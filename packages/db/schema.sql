@@ -8,6 +8,33 @@
 -- 0. Extensions
 create extension if not exists "pgcrypto";
 
+-- Clean Slate: Drop existing tables, sequences, and types to prevent conflicts
+drop table if exists chat_messages cascade;
+drop table if exists ai_generation_logs cascade;
+drop table if exists subscriptions cascade;
+drop table if exists payments cascade;
+drop table if exists order_items cascade;
+drop table if exists orders cascade;
+drop table if exists product_images cascade;
+drop table if exists products cascade;
+drop table if exists store_domains cascade;
+drop table if exists store_themes cascade;
+drop table if exists stores cascade;
+drop table if exists profiles cascade;
+
+drop sequence if exists order_number_seq cascade;
+
+drop type if exists plan_type cascade;
+drop type if exists business_type cascade;
+drop type if exists store_status cascade;
+drop type if exists font_style cascade;
+drop type if exists stock_status cascade;
+drop type if exists payment_method cascade;
+drop type if exists order_status cascade;
+drop type if exists payment_status cascade;
+drop type if exists subscription_status cascade;
+drop type if exists chat_role cascade;
+
 -- ============================================================================
 -- 1. ENUMS
 -- ============================================================================
