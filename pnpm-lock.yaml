@@ -215,6 +215,9 @@ importers:
         specifier: ^3.22.0
         version: 3.25.76
     devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.43
       eslint:
         specifier: ^8.50.0
         version: 8.57.1
@@ -231,6 +234,9 @@ importers:
         specifier: ^2.39.0
         version: 2.108.2
     devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.43
       eslint:
         specifier: ^8.50.0
         version: 8.57.1
