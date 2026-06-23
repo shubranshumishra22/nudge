@@ -24,6 +24,8 @@ drop table if exists profiles cascade;
 
 drop sequence if exists order_number_seq cascade;
 
+drop trigger if exists on_auth_user_created on auth.users;
+
 drop type if exists plan_type cascade;
 drop type if exists business_type cascade;
 drop type if exists store_status cascade;
