@@ -1,0 +1,40 @@
+.contact-v1 {
+  padding: 8rem 5%;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact-v1 h2 {
+  font-family: var(--font-heading), serif;
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+.contact-v1 p {
+  opacity: 0.75;
+  font-size: 1.15rem;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  padding: 1.1rem 2.8rem;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.contact-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+}

@@ -75,4 +75,42 @@ export interface PipelineResult {
   duration_ms: number;
   models_used: string[];
   error?: string;
+  // V2 Diagnostic fields
+  iterations?: number;
+  final_score?: number;
+  critic_reports?: CriticPanelResult;
 }
+
+export interface ComponentBlock {
+  name: string; // e.g. "HeroV1"
+  props: Record<string, any>;
+}
+
+export interface LayoutPlan {
+  style: DesignOutput;
+  components: ComponentBlock[];
+}
+
+export interface CriticReport {
+  score: number; // 1 to 10
+  critique: string;
+  weaknesses: string[];
+}
+
+export interface CriticPanelResult {
+  design: CriticReport;
+  ux: CriticReport;
+  accessibility: CriticReport;
+  seo: CriticReport;
+  conversion: CriticReport;
+  overall_score: number;
+}
+
+export interface PatchAction {
+  component: string; // e.g. "hero"
+  action: 'replace' | 'style_tweak' | 'content_tweak';
+  target: string; // e.g. "HeroV1"
+  value: any; // new name or properties
+  reasoning: string;
+}
+

@@ -1,0 +1,24 @@
+.footer-v1 {
+  text-align: center;
+  padding: 4rem 5%;
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.footer-v1-content h3 {
+  font-family: var(--font-heading), serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.footer-v1 .footer-tagline {
+  opacity: 0.6;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.footer-v1 .footer-copyright {
+  opacity: 0.4;
+  font-size: 0.8rem;
+}

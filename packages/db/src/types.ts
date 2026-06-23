@@ -584,6 +584,273 @@ export interface ChatMessagesTable {
   }
 }
 
+export interface GenerationMemoryTable {
+  Row: {
+    id: string
+    prompt: string
+    business_description: string
+    style_keywords: string[]
+    industry: string
+    style: string
+    design_tokens: Json
+    layout: Json
+    score: number
+    screenshot_url: string | null
+    created_at: string
+  }
+  Insert: {
+    id?: string
+    prompt: string
+    business_description: string
+    style_keywords: string[]
+    industry: string
+    style: string
+    design_tokens: Json
+    layout: Json
+    score: number
+    screenshot_url?: string | null
+    created_at?: string
+  }
+  Update: {
+    id?: string
+    prompt?: string
+    business_description?: string
+    style_keywords?: string[]
+    industry?: string
+    style?: string
+    design_tokens?: Json
+    layout?: Json
+    score?: number
+    screenshot_url?: string | null
+    created_at?: string
+  }
+}
+
+export interface GenerationEmbeddings1536Table {
+  Row: {
+    id: string
+    generation_id: string
+    provider: string
+    model_name: string
+    embedding: string
+    created_at: string
+  }
+  Insert: {
+    id?: string
+    generation_id: string
+    provider: string
+    model_name: string
+    embedding: string | number[]
+    created_at?: string
+  }
+  Update: {
+    id?: string
+    generation_id?: string
+    provider?: string
+    model_name?: string
+    embedding?: string | number[]
+    created_at?: string
+  }
+}
+
+export interface ComponentArchiveTable {
+  Row: {
+    id: string
+    name: string
+    version: string
+    file_path: string
+    semantic_metadata: Json
+    created_at: string
+  }
+  Insert: {
+    id?: string
+    name: string
+    version: string
+    file_path: string
+    semantic_metadata: Json
+    created_at?: string
+  }
+  Update: {
+    id?: string
+    name?: string
+    version?: string
+    file_path?: string
+    semantic_metadata?: Json
+    created_at?: string
+  }
+}
+
+export interface ComponentScoreTable {
+  Row: {
+    id: string
+    component_name: string
+    industry: string
+    style: string
+    page_type: string
+    usage_count: number
+    avg_score: number
+    created_at: string
+    updated_at: string
+  }
+  Insert: {
+    id?: string
+    component_name: string
+    industry: string
+    style: string
+    page_type?: string
+    usage_count?: number
+    avg_score?: number
+    created_at?: string
+    updated_at?: string
+  }
+  Update: {
+    id?: string
+    component_name?: string
+    industry?: string
+    style?: string
+    page_type?: string
+    usage_count?: number
+    avg_score?: number
+    created_at?: string
+    updated_at?: string
+  }
+}
+
+export interface PatchLearningTable {
+  Row: {
+    id: string
+    industry: string
+    style: string
+    weakness: string
+    patch_action: Json
+    reasoning: string
+    success_count: number
+    failure_count: number
+    confidence_score: number
+    created_at: string
+  }
+  Insert: {
+    id?: string
+    industry: string
+    style: string
+    weakness: string
+    patch_action: Json
+    reasoning: string
+    success_count?: number
+    failure_count?: number
+    confidence_score?: number
+    created_at?: string
+  }
+  Update: {
+    id?: string
+    industry?: string
+    style?: string
+    weakness?: string
+    patch_action?: Json
+    reasoning?: string
+    success_count?: number
+    failure_count?: number
+    confidence_score?: number
+    created_at?: string
+  }
+}
+
+export interface ComponentAnalyticsTable {
+  Row: {
+    id: string
+    store_id: string
+    component_name: string
+    clicks: number
+    impressions: number
+    conversions: number
+    updated_at: string
+  }
+  Insert: {
+    id?: string
+    store_id: string
+    component_name: string
+    clicks?: number
+    impressions?: number
+    conversions?: number
+    updated_at?: string
+  }
+  Update: {
+    id?: string
+    store_id?: string
+    component_name?: string
+    clicks?: number
+    impressions?: number
+    conversions?: number
+    updated_at?: string
+  }
+}
+
+export interface UserFeedbackTable {
+  Row: {
+    id: string
+    store_id: string
+    rating: number | null
+    thumbs_up_down: boolean | null
+    feedback_text: string | null
+    created_at: string
+  }
+  Insert: {
+    id?: string
+    store_id: string
+    rating?: number | null
+    thumbs_up_down?: boolean | null
+    feedback_text?: string | null
+    created_at?: string
+  }
+  Update: {
+    id?: string
+    store_id?: string
+    rating?: number | null
+    thumbs_up_down?: boolean | null
+    feedback_text?: string | null
+    created_at?: string
+  }
+}
+
+export interface ModelPerformanceTable {
+  Row: {
+    id: string
+    model_name: string
+    task: string
+    avg_score: number
+    success_rate: number
+    avg_latency_ms: number
+    avg_tokens: number
+    total_calls: number
+    created_at: string
+    updated_at: string
+  }
+  Insert: {
+    id?: string
+    model_name: string
+    task: string
+    avg_score?: number
+    success_rate?: number
+    avg_latency_ms?: number
+    avg_tokens?: number
+    total_calls?: number
+    created_at?: string
+    updated_at?: string
+  }
+  Update: {
+    id?: string
+    model_name?: string
+    task?: string
+    avg_score?: number
+    success_rate?: number
+    avg_latency_ms?: number
+    avg_tokens?: number
+    total_calls?: number
+    created_at?: string
+    updated_at?: string
+  }
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -599,6 +866,14 @@ export interface Database {
       subscriptions: SubscriptionsTable
       ai_generation_logs: AiGenerationLogsTable
       chat_messages: ChatMessagesTable
+      generation_memory: GenerationMemoryTable
+      generation_embeddings_1536: GenerationEmbeddings1536Table
+      component_archive: ComponentArchiveTable
+      component_score: ComponentScoreTable
+      patch_learning: PatchLearningTable
+      component_analytics: ComponentAnalyticsTable
+      user_feedback: UserFeedbackTable
+      model_performance: ModelPerformanceTable
     }
     Views: Record<string, never>
     Functions: Record<string, never>

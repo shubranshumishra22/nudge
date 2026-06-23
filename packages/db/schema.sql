@@ -583,3 +583,212 @@ create policy "chat_messages_own_update" on chat_messages
 
 create policy "chat_messages_own_delete" on chat_messages
   for delete using (auth.uid() = owner_id);
+
+-- ============================================================================
+-- 6. NUDGE V2: ADVANCED AGENTIC ARCHITECTURE TABLES
+-- ============================================================================
+
+-- 6.0 Enable pgvector extension
+create extension if not exists vector;
+
+-- 6.1 Unified Generation Memory
+create table if not exists generation_memory (
+  id uuid primary key default gen_random_uuid(),
+  prompt text not null,
+  business_description text not null,
+  style_keywords text[] not null,
+  industry text not null,
+  style text not null,
+  design_tokens jsonb not null,
+  layout jsonb not null,
+  score numeric not null,
+  screenshot_url text,
+  created_at timestamptz default now()
+);
+
+alter table generation_memory enable row level security;
+create policy "generation_memory_public_select" on generation_memory
+  for select using (true);
+
+-- 6.2 Isolated Embedding Tables (1536 dimensions)
+create table if not exists generation_embeddings_1536 (
+  id uuid primary key default gen_random_uuid(),
+  generation_id uuid references generation_memory(id) on delete cascade,
+  provider text not null, -- 'openai', 'cohere'
+  model_name text not null, -- 'text-embedding-3-small'
+  embedding vector(1536) not null,
+  created_at timestamptz default now()
+);
+
+create index if not exists generation_embeddings_1536_hnsw_idx 
+  on generation_embeddings_1536 using hnsw (embedding vector_cosine_ops);
+
+alter table generation_embeddings_1536 enable row level security;
+create policy "generation_embeddings_public_select" on generation_embeddings_1536
+  for select using (true);
+
+-- 6.3 Component Archive Index
+create table if not exists component_archive (
+  id uuid primary key default gen_random_uuid(),
+  name text not null, -- e.g., 'hero', 'footer', 'about'
+  version text not null, -- e.g., 'HeroV1', 'HeroV2'
+  file_path text not null, -- Relative codebase path
+  semantic_metadata jsonb not null,
+  created_at timestamptz default now(),
+  unique(name, version)
+);
+
+alter table component_archive enable row level security;
+create policy "component_archive_public_select" on component_archive
+  for select using (true);
+
+-- 6.4 Component Score
+create table if not exists component_score (
+  id uuid primary key default gen_random_uuid(),
+  component_name text not null, -- e.g., "HeroV2"
+  industry text not null,
+  style text not null,
+  page_type text not null default 'storefront',
+  usage_count integer not null default 0,
+  avg_score numeric not null default 0.0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(component_name, industry, style, page_type)
+);
+
+alter table component_score enable row level security;
+create policy "component_score_public_select" on component_score
+  for select using (true);
+
+create trigger update_component_score_updated_at
+  before update on component_score
+  for each row execute function update_updated_at();
+
+-- 6.5 Patch Learning Table
+create table if not exists patch_learning (
+  id uuid primary key default gen_random_uuid(),
+  industry text not null,
+  style text not null,
+  weakness text not null,
+  patch_action jsonb not null,
+  reasoning text not null,
+  success_count integer not null default 0,
+  failure_count integer not null default 0,
+  confidence_score numeric not null default 0.0,
+  created_at timestamptz default now()
+);
+
+alter table patch_learning enable row level security;
+create policy "patch_learning_public_select" on patch_learning
+  for select using (true);
+
+-- 6.6 Component-Level Analytics
+create table if not exists component_analytics (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references stores(id) on delete cascade,
+  component_name text not null,
+  clicks integer default 0,
+  impressions integer default 0,
+  conversions integer default 0,
+  updated_at timestamptz default now()
+);
+
+alter table component_analytics enable row level security;
+create policy "component_analytics_public_select" on component_analytics
+  for select using (true);
+create policy "component_analytics_public_insert" on component_analytics
+  for insert with check (true);
+create policy "component_analytics_public_update" on component_analytics
+  for update using (true) with check (true);
+
+create trigger update_component_analytics_updated_at
+  before update on component_analytics
+  for each row execute function update_updated_at();
+
+-- 6.7 User Feedback Loop
+create table if not exists user_feedback (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references stores(id) on delete cascade,
+  rating integer check (rating between 1 and 5),
+  thumbs_up_down boolean,
+  feedback_text text,
+  created_at timestamptz default now()
+);
+
+alter table user_feedback enable row level security;
+create policy "user_feedback_public_select" on user_feedback
+  for select using (true);
+create policy "user_feedback_public_insert" on user_feedback
+  for insert with check (true);
+
+-- 6.8 Model Performance Tracking
+create table if not exists model_performance (
+  id uuid primary key default gen_random_uuid(),
+  model_name text not null,
+  task text not null, -- 'research', 'design', 'content', 'builder', 'evaluator', 'patch'
+  avg_score numeric not null default 0.0,
+  success_rate numeric not null default 0.0,
+  avg_latency_ms numeric not null default 0.0,
+  avg_tokens integer not null default 0,
+  total_calls integer not null default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(model_name, task)
+);
+
+alter table model_performance enable row level security;
+create policy "model_performance_public_select" on model_performance
+  for select using (true);
+
+create trigger update_model_performance_updated_at
+  before update on model_performance
+  for each row execute function update_updated_at();
+
+-- ============================================================================
+-- 7. SIMILARITY SEARCH RPC FUNCTION
+-- ============================================================================
+
+create or replace function match_generation_memory(
+  query_embedding vector(1536),
+  match_threshold numeric,
+  match_count int
+)
+returns table (
+  id uuid,
+  prompt text,
+  business_description text,
+  style_keywords text[],
+  industry text,
+  style text,
+  design_tokens jsonb,
+  layout jsonb,
+  score numeric,
+  screenshot_url text,
+  created_at timestamptz,
+  similarity numeric
+)
+language plpgsql
+as $$
+begin
+  return query
+  select
+    gm.id,
+    gm.prompt,
+    gm.business_description,
+    gm.style_keywords,
+    gm.industry,
+    gm.style,
+    gm.design_tokens,
+    gm.layout,
+    gm.score,
+    gm.screenshot_url,
+    gm.created_at,
+    1 - (ge.embedding <=> query_embedding) as similarity
+  from generation_memory gm
+  join generation_embeddings_1536 ge on ge.generation_id = gm.id
+  where 1 - (ge.embedding <=> query_embedding) > match_threshold
+  order by ge.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+
