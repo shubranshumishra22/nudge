@@ -57,7 +57,7 @@ export default function MessageBubble({
         <div
           className="text-[15px] leading-relaxed"
           style={{ color: 'var(--text-primary)', lineHeight: '1.7' }}
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) + (isStreaming ? '<span class="nudge-cursor"/>' : '') }}
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) + (isStreaming ? '<span class="nudge-typing-dots"><span></span><span></span><span></span></span>' : '') }}
         />
         {!isStreaming && containsUpdate && (
           <div className="mt-3 flex items-center gap-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
@@ -74,19 +74,36 @@ export default function MessageBubble({
         )}
       </div>
       <style>{`
-        .nudge-cursor::after {
-          content: '';
-          display: inline-block;
-          width: 2px;
-          height: 1em;
-          background: var(--text-primary);
-          margin-left: 2px;
-          animation: nudge-blink 1s step-end infinite;
-          vertical-align: text-bottom;
+        .nudge-typing-dots {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          margin-left: 6px;
+          vertical-align: middle;
         }
-        @keyframes nudge-blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
+        .nudge-typing-dots span {
+          width: 5px;
+          height: 5px;
+          background-color: var(--text-primary);
+          border-radius: 50%;
+          opacity: 0.4;
+          animation: nudge-bounce 1.4s infinite both;
+        }
+        .nudge-typing-dots span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .nudge-typing-dots span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+        @keyframes nudge-bounce {
+          0%, 80%, 100% {
+            transform: scale(0.6);
+            opacity: 0.4;
+          }
+          40% {
+            transform: scale(1.15);
+            opacity: 1;
+          }
         }
       `}</style>
     </div>
