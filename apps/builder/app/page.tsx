@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Check, Zap, Building2, ArrowRight } from 'lucide-react'
+import Navbar from '@/components/Navbar'
 
 export default function LandingPage() {
   const plans = [
@@ -15,21 +16,8 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ backgroundColor: '#FAFAF8' }}>
-      <header className="fixed top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <img src="https://i.postimg.cc/fyvVwyF5/Chat-GPT-Image-Jun-22-2026-08-08-03-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover" />
-            <span className="text-sm font-bold tracking-tight">Nudge</span>
-          </div>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground">How it works</Link>
-            <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground">Pricing</Link>
-            <Link href="/login" className="text-sm font-medium text-foreground">Sign in</Link>
-            <Link href="/login" className="rounded-[10px] bg-[#0F0F0E] px-5 py-2.5 text-sm font-semibold text-white">Create my store</Link>
-          </nav>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col" style={{ backgroundColor: 'var(--bg-base)' }}>
+      <Navbar />
 
       <main className="flex-1">
         <section className="flex min-h-[85vh] items-center justify-center px-4 pt-16">
@@ -118,21 +106,26 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t" style={{ backgroundColor: '#FAFAF8' }}>
+      <footer className="border-t" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)' }}>
         <div className="mx-auto max-w-6xl px-4 py-12">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="text-center md:text-left">
-              <div className="flex items-center gap-2"><img src="https://i.postimg.cc/fyvVwyF5/Chat-GPT-Image-Jun-22-2026-08-08-03-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover" /><span className="text-sm font-bold tracking-tight">Nudge</span></div>
-              <p className="mt-1 text-sm text-muted-foreground">AI-powered e-commerce for Indian small businesses</p>
+              <div className="flex items-center gap-2">
+                <img src="https://i.postimg.cc/fyvVwyF5/Chat-GPT-Image-Jun-22-2026-08-08-03-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover" />
+                <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Nudge</span>
+                <span className="text-xs font-mono" style={{ color: 'var(--text-tertiary)' }}>Built by</span>
+                <a href="https://shubranshu.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-xs font-mono font-semibold underline underline-offset-2 transition-colors" style={{ color: 'var(--text-secondary)' }}>Shubranshu</a>
+              </div>
+              <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>AI-powered e-commerce for Indian small businesses</p>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-foreground">About</a>
-              <a href="#" className="hover:text-foreground">Blog</a>
-              <a href="#" className="hover:text-foreground">Twitter</a>
-              <a href="#" className="hover:text-foreground">Instagram</a>
+            <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <a href="#" className="hover:text-[var(--text-primary)] transition-colors">About</a>
+              <a href="#" className="hover:text-[var(--text-primary)] transition-colors">Blog</a>
+              <a href="#" className="hover:text-[var(--text-primary)] transition-colors">Twitter</a>
+              <a href="#" className="hover:text-[var(--text-primary)] transition-colors">Instagram</a>
             </div>
           </div>
-          <p className="mt-8 text-center text-xs text-muted-foreground">Made in Bengaluru 🇮🇳</p>
+          <p className="mt-8 text-center text-xs font-mono" style={{ color: 'var(--text-tertiary)' }}>Made in Bengaluru</p>
         </div>
       </footer>
     </div>
