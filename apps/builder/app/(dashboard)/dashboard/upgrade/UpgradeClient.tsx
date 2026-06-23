@@ -98,11 +98,11 @@ export default function UpgradeClient({ profile }: { profile: any }) {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold tracking-tight">Pricing</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Choose the plan that fits your business</p>
+      <h1 className="font-serif text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Pricing</h1>
+      <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>Choose the plan that fits your business</p>
 
       {error && (
-        <div className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+        <div className="mt-4 rounded-lg bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400">{error}</div>
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -116,38 +116,43 @@ export default function UpgradeClient({ profile }: { profile: any }) {
               onClick={() => {
                 if (!isCurrent) setSelected(plan.id)
               }}
-              className={`relative rounded-xl bg-white p-6 transition-all cursor-pointer ${
+              className={`relative rounded-xl p-6 transition-all cursor-pointer ${
                 plan.accent && isSelected
-                  ? 'border-2 border-[#0F0F0E] shadow-lg ring-1 ring-[#0F0F0E]/10'
+                  ? 'border-2 shadow-lg'
                   : plan.accent
-                  ? 'border-2 border-[#0F0F0E] shadow-md'
+                  ? 'border-2 shadow-md'
                   : isSelected
-                  ? 'border-2 border-[#0F0F0E]'
-                  : 'border border-input hover:border-[#0F0F0E]/40'
+                  ? 'border-2'
+                  : 'border hover:border-[var(--text-primary)]/40'
               }`}
+              style={{
+                backgroundColor: 'var(--bg-surface)',
+                borderColor: plan.accent || isSelected ? 'var(--bg-inverse)' : 'var(--border-default)',
+                color: 'var(--text-primary)',
+              }}
             >
               {plan.badge && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#0F0F0E] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>
                   {plan.badge}
                 </span>
               )}
 
               <div className="flex items-center gap-2">
-                {plan.id === 'free' ? <Zap size={20} className="text-muted-foreground" /> :
-                 plan.id === 'pro' ? <Zap size={20} className="text-[#0F0F0E]" /> :
-                 <Building2 size={20} className="text-[#0F0F0E]" />}
+                {plan.id === 'free' ? <Zap size={20} style={{ color: 'var(--text-secondary)' }} /> :
+                 plan.id === 'pro' ? <Zap size={20} style={{ color: 'var(--text-primary)' }} /> :
+                 <Building2 size={20} style={{ color: 'var(--text-primary)' }} />}
                 <h2 className="text-lg font-semibold">{plan.name}</h2>
               </div>
 
               <div className="mt-4">
-                <span className="font-serif text-3xl font-bold">{plan.price}</span>
-                <span className="text-sm text-muted-foreground">{plan.period}</span>
+                <span className="font-serif text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.price}</span>
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{plan.period}</span>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">{plan.description}</p>
+              <p className="mt-1 text-xs" style={{ color: 'var(--text-secondary)' }}>{plan.description}</p>
 
               <ul className="mt-6 space-y-3">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
+                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                     <Check size={14} className="mt-0.5 shrink-0 text-green-600" />
                     <span>{f}</span>
                   </li>
@@ -162,13 +167,22 @@ export default function UpgradeClient({ profile }: { profile: any }) {
                   }
                 }}
                 disabled={isCurrent || loading}
-                className={`mt-6 w-full rounded-[10px] py-3 text-sm font-semibold transition-all ${
+                className="mt-6 w-full rounded-[10px] py-3 text-sm font-semibold transition-all"
+                style={
                   isCurrent
-                    ? 'bg-[#F4F3F0] text-muted-foreground cursor-default'
+                    ? { backgroundColor: 'var(--bg-subtle)', color: 'var(--text-secondary)', cursor: 'default' }
                     : plan.accent
-                    ? 'bg-[#0F0F0E] text-white hover:opacity-90'
-                    : 'border border-input hover:bg-[#F4F3F0]'
-                }`}
+                    ? { backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }
+                    : { border: '1px solid var(--border-default)', color: 'var(--text-primary)', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (!isCurrent && !plan.accent) e.currentTarget.style.backgroundColor = 'var(--bg-subtle)'
+                  if (!isCurrent && plan.accent) e.currentTarget.style.opacity = '0.9'
+                }}
+                onMouseLeave={(e) => {
+                  if (!isCurrent && !plan.accent) e.currentTarget.style.backgroundColor = 'transparent'
+                  if (!isCurrent && plan.accent) e.currentTarget.style.opacity = '1'
+                }}
               >
                 {isCurrent ? 'Current plan' : loading && selected === plan.id ? 'Processing...' : `Upgrade to ${plan.name}`}
               </button>

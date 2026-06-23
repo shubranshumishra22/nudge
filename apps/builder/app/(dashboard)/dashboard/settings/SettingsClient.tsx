@@ -32,13 +32,13 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
     router.push('/dashboard')
   }
 
-  const inputClass = 'w-full rounded-[10px] border border-input bg-white px-4 py-2.5 text-sm outline-none focus:border-foreground'
-  const labelClass = 'mb-1 block text-xs font-medium'
-  const sectionClass = 'rounded-xl border bg-white p-6'
+  const inputClass = 'w-full rounded-[10px] border px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)] bg-[var(--bg-surface)] border-[var(--border-default)] text-[var(--text-primary)]'
+  const labelClass = 'mb-1 block text-xs font-medium text-[var(--text-secondary)]'
+  const sectionClass = 'rounded-xl border p-6 bg-[var(--bg-surface)] border-[var(--border-default)] text-[var(--text-primary)]'
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-serif text-2xl font-bold tracking-tight">Settings</h1>
+      <h1 className="font-serif text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Settings</h1>
 
       <div className="mt-6 space-y-6">
         <div className={sectionClass}>
@@ -47,7 +47,7 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
             <div><label className={labelClass}>Store name</label><input className={inputClass} value={store.name} onChange={(e) => update('name', e.target.value)} /></div>
             <div><label className={labelClass}>Tagline</label><input className={inputClass} value={store.tagline || ''} onChange={(e) => update('tagline', e.target.value)} placeholder="Short tagline for your store" /></div>
             <div><label className={labelClass}>Description</label><textarea rows={3} className={inputClass} value={store.description || ''} onChange={(e) => update('description', e.target.value)} /></div>
-            <button onClick={() => handleSave('info')} disabled={saving} className="rounded-[10px] bg-[#0F0F0E] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Save</button>
+            <button onClick={() => handleSave('info')} disabled={saving} className="rounded-[10px] px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>Save</button>
           </div>
         </div>
 
@@ -57,7 +57,7 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
             <div><label className={labelClass}>WhatsApp number</label><input className={inputClass} value={store.whatsapp_number || ''} onChange={(e) => update('whatsapp_number', e.target.value)} placeholder="9876543210" /></div>
             <div><label className={labelClass}>Email</label><input className={inputClass} type="email" value={store.contact_email || ''} onChange={(e) => update('contact_email', e.target.value)} /></div>
             <div><label className={labelClass}>Address</label><textarea rows={2} className={inputClass} value={store.contact_address || ''} onChange={(e) => update('contact_address', e.target.value)} /></div>
-            <button onClick={() => handleSave('contact')} disabled={saving} className="rounded-[10px] bg-[#0F0F0E] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Save</button>
+            <button onClick={() => handleSave('contact')} disabled={saving} className="rounded-[10px] px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>Save</button>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
               <div><label className={labelClass}>Free above (₹)</label><input type="number" className={inputClass} value={store.free_delivery_above || ''} onChange={(e) => update('free_delivery_above', e.target.value ? parseInt(e.target.value) : null)} placeholder="Leave empty to disable" /></div>
             </div>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={store.cod_enabled || false} onChange={(e) => update('cod_enabled', e.target.checked)} className="h-4 w-4" /> Enable cash on delivery</label>
-            <button onClick={() => handleSave('delivery')} disabled={saving} className="rounded-[10px] bg-[#0F0F0E] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Save</button>
+            <button onClick={() => handleSave('delivery')} disabled={saving} className="rounded-[10px] px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>Save</button>
           </div>
         </div>
 
@@ -85,14 +85,15 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded bg-[#F4F3F0] px-2 py-0.5 text-xs text-foreground hover:bg-accent transition-colors underline underline-offset-2"
+                className="rounded px-2 py-0.5 text-xs transition-colors underline underline-offset-2"
+                style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-primary)' }}
               >
                 {process.env.NEXT_PUBLIC_STOREFRONT_URL
                   ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL.replace(/^https?:\/\//, '')}/${store.slug}`
                   : `${store.slug}.nudge.store`}
               </a>
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">Upgrade to Pro to connect a custom domain.</p>
+            <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>Upgrade to Pro to connect a custom domain.</p>
           </div>
         </div>
 
@@ -101,25 +102,25 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
           <div className="mt-4 space-y-4">
             <div><label className={labelClass}>WhatsApp number for order alerts</label><input className={inputClass} value={store.whatsapp_number || ''} onChange={(e) => update('whatsapp_number', e.target.value)} /></div>
             <div><label className={labelClass}>Email for order alerts</label><input className={inputClass} type="email" value={owner?.email || store.contact_email || ''} /></div>
-            <button onClick={() => handleSave('notifications')} disabled={saving} className="rounded-[10px] bg-[#0F0F0E] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Save</button>
+            <button onClick={() => handleSave('notifications')} disabled={saving} className="rounded-[10px] px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>Save</button>
           </div>
         </div>
 
-        <div className={`${sectionClass} border-red-200`}>
-          <h2 className="text-sm font-semibold text-red-600">Danger zone</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Permanently delete your store and all its data.</p>
-          <button onClick={() => setDeleteConfirm(true)} className="mt-3 flex items-center gap-2 rounded-[10px] border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"><Trash2 size={16} />Delete store</button>
+        <div className={`${sectionClass} border-red-200 dark:border-red-950/50`}>
+          <h2 className="text-sm font-semibold text-red-600 dark:text-red-400">Danger zone</h2>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-secondary)' }}>Permanently delete your store and all its data.</p>
+          <button onClick={() => setDeleteConfirm(true)} className="mt-3 flex items-center gap-2 rounded-[10px] border px-4 py-2.5 text-sm font-medium transition-colors border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"><Trash2 size={16} />Delete store</button>
         </div>
       </div>
 
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-xl p-6 shadow-xl border" style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }}>
             <h3 className="text-sm font-semibold">Delete {store.name}?</h3>
-            <p className="mt-2 text-xs text-muted-foreground">This permanently deletes your store, products, orders, and all data. This cannot be undone.</p>
+            <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>This permanently deletes your store, products, orders, and all data. This cannot be undone.</p>
             <div className="mt-4 flex justify-end gap-3">
-              <button onClick={() => setDeleteConfirm(false)} className="rounded-[10px] border border-input px-4 py-2 text-xs font-medium">Cancel</button>
-              <button onClick={handleDelete} className="rounded-[10px] bg-red-600 px-4 py-2 text-xs font-medium text-white">Delete permanently</button>
+              <button onClick={() => setDeleteConfirm(false)} className="rounded-[10px] border px-4 py-2 text-xs font-medium hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}>Cancel</button>
+              <button onClick={handleDelete} className="rounded-[10px] bg-red-600 px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity">Delete permanently</button>
             </div>
           </div>
         </div>

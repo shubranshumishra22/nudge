@@ -39,29 +39,35 @@ export default function ProductsClient({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="font-serif text-2xl font-bold tracking-tight">Products</h1>
-        <button onClick={() => { setPanel({ mode: 'add' }); setUploadedImages([]) }} className="flex items-center gap-2 rounded-[10px] bg-[#0F0F0E] px-4 py-2.5 text-sm font-semibold text-white">
+        <h1 className="font-serif text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Products</h1>
+        <button onClick={() => { setPanel({ mode: 'add' }); setUploadedImages([]) }} className="flex items-center gap-2 rounded-[10px] px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>
           <Plus size={16} /> Add product
         </button>
       </div>
 
       <div className="mt-4 flex items-center gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input className="w-full rounded-[10px] border border-input bg-white py-2.5 pl-9 pr-4 text-sm outline-none focus:border-foreground" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
+          <input
+            className="w-full rounded-[10px] border py-2.5 pl-9 pr-4 text-sm outline-none transition-colors focus:border-[var(--border-focus)]"
+            style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }}
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
         {selected.size > 0 && (
-          <button onClick={handleBulkDelete} className="flex items-center gap-1.5 rounded-[10px] border border-red-200 px-3 py-2.5 text-xs font-medium text-red-600 hover:bg-red-50">
+          <button onClick={handleBulkDelete} className="flex items-center gap-1.5 rounded-[10px] border px-3 py-2.5 text-xs font-medium transition-colors border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20">
             <Trash2 size={14} /> Delete {selected.size}
           </button>
         )}
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-xl border">
+      <div className="mt-4 overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--border-default)' }}>
         <table className="w-full text-left text-sm">
-          <thead className="border-b bg-[#F4F3F0] text-xs text-muted-foreground">
+          <thead className="border-b text-xs" style={{ backgroundColor: 'var(--bg-subtle)', borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}>
             <tr>
-              <th className="w-10 px-3 py-3"><input type="checkbox" checked={allSelected} onChange={toggleAll} className="h-4 w-4" /></th>
+              <th className="w-10 px-3 py-3"><input type="checkbox" checked={allSelected} onChange={toggleAll} className="h-4 w-4 bg-transparent" /></th>
               <th className="px-3 py-3 font-medium">Image</th>
               <th className="px-3 py-3 font-medium">Name</th>
               <th className="px-3 py-3 font-medium">Price</th>
@@ -72,23 +78,23 @@ export default function ProductsClient({
           </thead>
           <tbody>
             {filtered.map((p) => (
-              <tr key={p.id} className="border-b last:border-0 hover:bg-[#FAFAF8]">
-                <td className="px-3 py-3"><input type="checkbox" checked={selected.has(p.id)} onChange={() => toggleOne(p.id)} className="h-4 w-4" /></td>
+              <tr key={p.id} className="border-b last:border-0 hover:bg-[var(--bg-subtle)]/50 transition-colors" style={{ borderColor: 'var(--border-default)' }}>
+                <td className="px-3 py-3"><input type="checkbox" checked={selected.has(p.id)} onChange={() => toggleOne(p.id)} className="h-4 w-4 bg-transparent" /></td>
                 <td className="px-3 py-3">
-                  <div className="h-10 w-10 overflow-hidden rounded-lg bg-muted">
-                    {imageMap[p.id] ? <img src={imageMap[p.id]} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>}
+                  <div className="h-10 w-10 overflow-hidden rounded-lg bg-[var(--bg-subtle)]" style={{ border: '1px solid var(--border-default)' }}>
+                    {imageMap[p.id] ? <img src={imageMap[p.id]} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs" style={{ color: 'var(--text-tertiary)' }}>—</div>}
                   </div>
                 </td>
-                <td className="px-3 py-3 font-medium">{p.name}</td>
-                <td className="px-3 py-3">₹{p.price.toLocaleString('en-IN')}</td>
-                <td className="px-3 py-3 text-xs text-muted-foreground">{p.category || '—'}</td>
+                <td className="px-3 py-3 font-medium" style={{ color: 'var(--text-primary)' }}>{p.name}</td>
+                <td className="px-3 py-3" style={{ color: 'var(--text-primary)' }}>₹{p.price.toLocaleString('en-IN')}</td>
+                <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-secondary)' }}>{p.category || '—'}</td>
                 <td className="px-3 py-3">
-                  <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${p.stock_status === 'in_stock' ? 'bg-green-100 text-green-700' : p.stock_status === 'limited' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{p.stock_status.replace(/_/g, ' ')}</span>
+                  <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${p.stock_status === 'in_stock' ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400' : p.stock_status === 'limited' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400' : 'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400'}`}>{p.stock_status.replace(/_/g, ' ')}</span>
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
-                    <button onClick={() => { setPanel({ mode: 'edit', product: p }); setUploadedImages(imageMap[p.id] ? [imageMap[p.id]] : []) }} className="text-muted-foreground hover:text-[#0F0F0E]"><Pencil size={15} /></button>
-                    <button onClick={() => setDeleteConfirm(p)} className="text-muted-foreground hover:text-red-600"><Trash2 size={15} /></button>
+                    <button onClick={() => { setPanel({ mode: 'edit', product: p }); setUploadedImages(imageMap[p.id] ? [imageMap[p.id]] : []) }} className="transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><Pencil size={15} /></button>
+                    <button onClick={() => setDeleteConfirm(p)} className="transition-colors text-[var(--text-secondary)] hover:text-red-600"><Trash2 size={15} /></button>
                   </div>
                 </td>
               </tr>
@@ -136,42 +142,80 @@ function ProductPanel({ store, panel, images: initialImages, onClose, onSaved }:
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/20" onClick={onClose} />
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-white shadow-xl md:w-[400px]">
-        <div className="flex items-center justify-between border-b px-5 py-4">
+      <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col shadow-xl md:w-[400px]" style={{ backgroundColor: 'var(--bg-surface)', borderLeft: '1px solid var(--border-default)', color: 'var(--text-primary)' }}>
+        <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'var(--border-default)' }}>
           <h2 className="text-sm font-semibold">{isEdit ? 'Edit product' : 'Add product'}</h2>
-          <button onClick={onClose}><X size={18} /></button>
+          <button onClick={onClose} style={{ color: 'var(--text-secondary)' }} className="hover:text-[var(--text-primary)]"><X size={18} /></button>
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-4">
           <div className="space-y-4">
-            <div><label className="mb-1 block text-xs font-medium">Name *</label><input className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="mb-1 block text-xs font-medium">Price (₹) *</label><input type="number" className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} /></div>
-              <div><label className="mb-1 block text-xs font-medium">Compare-at price</label><input type="number" className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} /></div>
-            </div>
-            <div><label className="mb-1 block text-xs font-medium">Description</label><textarea rows={3} className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="mb-1 block text-xs font-medium">Category</label><input list="cats" className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /><datalist id="cats">{(store.categories || []).map((c: string) => <option key={c} value={c} />)}</datalist></div>
-              <div><label className="mb-1 block text-xs font-medium">SKU</label><input className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="mb-1 block text-xs font-medium">Stock status</label><select className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none" value={form.stock_status} onChange={(e) => setForm({ ...form, stock_status: e.target.value })}><option value="in_stock">In stock</option><option value="limited">Limited</option><option value="out_of_stock">Out of stock</option></select></div>
-              {form.stock_status === 'limited' && <div><label className="mb-1 block text-xs font-medium">Quantity</label><input type="number" className="w-full rounded-[10px] border border-input px-3 py-2.5 text-sm outline-none focus:border-foreground" value={form.stock_quantity} onChange={(e) => setForm({ ...form, stock_quantity: e.target.value })} /></div>}
-            </div>
             <div>
-              <label className="mb-1 block text-xs font-medium">Images</label>
-              <div className="flex flex-wrap gap-2">
-                {images.map((url: string, i: number) => (
-                  <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border"><img src={url} alt="" className="h-full w-full object-cover" /><button className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black/50 text-white" onClick={() => setImages(images.filter((_, j) => j !== i))}><X size={10} /></button></div>
-                ))}
-                {images.length < 5 && <label className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border border-dashed text-muted-foreground hover:bg-[#F4F3F0]"><input type="file" accept="image/*" className="hidden" onChange={handleUpload} /><Upload size={18} /></label>}
+              <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Name *</label>
+              <input className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Price (₹) *</label>
+                <input type="number" className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Compare-at price</label>
+                <input type="number" className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} />
               </div>
             </div>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} className="h-4 w-4" /> Featured product</label>
+            <div>
+              <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Description</label>
+              <textarea rows={3} className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Category</label>
+                <input list="cats" className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /><datalist id="cats">{(store.categories || []).map((c: string) => <option key={c} value={c} />)}</datalist>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>SKU</label>
+                <input className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Stock status</label>
+                <select className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.stock_status} onChange={(e) => setForm({ ...form, stock_status: e.target.value })}>
+                  <option value="in_stock" style={{ backgroundColor: 'var(--bg-surface)' }}>In stock</option>
+                  <option value="limited" style={{ backgroundColor: 'var(--bg-surface)' }}>Limited</option>
+                  <option value="out_of_stock" style={{ backgroundColor: 'var(--bg-surface)' }}>Out of stock</option>
+                </select>
+              </div>
+              {form.stock_status === 'limited' && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Quantity</label>
+                  <input type="number" className="w-full rounded-[10px] border px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]" style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }} value={form.stock_quantity} onChange={(e) => setForm({ ...form, stock_quantity: e.target.value })} />
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Images</label>
+              <div className="flex flex-wrap gap-2">
+                {images.map((url: string, i: number) => (
+                  <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border" style={{ borderColor: 'var(--border-default)' }}>
+                    <img src={url} alt="" className="h-full w-full object-cover" />
+                    <button className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black/50 text-white" onClick={() => setImages(images.filter((_, j) => j !== i))}><X size={10} /></button>
+                  </div>
+                ))}
+                {images.length < 5 && (
+                  <label className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border border-dashed transition-colors hover:bg-[var(--bg-subtle)]" style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                    <Upload size={18} />
+                  </label>
+                )}
+              </div>
+            </div>
+            <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-primary)' }}><input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} className="h-4 w-4" /> Featured product</label>
           </div>
         </div>
-        <div className="border-t px-5 py-4">
-          <button onClick={handleSave} disabled={saving || !form.name || !form.price} className="w-full rounded-[10px] bg-[#0F0F0E] py-3 text-sm font-semibold text-white disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
+        <div className="border-t px-5 py-4" style={{ borderColor: 'var(--border-default)' }}>
+          <button onClick={handleSave} disabled={saving || !form.name || !form.price} className="w-full rounded-[10px] py-3 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </div>
     </>
@@ -186,13 +230,13 @@ function DeleteDialog({ product, onClose, onDeleted }: any) {
     onDeleted(product.id)
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-xl p-6 shadow-xl border" style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }}>
         <h3 className="text-sm font-semibold">Delete {product.name}?</h3>
-        <p className="mt-2 text-xs text-muted-foreground">This cannot be undone.</p>
+        <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>This cannot be undone.</p>
         <div className="mt-4 flex justify-end gap-3">
-          <button onClick={onClose} className="rounded-[10px] border border-input px-4 py-2 text-xs font-medium">Cancel</button>
-          <button onClick={handleDelete} disabled={deleting} className="rounded-[10px] bg-red-600 px-4 py-2 text-xs font-medium text-white">{deleting ? 'Deleting...' : 'Delete'}</button>
+          <button onClick={onClose} className="rounded-[10px] border px-4 py-2 text-xs font-medium hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}>Cancel</button>
+          <button onClick={handleDelete} disabled={deleting} className="rounded-[10px] bg-red-600 px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity">{deleting ? 'Deleting...' : 'Delete'}</button>
         </div>
       </div>
     </div>

@@ -111,11 +111,16 @@ export default function ChatBox({ storeId }: { storeId: string }) {
       )}
 
       <div
-        className={`fixed bottom-0 right-0 z-50 flex flex-col bg-white shadow-2xl transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-0 right-0 z-50 flex flex-col shadow-2xl transition-all duration-300 ease-in-out ${
           open
             ? 'h-[600px] w-full max-w-[420px] rounded-t-2xl border md:bottom-6 md:right-6 md:rounded-2xl md:shadow-2xl'
             : 'h-0 w-0 overflow-hidden'
         }`}
+        style={{
+          backgroundColor: 'var(--bg-surface)',
+          borderColor: 'var(--border-default)',
+          color: 'var(--text-primary)',
+        }}
       >
         {open && (
           <>
@@ -137,17 +142,30 @@ export default function ChatBox({ storeId }: { storeId: string }) {
             <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center px-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F4F3F0] mb-4">
-                    <Sparkles size={24} className="text-[#0F0F0E]" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl mb-4" style={{ backgroundColor: 'var(--bg-subtle)' }}>
+                    <Sparkles size={24} style={{ color: 'var(--text-primary)' }} />
                   </div>
-                  <p className="text-sm font-medium text-[#0F0F0E] mb-1">Ask me anything about your store</p>
-                  <p className="text-xs text-muted-foreground mb-6">I can update your theme, add products, change settings, and more.</p>
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Ask me anything about your store</p>
+                  <p className="text-xs mb-6" style={{ color: 'var(--text-secondary)' }}>I can update your theme, add products, change settings, and more.</p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {suggestions.map((s) => (
                       <button
                         key={s}
                         onClick={() => sendMessage(s)}
-                        className="rounded-full border bg-white px-3 py-1.5 text-xs text-muted-foreground hover:border-[#0F0F0E] hover:text-[#0F0F0E] transition-colors"
+                        className="rounded-full border px-3 py-1.5 text-xs transition-colors"
+                        style={{
+                          backgroundColor: 'var(--bg-surface)',
+                          borderColor: 'var(--border-default)',
+                          color: 'var(--text-secondary)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--text-primary)'
+                          e.currentTarget.style.color = 'var(--text-primary)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--border-default)'
+                          e.currentTarget.style.color = 'var(--text-secondary)'
+                        }}
                       >
                         {s}
                       </button>
@@ -159,17 +177,18 @@ export default function ChatBox({ storeId }: { storeId: string }) {
               {messages.map((msg, i) => (
                 <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
                   {msg.role === 'assistant' && (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F4F3F0]">
-                      <Bot size={16} className="text-[#0F0F0E]" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--bg-subtle)' }}>
+                      <Bot size={16} style={{ color: 'var(--text-primary)' }} />
                     </div>
                   )}
                   <div className={`max-w-[80%] ${msg.role === 'user' ? 'order-1' : ''}`}>
                     <div
-                      className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                      className="rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
+                      style={
                         msg.role === 'user'
-                          ? 'bg-[#0F0F0E] text-white rounded-tr-md'
-                          : 'bg-[#F4F3F0] text-[#0F0F0E] rounded-tl-md'
-                      }`}
+                          ? { backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)', borderRadius: '16px 16px 4px 16px' }
+                          : { backgroundColor: 'var(--bg-subtle)', color: 'var(--text-primary)', borderRadius: '16px 16px 16px 4px' }
+                      }
                     >
                       {msg.content}
                     </div>
@@ -185,8 +204,8 @@ export default function ChatBox({ storeId }: { storeId: string }) {
                     )}
                   </div>
                   {msg.role === 'user' && (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0F0F0E]">
-                      <User size={16} className="text-white" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--bg-inverse)' }}>
+                      <User size={16} style={{ color: 'var(--text-inverse)' }} />
                     </div>
                   )}
                 </div>
@@ -194,17 +213,17 @@ export default function ChatBox({ storeId }: { storeId: string }) {
 
               {loading && (
                 <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F4F3F0]">
-                    <Bot size={16} className="text-[#0F0F0E]" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--bg-subtle)' }}>
+                    <Bot size={16} style={{ color: 'var(--text-primary)' }} />
                   </div>
-                  <div className="rounded-2xl rounded-tl-md bg-[#F4F3F0] px-4 py-3">
-                    <Loader2 size={16} className="animate-spin text-muted-foreground" />
+                  <div className="rounded-2xl rounded-tl-md px-4 py-3" style={{ backgroundColor: 'var(--bg-subtle)' }}>
+                    <Loader2 size={16} className="animate-spin" style={{ color: 'var(--text-secondary)' }} />
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="border-t px-4 py-3">
+            <div className="border-t px-4 py-3" style={{ borderColor: 'var(--border-default)' }}>
               <div className="flex items-center gap-2">
                 <input
                   ref={inputRef}
@@ -213,19 +232,34 @@ export default function ChatBox({ storeId }: { storeId: string }) {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask me anything..."
-                  className="flex-1 rounded-xl border bg-[#FAFAF8] px-4 py-2.5 text-sm outline-none focus:border-[#0F0F0E] transition-colors"
+                  className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--border-focus)]"
+                  style={{
+                    backgroundColor: 'var(--bg-base)',
+                    borderColor: 'var(--border-default)',
+                    color: 'var(--text-primary)',
+                  }}
                   disabled={loading}
                 />
                 <button
                   onClick={() => sendMessage(input)}
                   disabled={loading || !input.trim()}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F0F0E] text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl transition-opacity hover:opacity-90 disabled:opacity-40"
+                  style={{
+                    backgroundColor: 'var(--bg-inverse)',
+                    color: 'var(--text-inverse)',
+                  }}
                 >
                   <Send size={16} />
                 </button>
               </div>
               {messages.length > 0 && (
-                <button onClick={clearChat} className="mt-2 text-[10px] text-muted-foreground hover:text-[#0F0F0E] transition-colors">
+                <button
+                  onClick={clearChat}
+                  className="mt-2 text-[10px] transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
                   Clear conversation
                 </button>
               )}
@@ -236,9 +270,13 @@ export default function ChatBox({ storeId }: { storeId: string }) {
 
       <button
         onClick={() => setOpen(!open)}
-        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#0F0F0E] text-white shadow-xl transition-all hover:scale-105 active:scale-95 ${
+        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-all hover:scale-105 active:scale-95 ${
           open ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
         }`}
+        style={{
+          backgroundColor: 'var(--bg-inverse)',
+          color: 'var(--text-inverse)',
+        }}
       >
         <MessageSquare size={22} />
       </button>
