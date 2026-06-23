@@ -23,9 +23,14 @@ export async function POST(
 
     await db.from('profiles').update({ onboarding_completed: true }).eq('id', user.id)
 
+    const storefrontUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL
+    const storeUrl = storefrontUrl
+      ? `${storefrontUrl}/${store.slug}`
+      : `https://${store.slug}.nudge.store`
+
     return NextResponse.json({
       slug: store.slug,
-      url: `https://${store.slug}.nudge.store`,
+      url: storeUrl,
     })
   } catch (err) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })

@@ -76,7 +76,22 @@ export default function SettingsClient({ store: initial, owner }: { store: any; 
         <div className={sectionClass}>
           <h2 className="text-sm font-semibold">Domain</h2>
           <div className="mt-4">
-            <p className="text-sm"><code className="rounded bg-[#F4F3F0] px-2 py-0.5 text-xs">{store.slug}.nudge.store</code></p>
+            <p className="text-sm">
+              <a
+                href={
+                  process.env.NEXT_PUBLIC_STOREFRONT_URL
+                    ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL}/${store.slug}`
+                    : `https://${store.slug}.nudge.store`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded bg-[#F4F3F0] px-2 py-0.5 text-xs text-foreground hover:bg-accent transition-colors underline underline-offset-2"
+              >
+                {process.env.NEXT_PUBLIC_STOREFRONT_URL
+                  ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL.replace(/^https?:\/\//, '')}/${store.slug}`
+                  : `${store.slug}.nudge.store`}
+              </a>
+            </p>
             <p className="mt-2 text-xs text-muted-foreground">Upgrade to Pro to connect a custom domain.</p>
           </div>
         </div>

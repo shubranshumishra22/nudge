@@ -8,12 +8,10 @@ export async function POST(request: Request) {
     const { revalidatePath } = await import('next/cache')
     const { revalidateTag } = await import('next/cache')
     
-    revalidatePath(`http://localhost:3001/${slug}`)
-    revalidatePath(`http://localhost:3001/${slug}/products`)
-    revalidatePath(`http://localhost:3001/${slug}/checkout`)
+    const storefrontUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL || 'http://localhost:3001'
 
     try {
-      await fetch(`http://localhost:3001/api/revalidate`, {
+      await fetch(`${storefrontUrl}/api/revalidate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slug }),

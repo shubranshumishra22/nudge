@@ -39,15 +39,19 @@ export default function PreviewPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to publish')
 
-      setStoreUrl(data.url || `https://${data.slug}.nudge.store`)
-      setDisplayUrl(data.url || `${data.slug}.nudge.store`)
+      const defaultUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL
+        ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL}/${data.slug}`
+        : `https://${data.slug}.nudge.store`
+
+      setStoreUrl(data.url || defaultUrl)
+      setDisplayUrl((data.url || defaultUrl).replace(/^https?:\/\//, ''))
 
       setTimeout(() => {
         setPublished(true)
         setPublishing(false)
 
         let i = 0
-        const url = data.url || `${data.slug}.nudge.store`
+        const url = (data.url || defaultUrl).replace(/^https?:\/\//, '')
         const interval = setInterval(() => {
           i++
           setTypedUrl(url.slice(0, i))
