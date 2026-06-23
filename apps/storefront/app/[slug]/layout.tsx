@@ -2,16 +2,27 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { StoreProvider, type StoreData } from '@/components/StoreProvider'
 import Header from '@/components/templates/Minimal/Header'
 import Footer from '@/components/templates/Minimal/Footer'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let supabaseClient: SupabaseClient | null = null
+
+function getSupabase() {
+  if (!supabaseClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase environment variables are missing')
+    }
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseClient
+}
 
 async function getStoreData(slug: string): Promise<StoreData | null> {
+  const supabase = getSupabase()
   const { data: store } = await supabase
     .from('stores')
     .select('*')
@@ -47,6 +58,7 @@ async function getStoreData(slug: string): Promise<StoreData | null> {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const supabase = getSupabase()
   const { data: store } = await supabase
     .from('stores')
     .select('name, description, tagline')

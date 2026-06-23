@@ -1,12 +1,23 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import OrderClient from './OrderClient'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let supabaseClient: SupabaseClient | null = null
+
+function getSupabase() {
+  if (!supabaseClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase environment variables are missing')
+    }
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseClient
+}
 
 async function getOrder(slug: string, orderId: string) {
+  const supabase = getSupabase()
   const { data: store } = await supabase
     .from('stores')
     .select('id, slug, name, whatsapp_number')

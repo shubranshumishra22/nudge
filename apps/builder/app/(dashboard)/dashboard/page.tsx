@@ -1,12 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { createServerSupabaseClient } from '@nudge/db'
 import { redirect } from 'next/navigation'
 import DashboardHomeClient from './DashboardHomeClient'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const db = createClient(supabaseUrl, supabaseKey)
+let dbClient: SupabaseClient | null = null
+
+function getDb() {
+  if (!dbClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase environment variables are missing')
+    }
+    dbClient = createClient(supabaseUrl, supabaseKey)
+  }
+  return dbClient
+}
 
 function getGreeting() {
   const h = new Date().getHours()
@@ -23,6 +33,7 @@ export default async function DashboardHome() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const db = getDb()
   const { data: stores } = await db.from('stores').select('*').eq('owner_id', user.id)
   const store = stores?.[0]
   if (!store) return <DashboardHomeClient greeting={getGreeting()} name="" store={null} stats={null} orders={[]} />

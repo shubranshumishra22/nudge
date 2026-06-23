@@ -1,16 +1,27 @@
 import { ImageResponse } from 'next/og'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 export const runtime = 'edge'
 export const alt = 'Nudge Store'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let supabaseClient: SupabaseClient | null = null
+
+function getSupabase() {
+  if (!supabaseClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase environment variables are missing')
+    }
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseClient
+}
 
 export default async function Image({ params }: { params: { slug: string } }) {
+  const supabase = getSupabase()
   const { data: store } = await supabase.from('stores').select('id, name, tagline').eq('slug', params.slug).single()
 
   const name = store?.name || 'Nudge Store'

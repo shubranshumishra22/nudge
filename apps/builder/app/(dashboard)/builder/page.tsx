@@ -1,12 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createServerSupabaseClient } from '@nudge/db'
 import BuilderShell from '@/components/builder/BuilderShell'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const db = createClient(supabaseUrl, supabaseServiceKey)
+let dbClient: SupabaseClient | null = null
+
+function getDb() {
+  if (!dbClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Supabase environment variables are missing')
+    }
+    dbClient = createClient(supabaseUrl, supabaseServiceKey)
+  }
+  return dbClient
+}
 
 export default async function BuilderPage({
   searchParams,
@@ -25,6 +35,7 @@ export default async function BuilderPage({
   const storeId = searchParams.store
   if (!storeId) redirect('/dashboard')
 
+  const db = getDb()
   const { data: store } = await db
     .from('stores')
     .select('id')
