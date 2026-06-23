@@ -396,7 +396,7 @@ create policy "ai_generation_logs_owner_all" on ai_generation_logs
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into profiles (id, full_name, phone, avatar_url)
+  insert into public.profiles (id, full_name, phone, avatar_url)
   values (
     new.id,
     new.raw_user_meta_data->>'full_name',
@@ -405,7 +405,7 @@ begin
   );
   return new;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer set search_path = public;
 
 -- 3.1 updated_at trigger function
 create or replace function update_updated_at()
