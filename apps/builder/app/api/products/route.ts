@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { rateLimit } from '@/lib/rate-limit'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
+function getDb() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+}
 
 export async function POST(request: Request) {
   try {
@@ -15,6 +15,7 @@ export async function POST(request: Request) {
     if (!allowed) return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40)
 
+    const supabase = getDb()
     const { data, error } = await supabase.from('products').insert({
       store_id, name, slug, price, compare_at_price, description, category, sku,
       stock_status: stock_status || 'in_stock', stock_quantity, is_featured: is_featured || false,
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const supabase = getDb()
     const body = await request.json()
     const { id, name, price, compare_at_price, description, category, sku, stock_status, stock_quantity, is_featured, images } = body
 
@@ -57,6 +59,7 @@ export async function PATCH(request: Request) {
     const { data, error } = await supabase.from('products').update(updates).eq('id', id).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     if (Array.isArray(images)) {
+      const supabase = getDb()
       await supabase.from('product_images').delete().eq('product_id', id)
       if (images.length > 0) {
         const imageRows = images.slice(0, 5).map((url: string, index: number) => ({
@@ -76,6 +79,7 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const supabase = getDb()
     const { id } = await request.json()
     await supabase.from('product_images').delete().eq('product_id', id)
     const { error } = await supabase.from('products').delete().eq('id', id)

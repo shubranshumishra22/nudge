@@ -1,15 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 import { OrderConfirmationHtml, OwnerNewOrderHtml } from './email-templates'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+function getDb() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+}
 
 const WATI_ENDPOINT = process.env.WATI_ENDPOINT
 const WATI_API_KEY = process.env.WATI_API_KEY
 
 export async function notifyStoreOwner(orderId: string) {
   try {
+    const supabase = getDb()
     const { data: order } = await supabase
       .from('orders')
       .select('*, stores!inner(*, profiles!inner(*))')
@@ -84,6 +85,7 @@ export async function notifyStoreOwner(orderId: string) {
 
 export async function notifyCustomer(orderId: string) {
   try {
+    const supabase = getDb()
     const { data: order } = await supabase
       .from('orders')
       .select('*, stores(*)')

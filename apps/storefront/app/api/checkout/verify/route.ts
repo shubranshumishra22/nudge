@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+function getDb() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+}
 
 async function triggerNotifications(orderId: string) {
   try {
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
     const razorpayOrderId = entity.order_id
     const razorpayPaymentId = entity.id
 
+    const supabase = getDb()
     if (event === 'payment.captured') {
       const { data: payment } = await supabase
         .from('payments')

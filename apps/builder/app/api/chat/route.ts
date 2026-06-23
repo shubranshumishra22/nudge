@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const db = createClient(supabaseUrl, supabaseKey)
-
 const OPENROUTER_API_BASE = 'https://openrouter.ai/api/v1/chat/completions'
 
 const MODELS = [
@@ -331,8 +327,13 @@ async function executeAction(action: ChatAction, storeId: string): Promise<strin
   }
 }
 
+function getDb() {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+}
+
 export async function POST(request: Request) {
   try {
+    const db = getDb()
     const { storeId, message } = await request.json()
     if (!storeId || !message) {
       return NextResponse.json({ error: 'storeId and message are required' }, { status: 400 })
