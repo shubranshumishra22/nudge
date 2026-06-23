@@ -116,7 +116,7 @@ export async function renderAndAnalyzeHTML(html: string): Promise<{
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
         acceptNode: (node: any) => {
           // Check if element has direct text nodes
-          const hasDirectText = Array.from(node.childNodes).some(n => n.nodeType === Node.TEXT_NODE && n.textContent?.trim().length > 0);
+          const hasDirectText = Array.from(node.childNodes).some((n: any) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim().length > 0);
           return hasDirectText ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
         }
       });

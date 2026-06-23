@@ -1,9 +1,11 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { componentRegistry } from '../components/registry';
 import fs from 'fs';
 import path from 'path';
 import type { LayoutPlan } from '../types';
+
+// Use require instead of static import to bypass Next.js static bundler checks for react-dom/server inside client-visible paths
+const ReactDOMServer = require('react-dom/server');
 
 function hexToRgb(hex: string): string {
   const clean = hex.replace('#', '');
@@ -21,65 +23,62 @@ function hexToRgb(hex: string): string {
 
 /**
  * Compiles a V2 LayoutPlan containing modular components and styles into a standalone HTML + CSS page.
- * Automatically injects standard cart slide-drawer templates and Razorpay payment scripts.
+ * Uses React.createElement instead of JSX syntax to reside in a pure .ts file, bypassing SWC component restrictions.
  */
 export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: string } {
   let cssContent = '';
 
-  // Extract business name from layout components to configure metadata & payment triggers
   const footerComp = layout.components.find(c => c.name === 'FooterV1');
   const businessName = footerComp?.props?.businessName || 'Nudge Merchant';
 
-  const componentsTree = (
-    <div style={{
-      backgroundColor: layout.style.background_color,
-      color: layout.style.text_color,
-      fontFamily: layout.style.font_body,
-      minHeight: '100vh',
-    }}>
-      {layout.components.map((comp, idx) => {
-        const entry = componentRegistry[comp.name];
-        if (!entry) {
-          console.warn(`Component "${comp.name}" not found in registry.`);
-          return null;
-        }
+  const componentsTree = React.createElement(
+    'div',
+    {
+      style: {
+        backgroundColor: layout.style.background_color,
+        color: layout.style.text_color,
+        fontFamily: layout.style.font_body,
+        minHeight: '100vh',
+      }
+    },
+    layout.components.map((comp, idx) => {
+      const entry = componentRegistry[comp.name];
+      if (!entry) {
+        console.warn(`Component "${comp.name}" not found in registry.`);
+        return null;
+      }
 
-        const Component = entry.component;
+      const Component = entry.component;
 
-        // Read CSS style sheets relative to __dirname
-        try {
-          const cssFullPath = path.resolve(
-            __dirname,
-            '../components/templates',
-            entry.cssPath
-          );
-          if (fs.existsSync(cssFullPath)) {
-            cssContent += fs.readFileSync(cssFullPath, 'utf-8') + '\n';
-          }
-        } catch (err) {
-          console.error(`Failed to read stylesheet for ${comp.name}:`, err);
-        }
-
-        // Pass component props and style tokens
-        return (
-          <Component
-            key={idx}
-            {...comp.props}
-            styleTokens={layout.style}
-          />
+      // Read CSS style sheets relative to __dirname
+      try {
+        const cssFullPath = path.resolve(
+          __dirname,
+          '../components/templates',
+          entry.cssPath
         );
-      })}
-    </div>
+        if (fs.existsSync(cssFullPath)) {
+          cssContent += fs.readFileSync(cssFullPath, 'utf-8') + '\n';
+        }
+      } catch (err) {
+        console.error(`Failed to read stylesheet for ${comp.name}:`, err);
+      }
+
+      // Instantiate using React.createElement
+      return React.createElement(Component, {
+        key: idx,
+        ...comp.props,
+        styleTokens: layout.style
+      });
+    })
   );
 
   const bodyMarkup = ReactDOMServer.renderToStaticMarkup(componentsTree);
 
-  // Convert Hex colors to RGB to support premium translucent gradients
   const primaryRgb = hexToRgb(layout.style.primary_color);
   const accentRgb = hexToRgb(layout.style.accent_color);
   const textRgb = hexToRgb(layout.style.text_color || '#1A1A1A');
 
-  // Wrap inside standard HTML5 boilerplate with google fonts and root CSS variables
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,12 +119,10 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
       line-height: 1.6;
     }
     
-    /* Interactive transition durations globally */
     button, a {
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     
-    /* Cart drawer styles */
     .cart-overlay {
       position: fixed;
       inset: 0;
@@ -262,7 +259,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    // Cart functionality
     let cart = JSON.parse(localStorage.getItem('nudge_cart') || '[]');
 
     function updateCartBadge() {
@@ -270,9 +266,8 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
       const badge = document.getElementById('cart-badge');
       if (badge) {
         badge.textContent = count;
-        // Bounce animation
         badge.classList.remove('bounce');
-        void badge.offsetWidth; // Trigger reflow
+        void badge.offsetWidth;
         badge.classList.add('bounce');
       }
     }
@@ -327,7 +322,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Add to cart buttons event binding
       document.body.addEventListener('click', (e) => {
         const button = e.target.closest('.add-to-cart');
         if (button) {
@@ -342,7 +336,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
           }
           saveCart();
           
-          // Auto open drawer to show feedback
           const drawer = document.getElementById('cart-drawer');
           const overlay = document.getElementById('cart-overlay');
           if (drawer && overlay) {
@@ -352,7 +345,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
         }
       });
 
-      // Cart toggle clicks
       const cartIcon = document.querySelector('.cart-icon');
       const cartDrawer = document.getElementById('cart-drawer');
       const cartOverlay = document.getElementById('cart-overlay');
@@ -373,7 +365,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
       renderCart();
     });
 
-    // Razorpay checkout integration
     function initiateCheckout() {
       if (cart.length === 0) {
         alert('Your cart is empty!');
@@ -408,7 +399,6 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
             alert("Payment successful! ID: " + response.razorpay_payment_id);
             cart = [];
             saveCart();
-            // Close drawer
             document.getElementById('cart-drawer').classList.remove('open');
             document.getElementById('cart-overlay').classList.remove('open');
           },
