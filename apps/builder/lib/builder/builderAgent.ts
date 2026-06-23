@@ -42,11 +42,26 @@ export interface BuilderAgentResponse {
 export async function runBuilderAgent(options: StoreUpdateOptions): Promise<BuilderAgentResponse> {
   const { intent, targetSection, storeHtml, designTokens, content, conversationHistory } = options;
 
-  // Determine which system prompt to use
+  // Common design rules applied to all changes
+  const designRules = `
+DESIGN RULES (Emil Kowalski philosophy — follow strictly):
+- Whitespace is a feature: generous padding (64-96px section vertical, 24-32px card padding), breathing room everywhere
+- Typography first: proper hierarchy, line-height 1.6 body / 1.2 headings, good letter-spacing
+- Subtlety over flash: micro-interactions (0.2s ease hover transitions), subtle shadows, gentle color shifts
+- Consistent rhythm: use spacing scale (4/8/12/16/24/32/48/64/96px), consistent border-radius (12px cards, 8px buttons)
+- Refined colors: muted sophisticated palettes. Avoid pure black. Use opacity for depth.
+- Glassmorphism: backdrop-filter: blur(12px) on sticky headers, semi-transparent backgrounds
+- Smooth transitions: 0.2s-0.3s ease for hovers, 0.5s ease for page elements
+- Borders are optional — use spacing to separate content instead
+- Mobile-first: responsive by default, touch-friendly targets (min 44px)
+- NO margin-top, padding-top, or top spacing on the hero section or any element. The hero must start directly below the header.
+- If the hero uses min-h-[70vh], change it to min-h-[calc(100vh-64px)] so it fills the remaining viewport without extra whitespace.
+`;
+
   const isCopyChange = intent === 'change_copy' || intent === 'change_products';
   const systemPrompt = isCopyChange
     ? `
-You are an expert UI developer embedded in a live website editor for small Indian businesses. The user can see their storefront in a preview pane and is asking you to make changes to it. You have the current HTML of their store.
+You are an expert designer + developer (Emil Kowalski style) embedded in a live website editor. The user can see their storefront in a preview pane and is asking you to make changes. You have the current HTML of their store.
 
 Your job:
 1. First, respond in natural, conversational English explaining what you are about to change and why it will look great. Be warm and encouraging. 2-3 sentences max.
@@ -58,8 +73,7 @@ Rules for making changes:
 - Preserve all existing JavaScript (cart logic, Razorpay) exactly as-is.
 - Preserve all section IDs (id='hero', id='products', etc.) exactly as-is.
 - The nudge-updating CSS and postMessage listener must remain in the HTML.
-- NO margin-top, padding-top, or top spacing on the hero section or any element. The hero must start directly below the header.
-- If the hero uses min-h-[70vh], change it to min-h-[calc(100vh-64px)] so it fills the remaining viewport without extra whitespace.
+${designRules}
 - Return your conversational response followed by a special delimiter and the COMPLETE updated HTML:
 
 [NUDGE_RESPONSE]
@@ -73,7 +87,7 @@ If the intent is 'question' (no store update needed):
 Return ONLY the conversational answer. Do not include the delimiters.
 `
     : `
-You are an expert UI developer embedded in a live website editor for small Indian businesses. The user can see their storefront in a preview pane and is asking you to make changes to it. You have the current HTML of their store.
+You are an expert designer + developer (Emil Kowalski style) embedded in a live website editor. The user can see their storefront in a preview pane and is asking you to make changes. You have the current HTML of their store.
 
 Your job:
 1. First, respond in natural, conversational English explaining what you are about to change and why it will look great. Be warm and encouraging. 2-3 sentences max.
@@ -84,8 +98,7 @@ Rules for making changes:
 - Preserve all existing JavaScript (cart logic, Razorpay) exactly as-is.
 - Preserve all section IDs (id='hero', id='products', etc.) exactly as-is.
 - The nudge-updating CSS and postMessage listener must remain in the HTML.
-- NO margin-top, padding-top, or top spacing on the hero section or any element. The hero must start directly below the header.
-- If the hero uses min-h-[70vh], change it to min-h-[calc(100vh-64px)] so it fills the remaining viewport without extra whitespace.
+${designRules}
 - Return your conversational response followed by a special delimiter and the COMPLETE updated HTML:
 
 [NUDGE_RESPONSE]
@@ -121,16 +134,14 @@ Respond with your analysis and changes as instructed.
   // Call the model with retry logic via callModel
   console.log(`Builder agent: calling model for intent=${intent} target=${targetSection}`);
   const modelResponse = await callModel(
-    intent === 'change_copy' ? 'openrouter/auto'
-      : intent === 'change_products' ? 'openrouter/auto'
-      : 'openrouter/auto',
+    'openrouter/auto',
     [
       { role: 'system', content: systemPrompt.trim() },
       { role: 'user', content: userMessage.trim() }
     ],
     {
       max_tokens: 8000,
-      temperature: 0.2
+      temperature: 0.4
     }
   );
 
