@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Sun, Moon, ArrowRight } from 'lucide-react'
@@ -8,11 +8,11 @@ import { useTheme } from '@/lib/ThemeProvider'
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
-  const scrolled = useRef(false)
+  const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
 
   useMotionValueEvent(scrollY, 'change', (y) => {
-    scrolled.current = y > 40
+    setScrolled(y > 40)
   })
 
   return (
@@ -24,12 +24,13 @@ export default function Navbar() {
     >
       <motion.div
         animate={{
-          width: scrolled.current ? 'auto' : '720px',
-          paddingLeft: scrolled.current ? '12px' : '24px',
-          paddingRight: scrolled.current ? '12px' : '24px',
+          width: scrolled ? 'auto' : 'min(720px, calc(100vw - 32px))',
+          paddingLeft: scrolled ? '12px' : '24px',
+          paddingRight: scrolled ? '12px' : '24px',
+          scale: scrolled ? 0.92 : 1,
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="flex items-center justify-between mx-auto rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-xl shadow-[var(--shadow-md)] h-12"
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="flex items-center justify-between mx-auto rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-xl shadow-[var(--shadow-md)] h-12 origin-center"
       >
         <div className="flex items-center gap-2 shrink-0">
           <img
@@ -37,21 +38,21 @@ export default function Navbar() {
             alt="Nudge"
             className="h-7 w-7 rounded-[8px] object-cover"
           />
-          <span className="text-sm font-bold tracking-tight text-[var(--text-primary)]">Nudge</span>
+          <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Nudge</span>
         </div>
 
         <motion.nav
-          animate={{ opacity: scrolled.current ? 0 : 1, pointerEvents: scrolled.current ? 'none' as const : 'auto' as const }}
-          transition={{ duration: 0.2 }}
+          animate={{ opacity: scrolled ? 0 : 1, x: scrolled ? 8 : 0 }}
+          transition={{ duration: 0.25 }}
           className="hidden md:flex items-center gap-6"
         >
-          <Link href="#how-it-works" className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors font-mono tracking-tight">
+          <Link href="#how-it-works" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
             how-it-works
           </Link>
-          <Link href="#pricing" className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors font-mono tracking-tight">
+          <Link href="#pricing" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
             pricing
           </Link>
-          <Link href="/login" className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors font-mono tracking-tight">
+          <Link href="/login" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
             sign-in
           </Link>
         </motion.nav>
@@ -59,14 +60,16 @@ export default function Navbar() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={toggleTheme}
-            className="flex items-center justify-center h-8 w-8 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-all"
+            className="flex items-center justify-center h-8 w-8 rounded-full transition-all"
+            style={{ color: 'var(--text-secondary)' }}
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
           </button>
           <Link
             href="/login"
-            className="rounded-full bg-[var(--bg-inverse)] px-4 py-1.5 text-xs font-semibold text-[var(--text-inverse)] hover:opacity-90 transition-opacity flex items-center gap-1.5"
+            className="rounded-full px-4 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-opacity hover:opacity-90"
+            style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
           >
             Create store
             <ArrowRight size={12} />

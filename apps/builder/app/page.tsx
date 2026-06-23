@@ -22,30 +22,30 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="flex min-h-[85vh] items-center justify-center px-4 pt-16">
           <div className="max-w-3xl text-center">
-            <h1 className="font-serif text-4xl font-bold tracking-tight md:text-6xl">
+            <h1 className="font-serif text-4xl font-bold tracking-tight md:text-6xl" style={{ color: 'var(--text-primary)' }}>
               Your store, live in{' '}
-              <span className="text-[#F97316]">5 minutes</span>
+              <span style={{ color: '#F97316' }}>5 minutes</span>
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-xl text-lg" style={{ color: 'var(--text-secondary)' }}>
               Nudge uses AI to create a beautiful, Indian-optimized e-commerce storefront. No coding, no hassle.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/login" className="rounded-[10px] bg-[#0F0F0E] px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+              <Link href="/login" className="rounded-[10px] px-8 py-3.5 text-sm font-semibold transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>
                 Create my store
               </Link>
-              <Link href="#how-it-works" className="flex items-center gap-2 rounded-[10px] border border-input px-8 py-3.5 text-sm font-medium transition-colors hover:bg-accent">
+              <Link href="#how-it-works" className="flex items-center gap-2 rounded-[10px] px-8 py-3.5 text-sm font-medium transition-colors hover:opacity-80" style={{ border: '1px solid var(--border-default)', color: 'var(--text-secondary)' }}>
                 See a demo <ArrowRight size={16} />
               </Link>
             </div>
           </div>
         </section>
 
-        <section className="border-y py-8">
+        <section className="border-y py-8" style={{ borderColor: 'var(--border-default)' }}>
           <div className="mx-auto max-w-6xl px-4">
-            <p className="text-center text-sm text-muted-foreground">Join 1,200+ small businesses already on Nudge</p>
+            <p className="text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>Join 1,200+ small businesses already on Nudge</p>
             <div className="mt-4 flex items-center justify-center gap-4">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F3F0] text-xs font-medium text-muted-foreground">
+                <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-tertiary)' }}>
                   {String.fromCharCode(64 + i)}
                 </div>
               ))}
@@ -55,13 +55,13 @@ export default function LandingPage() {
 
         <section id="how-it-works" className="px-4 py-24">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-center font-serif text-3xl font-bold tracking-tight">How it works</h2>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>How it works</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
               {steps.map((step, i) => (
-                <div key={i} className="rounded-xl border bg-white p-8">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#F4F3F0] text-lg font-bold text-[#0F0F0E]">{i + 1}</div>
-                  <h3 className="mt-5 font-serif text-xl font-bold">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                <div key={i} className="rounded-xl p-8" style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)' }}>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl text-lg font-bold" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-primary)' }}>{i + 1}</div>
+                  <h3 className="mt-5 font-serif text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -70,10 +70,10 @@ export default function LandingPage() {
 
         <section className="overflow-hidden px-4 py-16">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-center font-serif text-3xl font-bold tracking-tight">Beautiful storefronts</h2>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Beautiful storefronts</h2>
             <div className="mt-8 flex gap-6 overflow-x-auto pb-4">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-80 w-60 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                <div key={i} className="h-80 w-60 flex-shrink-0 overflow-hidden rounded-xl" style={{ backgroundColor: 'var(--bg-subtle)' }}>
                   <img src={`https://picsum.photos/seed/store${i}/240/320`} alt={`Store template ${i}`} className="h-full w-full object-cover" loading="lazy" />
                 </div>
               ))}
@@ -83,20 +83,20 @@ export default function LandingPage() {
 
         <section id="pricing" className="px-4 py-24">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-center font-serif text-3xl font-bold tracking-tight">Simple pricing</h2>
-            <p className="mt-2 text-center text-sm text-muted-foreground">Start free, upgrade when you grow</p>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Simple pricing</h2>
+            <p className="mt-2 text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>Start free, upgrade when you grow</p>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {plans.map((plan) => (
-                <div key={plan.name} className={`relative rounded-xl bg-white p-6 transition-all ${plan.accent ? 'border-2 border-[#0F0F0E] shadow-md' : 'border border-input'}`}>
-                  {plan.badge && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#0F0F0E] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">{plan.badge}</span>}
-                  <div className="flex items-center gap-2"><plan.icon size={20} className={plan.accent ? 'text-[#0F0F0E]' : 'text-muted-foreground'} /><h3 className="text-lg font-semibold">{plan.name}</h3></div>
-                  <div className="mt-4"><span className="font-serif text-3xl font-bold">{plan.price}</span><span className="text-sm text-muted-foreground">/mo</span></div>
+                <div key={plan.name} className={`relative rounded-xl p-6 transition-all`} style={{ backgroundColor: 'var(--bg-surface)', border: plan.accent ? '2px solid var(--bg-inverse)' : '1px solid var(--border-default)', boxShadow: plan.accent ? '0 4px 24px rgba(0,0,0,0.08)' : 'none' }}>
+                  {plan.badge && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>{plan.badge}</span>}
+                  <div className="flex items-center gap-2"><plan.icon size={20} style={{ color: plan.accent ? 'var(--text-primary)' : 'var(--text-tertiary)' }} /><h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{plan.name}</h3></div>
+                  <div className="mt-4"><span className="font-serif text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.price}</span><span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>/mo</span></div>
                   <ul className="mt-6 space-y-3">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm"><Check size={14} className="mt-0.5 shrink-0 text-green-600" /><span>{f}</span></li>
+                      <li key={f} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}><Check size={14} className="mt-0.5 shrink-0" style={{ color: '#16a34a' }} /><span>{f}</span></li>
                     ))}
                   </ul>
-                  <Link href={plan.href} className={`mt-6 flex w-full items-center justify-center rounded-[10px] py-3 text-sm font-semibold transition-all ${plan.accent ? 'bg-[#0F0F0E] text-white hover:opacity-90' : 'border border-input hover:bg-[#F4F3F0]'}`}>
+                  <Link href={plan.href} className={`mt-6 flex w-full items-center justify-center rounded-[10px] py-3 text-sm font-semibold transition-all`} style={plan.accent ? { backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' } : { border: '1px solid var(--border-default)', color: 'var(--text-secondary)' }}>
                     {plan.cta}
                   </Link>
                 </div>
