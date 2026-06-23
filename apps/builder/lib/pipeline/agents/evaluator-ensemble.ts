@@ -3,7 +3,7 @@ import type { UserInput, DesignOutput, ContentOutput, CriticPanelResult, CriticR
 
 const BATCHED_SYSTEM_PROMPT = `You are a Website Quality Critic Panel.
 Your job is to evaluate generated e-commerce storefronts across 5 dimensions:
-1. Design (refinement, typography, colors, aesthetics)
+1. Design (Emil Kowalski Design: refined minimalism, micro-interactions, clean hover states; Impeccable Design: perfect grid/layout balance, strict padding/margin rhythm; Taste Skill: sophisticated visual details, luxury brand aesthetics, typography pairings, color harmonies)
 2. UX (flow, formatting, page rhythm)
 3. Accessibility (cues, tag targets, structure)
 4. SEO (meta tags, indexable text, heading order)
@@ -26,7 +26,7 @@ You must return a single JSON object matching:
 Ensure overall_score is the average of the five individual scores.`;
 
 const SPECIALIST_PROMPTS: Record<string, string> = {
-  design: `You are a Design Critic. Focus exclusively on typography hierarchy, color palette elegance (near-blacks, harmonized HSL), spacing breathing room, layout alignment, and visual polish. Return JSON matching: { "score": number, "critique": string, "weaknesses": string[] }`,
+  design: `You are a Design Critic. Evaluate strictly based on: (1) Emil Kowalski Design (refined minimalism, micro-interactions, clean hover states, high polish); (2) Impeccable Design (perfect grid/layout balance, proper padding/margin rhythm, clean alignment); (3) Taste Skill (sophisticated visual details, luxury brand aesthetics, elegant font and color pairings, no clutter). Be extremely critical; do not award high scores (>= 8.0) unless the layout looks truly premium. Return JSON matching: { "score": number, "critique": string, "weaknesses": string[] }`,
   ux: `You are a UX Critic. Focus exclusively on navigation, text reading flow, information hierarchy, layout rhythm, and ease of shop operations. Return JSON matching: { "score": number, "critique": string, "weaknesses": string[] }`,
   accessibility: `You are a Web Accessibility Critic. Focus on screen readers, semantic tags, heading hierarchies, keyboard focus, and size of interactive click regions. Return JSON matching: { "score": number, "critique": string, "weaknesses": string[] }`,
   seo: `You are an SEO Critic. Focus on document structure, page title and meta description character length, indexable keywords, and search friendliness. Return JSON matching: { "score": number, "critique": string, "weaknesses": string[] }`,

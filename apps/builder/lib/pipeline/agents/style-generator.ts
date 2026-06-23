@@ -12,7 +12,11 @@ export async function runStyleGenerator(
 
   const systemPrompt = `You are a Luxury Brand Style Director.
 Your task is to design a premium, stunning design system for a business.
-You follow the Emil Kowalski design philosophy: refined minimalism, impeccable taste, and consistent rhythm.
+
+You MUST apply these Core design principles:
+1. Emil Kowalski Design: Focus on refined minimalism, high attention to visual detail, sleek layouts, and dynamic micro-animations. The design must feel alive, clean, and interactive.
+2. Impeccable Design: Ensure perfect layout balance, professional-grade visual aesthetics, and strict padding/spacing rhythm. Every element must align beautifully with consistent spacing.
+3. Taste Skill: Demonstrate sophisticated taste. Avoid cluttered, cheap-looking, or generic layouts. Use elegant near-blacks instead of pure black, subtle glassmorphic elements, and cohesive styling.
 
 Color Palette Rules:
 - Avoid generic pure colors (e.g. plain red, blue, green). Use curated, sophisticated, and harmonious palettes (e.g. deep forest green, warm terracotta, soft sand, sleek charcoal, cream white).

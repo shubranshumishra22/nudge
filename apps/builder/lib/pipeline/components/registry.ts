@@ -6,39 +6,48 @@ import ProductsV1 from './templates/products/ProductsV1';
 import AboutV1 from './templates/about/AboutV1';
 import ContactV1 from './templates/contact/ContactV1';
 import FooterV1 from './templates/footer/FooterV1';
+import {
+  HeaderV1_CSS,
+  HeroV1_CSS,
+  HeroV2_CSS,
+  ProductsV1_CSS,
+  AboutV1_CSS,
+  ContactV1_CSS,
+  FooterV1_CSS,
+} from './css-templates';
 
 export interface RegistryEntry {
   component: React.ComponentType<any>;
-  cssPath: string;
+  css: string;
 }
 
 export const componentRegistry: Record<string, RegistryEntry> = {
   HeaderV1: {
     component: HeaderV1,
-    cssPath: 'header/HeaderV1.css',
+    css: HeaderV1_CSS,
   },
   HeroV1: {
     component: HeroV1,
-    cssPath: 'hero/HeroV1.css',
+    css: HeroV1_CSS,
   },
   HeroV2: {
     component: HeroV2,
-    cssPath: 'hero/HeroV2.css',
+    css: HeroV2_CSS,
   },
   ProductsV1: {
     component: ProductsV1,
-    cssPath: 'products/ProductsV1.css',
+    css: ProductsV1_CSS,
   },
   AboutV1: {
     component: AboutV1,
-    cssPath: 'about/AboutV1.css',
+    css: AboutV1_CSS,
   },
   ContactV1: {
     component: ContactV1,
-    cssPath: 'contact/ContactV1.css',
+    css: ContactV1_CSS,
   },
   FooterV1: {
     component: FooterV1,
-    cssPath: 'footer/FooterV1.css',
+    css: FooterV1_CSS,
   },
 };

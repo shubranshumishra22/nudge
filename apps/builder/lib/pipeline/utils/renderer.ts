@@ -1,7 +1,5 @@
 import React from 'react';
 import { componentRegistry } from '../components/registry';
-import fs from 'fs';
-import path from 'path';
 import type { LayoutPlan } from '../types';
 
 // Use require instead of static import to bypass Next.js static bundler checks for react-dom/server inside client-visible paths
@@ -50,18 +48,9 @@ export function renderLayoutToHTML(layout: LayoutPlan): { html: string; css: str
 
       const Component = entry.component;
 
-      // Read CSS style sheets relative to __dirname
-      try {
-        const cssFullPath = path.resolve(
-          __dirname,
-          '../components/templates',
-          entry.cssPath
-        );
-        if (fs.existsSync(cssFullPath)) {
-          cssContent += fs.readFileSync(cssFullPath, 'utf-8') + '\n';
-        }
-      } catch (err) {
-        console.error(`Failed to read stylesheet for ${comp.name}:`, err);
+      // Append CSS styles directly from component registry entry
+      if (entry.css) {
+        cssContent += entry.css + '\n';
       }
 
       // Instantiate using React.createElement
