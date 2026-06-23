@@ -9,28 +9,42 @@ import { useTheme } from '@/lib/ThemeProvider'
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const { scrollY } = useScroll()
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     setScrolled(y > 40)
   })
 
+  const compact = scrolled && !hovered
+
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+      className="fixed top-5 left-1/2 -translate-x-1/2 z-50"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <motion.div
         animate={{
-          width: scrolled ? 'auto' : 'min(720px, calc(100vw - 32px))',
-          paddingLeft: scrolled ? '12px' : '24px',
-          paddingRight: scrolled ? '12px' : '24px',
-          scale: scrolled ? 0.92 : 1,
+          paddingLeft: compact ? '16px' : '24px',
+          paddingRight: compact ? '16px' : '24px',
+          paddingTop: compact ? '6px' : '8px',
+          paddingBottom: compact ? '6px' : '8px',
+          scale: compact ? 0.92 : 1,
+          gap: compact ? '0px' : '0px',
         }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="flex items-center justify-between mx-auto rounded-full border border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-xl shadow-[var(--shadow-md)] h-12 origin-center"
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="flex items-center justify-between mx-auto rounded-full border backdrop-blur-xl"
+        style={{
+          width: 'min(720px, calc(100vw - 32px))',
+          borderColor: 'var(--border-default)',
+          backgroundColor: 'var(--bg-surface-glass)',
+          boxShadow: 'var(--shadow-md)',
+          transformOrigin: 'center center',
+        }}
       >
         <div className="flex items-center gap-2 shrink-0">
           <img
@@ -42,25 +56,22 @@ export default function Navbar() {
         </div>
 
         <motion.nav
-          animate={{ opacity: scrolled ? 0 : 1, x: scrolled ? 8 : 0 }}
-          transition={{ duration: 0.25 }}
+          animate={{
+            opacity: compact ? 0.5 : 1,
+            scale: compact ? 0.92 : 1,
+          }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="hidden md:flex items-center gap-6"
         >
-          <Link href="#how-it-works" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-            how-it-works
-          </Link>
-          <Link href="#pricing" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-            pricing
-          </Link>
-          <Link href="/login" className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-            sign-in
-          </Link>
+          <Link href="#how-it-works" className="text-xs font-medium transition-opacity hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>how-it-works</Link>
+          <Link href="#pricing" className="text-xs font-medium transition-opacity hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>pricing</Link>
+          <Link href="/login" className="text-xs font-medium transition-opacity hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>sign-in</Link>
         </motion.nav>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={toggleTheme}
-            className="flex items-center justify-center h-8 w-8 rounded-full transition-all"
+            className="flex items-center justify-center h-8 w-8 rounded-full transition-all hover:opacity-70"
             style={{ color: 'var(--text-secondary)' }}
             aria-label="Toggle theme"
           >
@@ -68,7 +79,7 @@ export default function Navbar() {
           </button>
           <Link
             href="/login"
-            className="rounded-full px-4 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-opacity hover:opacity-90"
+            className="rounded-full px-4 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-all hover:opacity-85"
             style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
           >
             Create store
