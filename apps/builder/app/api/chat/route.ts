@@ -190,6 +190,7 @@ function extractChanges(action: ChatAction, validFields: readonly string[]): Rec
 }
 
 async function executeAction(action: ChatAction, storeId: string): Promise<string> {
+  const db = getDb()
   switch (action.type) {
     case 'update_theme': {
       const updates = extractChanges(action, THEME_FIELDS)
