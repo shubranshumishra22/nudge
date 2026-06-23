@@ -20,10 +20,10 @@ export default function Navbar() {
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ x: "-50%", y: -80, opacity: 0 }}
+      animate={{ x: "-50%", y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-      className="fixed top-5 left-1/2 -translate-x-1/2 z-50"
+      className="fixed top-5 left-1/2 z-50"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -34,12 +34,13 @@ export default function Navbar() {
           paddingTop: compact ? '6px' : '8px',
           paddingBottom: compact ? '6px' : '8px',
           scale: compact ? 0.92 : 1,
-          gap: compact ? '0px' : '0px',
+          gap: compact ? '16px' : '32px',
         }}
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="flex items-center justify-between mx-auto rounded-full border backdrop-blur-xl"
         style={{
-          width: 'min(720px, calc(100vw - 32px))',
+          width: 'max-content',
+          maxWidth: 'min(720px, calc(100vw - 32px))',
           borderColor: 'var(--border-default)',
           backgroundColor: 'var(--bg-surface-glass)',
           boxShadow: 'var(--shadow-md)',
