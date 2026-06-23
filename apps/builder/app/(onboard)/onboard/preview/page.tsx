@@ -18,6 +18,7 @@ export default function PreviewPage() {
   const [storeId, setStoreId] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
   const [published, setPublished] = useState(false)
+  const [skipping, setSkipping] = useState(false)
   const [storeUrl, setStoreUrl] = useState('')
   const [displayUrl, setDisplayUrl] = useState('')
   const [typedUrl, setTypedUrl] = useState('')
@@ -83,6 +84,21 @@ export default function PreviewPage() {
     }
   }, [storeId, publishing])
 
+  const handleSkipPublish = useCallback(async () => {
+    if (!storeId || skipping || publishing) return
+    setSkipping(true)
+
+    try {
+      const res = await fetch(`/api/stores/${storeId}/skip-publish`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to complete onboarding')
+
+      router.push('/dashboard')
+    } catch (err) {
+      setSkipping(false)
+    }
+  }, [storeId, skipping, publishing, router])
+
   return (
     <main className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#FAFAF8' }}>
       <div className="max-w-md px-4 text-center">
@@ -116,7 +132,7 @@ export default function PreviewPage() {
             {storeId && (
               <div className="mt-6 flex flex-col items-center gap-3">
                 <a href={`/api/builder/preview?store_id=${storeId}`} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground underline underline-offset-2">Preview storefront</a>
-                <button ref={btnRef} onClick={handlePublish} disabled={publishing} className="inline-flex items-center gap-2 rounded-[10px] bg-[#F97316] px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-[#E86A0E] disabled:opacity-70">
+                <button ref={btnRef} onClick={handlePublish} disabled={publishing || skipping} className="inline-flex items-center gap-2 rounded-[10px] bg-[#F97316] px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-[#E86A0E] disabled:opacity-70">
                   {publishing && (
                     <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
@@ -124,6 +140,13 @@ export default function PreviewPage() {
                     </svg>
                   )}
                   {publishing ? 'Publishing...' : 'Publish store'}
+                </button>
+                <button
+                  onClick={handleSkipPublish}
+                  disabled={skipping || publishing}
+                  className="text-sm text-muted-foreground underline underline-offset-2 mt-1 hover:text-[#0F0F0E] disabled:opacity-50"
+                >
+                  {skipping ? 'Going to dashboard...' : 'Go to dashboard'}
                 </button>
               </div>
             )}
