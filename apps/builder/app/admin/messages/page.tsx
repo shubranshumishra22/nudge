@@ -41,39 +41,38 @@ export default function AdminMessagesPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const notesRef = useRef<string>('')
 
-  async function fetchMessages() {
-    try {
-      setLoading(true)
-      const params = new URLSearchParams()
-      if (statusFilter !== 'All') {
-        params.set('status', statusFilter)
-      }
-      const res = await fetch(`/api/admin/messages?${params.toString()}`)
-      if (!res.ok) throw new Error('Failed to fetch messages')
-      const data = await res.json()
-      setMessages(data || [])
-      
-      // Keep selected message updated if it still exists
-      if (selectedMessage) {
-        const updated = (data as ContactMessage[]).find(m => m.id === selectedMessage.id)
-        if (updated) {
-          setSelectedMessage(updated)
-          setNotesText(updated.admin_notes || '')
-          notesRef.current = updated.admin_notes || ''
-        } else {
-          setSelectedMessage(null)
-        }
-      }
-    } catch (err) {
-      console.error('Error fetching messages:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    async function fetchMessages() {
+      try {
+        setLoading(true)
+        const params = new URLSearchParams()
+        if (statusFilter !== 'All') {
+          params.set('status', statusFilter)
+        }
+        const res = await fetch(`/api/admin/messages?${params.toString()}`)
+        if (!res.ok) throw new Error('Failed to fetch messages')
+        const data = await res.json()
+        setMessages(data || [])
+        
+        // Keep selected message updated if it still exists
+        if (selectedMessage) {
+          const updated = (data as ContactMessage[]).find(m => m.id === selectedMessage.id)
+          if (updated) {
+            setSelectedMessage(updated)
+            setNotesText(updated.admin_notes || '')
+            notesRef.current = updated.admin_notes || ''
+          } else {
+            setSelectedMessage(null)
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
     fetchMessages()
-  }, [statusFilter])
+  }, [statusFilter, selectedMessage])
 
   // Select message and mark as read automatically if it's unread
   async function selectMessage(msg: ContactMessage) {

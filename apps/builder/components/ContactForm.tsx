@@ -77,7 +77,7 @@ export default function ContactForm() {
           Message sent!
         </h3>
         <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          We'll get back to you within 24 hours.
+          We&apos;ll get back to you within 24 hours.
         </p>
         <button
           onClick={() => setIsSubmitted(false)}

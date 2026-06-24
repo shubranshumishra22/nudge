@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { 
   Users, 
   Search, 
@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
   const [isUpdating, setIsUpdating] = useState(false)
   const [updatePlan, setUpdatePlan] = useState<'free' | 'pro' | 'agency'>('free')
 
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -59,11 +59,11 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, search, planFilter, sortFilter])
 
   useEffect(() => {
     fetchUsers()
-  }, [page, planFilter, sortFilter])
+  }, [fetchUsers])
 
   // Simple debounce search
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function AdminUsersPage() {
       fetchUsers()
     }, 300)
     return () => clearTimeout(timer)
-  }, [search])
+  }, [search, fetchUsers])
 
   async function handlePlanUpdate() {
     if (!selectedUser) return

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { 
   ShoppingBag, 
   Search, 
@@ -36,7 +36,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('All')
   const [paymentFilter, setPaymentFilter] = useState('All')
 
-  async function fetchOrders() {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -56,11 +56,11 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, search, statusFilter, paymentFilter])
 
   useEffect(() => {
     fetchOrders()
-  }, [page, statusFilter, paymentFilter])
+  }, [fetchOrders])
 
   // Simple debounce search
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function AdminOrdersPage() {
       fetchOrders()
     }, 300)
     return () => clearTimeout(timer)
-  }, [search])
+  }, [search, fetchOrders])
 
   const columns: Column<OrderRow>[] = [
     {

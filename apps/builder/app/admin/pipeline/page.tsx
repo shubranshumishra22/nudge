@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { 
   Activity, 
   Cpu, 
@@ -55,7 +55,7 @@ export default function AdminPipelinePage() {
   const [successRate, setSuccessRate] = useState(100)
   const [avgLatency, setAvgLatency] = useState(0)
 
-  async function fetchBanditData() {
+  const fetchBanditData = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/pipeline/bandit')
       if (!res.ok) throw new Error('Failed to fetch bandit stats')
@@ -64,9 +64,9 @@ export default function AdminPipelinePage() {
     } catch (err) {
       console.error('Error loading bandit stats:', err)
     }
-  }
+  }, [])
 
-  async function fetchLogsData() {
+  const fetchLogsData = useCallback(async () => {
     try {
       let url = '/api/admin/pipeline/logs'
       if (logFilter === 'success') url += '?success=true'
@@ -88,17 +88,17 @@ export default function AdminPipelinePage() {
     } catch (err) {
       console.error('Error loading logs:', err)
     }
-  }
+  }, [logFilter])
 
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     setLoading(true)
     await Promise.all([fetchBanditData(), fetchLogsData()])
     setLoading(false)
-  }
+  }, [fetchBanditData, fetchLogsData])
 
   useEffect(() => {
     loadAll()
-  }, [logFilter])
+  }, [loadAll])
 
   function handleCopyText(text: string) {
     navigator.clipboard.writeText(text)

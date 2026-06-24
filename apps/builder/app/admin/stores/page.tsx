@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { 
   Store, 
   Search, 
@@ -41,7 +41,7 @@ export default function AdminStoresPage() {
   const [typeFilter, setTypeFilter] = useState('All')
   const [sortFilter, setSortFilter] = useState('Newest')
 
-  async function fetchStores() {
+  const fetchStores = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -62,11 +62,11 @@ export default function AdminStoresPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, search, statusFilter, typeFilter, sortFilter])
 
   useEffect(() => {
     fetchStores()
-  }, [page, statusFilter, typeFilter, sortFilter])
+  }, [fetchStores])
 
   // Simple debounce search
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function AdminStoresPage() {
       fetchStores()
     }, 300)
     return () => clearTimeout(timer)
-  }, [search])
+  }, [search, fetchStores])
 
   async function toggleStoreSuspension(storeId: string, currentStatus: 'live' | 'draft' | 'suspended') {
     const newStatus = currentStatus === 'suspended' ? 'draft' : 'suspended'
