@@ -66,20 +66,23 @@ function StepIndicator({ current }: { current: number }) {
           <div
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
               s < current
-                ? 'bg-foreground text-background'
+                ? 'text-white'
                 : s === current
-                  ? 'border-2 border-foreground bg-foreground text-background'
-                  : 'border-2 border-muted-foreground/30 text-muted-foreground'
+                  ? 'text-white'
+                  : ''
             }`}
+            style={{
+              backgroundColor: s <= current ? 'var(--bg-inverse)' : 'var(--bg-subtle)',
+              border: s === current ? '2px solid var(--bg-inverse)' : 'none',
+              color: s <= current ? 'var(--text-inverse)' : 'var(--text-tertiary)',
+            }}
           >
             {s < current ? <Check className="h-4 w-4" /> : s}
           </div>
           {s < 3 && (
-            <div
-              className={`h-0.5 w-8 transition-colors duration-300 ${
-                s < current ? 'bg-foreground' : 'bg-muted-foreground/20'
-              }`}
-            />
+            <div className="h-0.5 w-8" style={{
+              backgroundColor: s < current ? 'var(--bg-inverse)' : 'var(--border-default)',
+            }} />
           )}
         </div>
       ))}
@@ -90,7 +93,8 @@ function StepIndicator({ current }: { current: number }) {
 function SkeletonBlock({ className }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-lg bg-muted ${className ?? ''}`}
+      className={`animate-pulse rounded-lg ${className ?? ''}`}
+      style={{ backgroundColor: 'var(--bg-subtle)' }}
     />
   )
 }
@@ -223,7 +227,7 @@ export default function OnboardPage() {
 
   if (step === 3) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center" style={{ backgroundColor: '#FAFAF8' }}>
+      <div className="flex min-h-screen flex-col items-center justify-center" style={{ backgroundColor: 'var(--bg-base)' }}>
         <div className="w-full max-w-md px-4">
           <div className="space-y-4">
             <SkeletonBlock className="h-6 w-48" />
@@ -237,17 +241,18 @@ export default function OnboardPage() {
           </div>
 
           <div className="mt-12 text-center">
-            <p className="animate-pulse text-lg font-medium text-foreground transition-opacity">
+            <p className="animate-pulse text-lg font-medium transition-opacity" style={{ color: 'var(--text-primary)' }}>
               {STATUS_TEXTS[statusIndex]}
             </p>
           </div>
 
           {error && (
-            <div className="mt-6 rounded-xl bg-red-50 p-4 text-center">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mt-6 rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
+              <p className="text-sm" style={{ color: '#EF4444' }}>{error}</p>
               <button
                 onClick={() => { initiatedRef.current = false; handleGenerate() }}
-                className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                className="mt-3 rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: '#EF4444', color: 'white' }}
               >
                 Try again
               </button>
@@ -259,7 +264,7 @@ export default function OnboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12" style={{ backgroundColor: '#FAFAF8' }}>
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12" style={{ backgroundColor: 'var(--bg-base)' }}>
       <div className="w-full max-w-[480px]">
         <div className="mb-10">
           <StepIndicator current={step} />
@@ -285,22 +290,24 @@ export default function OnboardPage() {
 
               <form onSubmit={form.handleSubmit(handleStep1Submit)} className="mt-8 space-y-5">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">Business name</label>
+                  <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Business name</label>
                   <input
                     {...form.register('business_name')}
-                    className="w-full rounded-[10px] border border-input bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                    className="w-full px-4 py-3 text-sm"
+                    style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', color: 'var(--text-primary)' }}
                     placeholder="My Store"
                   />
                   {form.formState.errors.business_name && (
-                    <p className="mt-1 text-xs text-red-500">{form.formState.errors.business_name.message}</p>
+                    <p className="mt-1 text-xs" style={{ color: '#EF4444' }}>{form.formState.errors.business_name.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">Business type</label>
+                  <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Business type</label>
                   <select
                     {...form.register('business_type')}
-                    className="w-full rounded-[10px] border border-input bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                    className="w-full px-4 py-3 text-sm"
+                    style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', color: 'var(--text-primary)' }}
                   >
                     <option value="">Select...</option>
                     {BUSINESS_TYPES.map((bt) => (
@@ -310,32 +317,34 @@ export default function OnboardPage() {
                     ))}
                   </select>
                   {form.formState.errors.business_type && (
-                    <p className="mt-1 text-xs text-red-500">{form.formState.errors.business_type.message}</p>
+                    <p className="mt-1 text-xs" style={{ color: '#EF4444' }}>{form.formState.errors.business_type.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">Description</label>
+                  <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Description</label>
                   <textarea
                     {...form.register('description')}
                     rows={3}
-                    className="w-full resize-none rounded-[10px] border border-input bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                    className="w-full resize-none px-4 py-3 text-sm"
+                    style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', color: 'var(--text-primary)' }}
                     placeholder="I sell handmade soy candles from Pune, made to order..."
                   />
                   {form.formState.errors.description && (
-                    <p className="mt-1 text-xs text-red-500">{form.formState.errors.description.message}</p>
+                    <p className="mt-1 text-xs" style={{ color: '#EF4444' }}>{form.formState.errors.description.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">Brand color</label>
+                  <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Brand color</label>
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
                       {...form.register('primary_color')}
-                      className="h-10 w-10 cursor-pointer rounded-lg border border-input"
+                      className="h-10 w-10 cursor-pointer rounded-lg"
+                      style={{ border: '1px solid var(--border-default)' }}
                     />
-                    <span className="font-mono text-sm text-muted-foreground">
+                    <span className="font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {form.watch('primary_color')}
                     </span>
                   </div>
@@ -343,7 +352,8 @@ export default function OnboardPage() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-[10px] bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90"
+                  className="w-full rounded-[10px] px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
                 >
                   Next: Add products &rarr;
                 </button>
@@ -361,10 +371,10 @@ export default function OnboardPage() {
               exit="exit"
               transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             >
-              <h1 className="font-serif text-[32px] font-bold leading-tight tracking-tight">
+              <h1 className="font-serif text-[32px] font-bold leading-tight tracking-tight" style={{ color: 'var(--text-primary)' }}>
                 What do you sell?
               </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                 Add up to 5 products to get started.
               </p>
 
@@ -372,12 +382,14 @@ export default function OnboardPage() {
                 {products.map((product, index) => (
                   <div
                     key={product.id}
-                    className="relative rounded-xl border border-input bg-white p-4"
+                    className="relative rounded-xl p-4"
+                    style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)' }}
                   >
                     <button
                       type="button"
                       onClick={() => removeProduct(product.id)}
-                      className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+                      className="absolute right-3 top-3 rounded-full p-1 transition-colors"
+                      style={{ color: 'var(--text-tertiary)' }}
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -403,7 +415,8 @@ export default function OnboardPage() {
                           <button
                             type="button"
                             onClick={() => fileInputRefs.current.get(product.id)?.click()}
-                            className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed border-input text-muted-foreground hover:border-foreground hover:text-foreground"
+                            className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed transition-colors"
+                            style={{ borderColor: 'var(--border-default)', color: 'var(--text-tertiary)' }}
                           >
                             <Upload className="h-5 w-5" />
                           </button>
@@ -428,7 +441,8 @@ export default function OnboardPage() {
                               placeholder="Product name"
                               value={product.name}
                               onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                              className="w-full rounded-lg border border-input bg-white px-3 py-2 text-sm outline-none focus:border-foreground"
+                              className="w-full rounded-lg px-3 py-2 text-sm"
+                              style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
                             />
                           </div>
                           <div className="w-24">
@@ -437,7 +451,8 @@ export default function OnboardPage() {
                               type="number"
                               value={product.price}
                               onChange={(e) => updateProduct(product.id, 'price', e.target.value)}
-                              className="w-full rounded-lg border border-input bg-white px-3 py-2 text-sm outline-none focus:border-foreground"
+                              className="w-full rounded-lg px-3 py-2 text-sm"
+                              style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
                             />
                           </div>
                         </div>
@@ -446,12 +461,13 @@ export default function OnboardPage() {
                           value={product.description}
                           onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
                           rows={2}
-                          className="w-full resize-none rounded-lg border border-input bg-white px-3 py-2 text-sm outline-none focus:border-foreground"
+                          className="w-full resize-none rounded-lg px-3 py-2 text-sm"
+                          style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
                         />
                       </div>
                     </div>
 
-                    <div className="mt-2 text-right text-xs text-muted-foreground">
+                    <div className="mt-2 text-right text-xs" style={{ color: 'var(--text-tertiary)' }}>
                       Product {index + 1} of 5
                     </div>
                   </div>
@@ -462,7 +478,8 @@ export default function OnboardPage() {
                 <button
                   type="button"
                   onClick={addProduct}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-input px-4 py-4 text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-4 text-sm transition-colors"
+                  style={{ borderColor: 'var(--border-default)', color: 'var(--text-tertiary)' }}
                 >
                   <Plus className="h-4 w-4" />
                   Add product
@@ -473,21 +490,24 @@ export default function OnboardPage() {
                 <button
                   type="button"
                   onClick={handleStep2Submit}
-                  className="w-full rounded-[10px] bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90"
+                  className="w-full rounded-[10px] px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
                 >
                   Next: Preview your store &rarr;
                 </button>
                 <button
                   type="button"
                   onClick={handleStep2Submit}
-                  className="text-center text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  className="text-center text-sm underline underline-offset-2 transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
                   Skip for now
                 </button>
                 <button
                   type="button"
                   onClick={goBack}
-                  className="text-center text-sm text-muted-foreground hover:text-foreground"
+                  className="text-center text-sm transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
                   &larr; Back
                 </button>

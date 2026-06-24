@@ -100,12 +100,12 @@ export default function PreviewPage() {
   }, [storeId, skipping, publishing, router])
 
   return (
-    <main className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#FAFAF8' }}>
+    <main className="flex min-h-screen items-center justify-center" style={{ backgroundColor: 'var(--bg-base)' }}>
       <div className="max-w-md px-4 text-center">
         {published ? (
           <>
             <AnimatedCheckmark />
-            <h1 className="mt-6 font-serif text-3xl font-bold tracking-tight">Your store is live!</h1>
+            <h1 className="mt-6 font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Your store is live!</h1>
             <div className="mt-4">
               <button
                 onClick={() => {
@@ -113,26 +113,27 @@ export default function PreviewPage() {
                   setCopied(true)
                   setTimeout(() => setCopied(false), 2000)
                 }}
-                className="inline-flex items-center gap-2 rounded-[10px] border border-input bg-white px-5 py-3 text-sm font-medium transition-colors hover:bg-[#F4F3F0]"
+                className="inline-flex items-center gap-2 rounded-[10px] px-5 py-3 text-sm font-medium transition-colors"
+                style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)', color: 'var(--text-primary)' }}
               >
                 {typedUrl || displayUrl}
-                {copied ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                {copied ? <Check size={14} style={{ color: '#22c55e' }} /> : <Copy size={14} />}
               </button>
             </div>
             <div className="mt-6 flex flex-col items-center gap-3">
-              <a href={storeUrl} target="_blank" rel="noopener noreferrer" className="rounded-[10px] bg-[#0F0F0E] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90">View your store</a>
-              <button onClick={() => router.push('/dashboard')} className="text-sm text-muted-foreground underline underline-offset-2">Go to dashboard</button>
+              <a href={storeUrl} target="_blank" rel="noopener noreferrer" className="rounded-[10px] px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>View your store</a>
+              <button onClick={() => router.push('/dashboard')} className="text-sm underline underline-offset-2" style={{ color: 'var(--text-secondary)' }}>Go to dashboard</button>
             </div>
           </>
         ) : (
           <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0F0F0E]"><Sparkles size={28} className="text-white" /></div>
-            <h1 className="mt-6 font-serif text-3xl font-bold tracking-tight">Your store is ready</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Review everything looks good, then publish your store to the world.</p>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--bg-inverse)' }}><Sparkles size={28} style={{ color: 'var(--text-inverse)' }} /></div>
+            <h1 className="mt-6 font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Your store is ready</h1>
+            <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>Review everything looks good, then publish your store to the world.</p>
             {storeId && (
               <div className="mt-6 flex flex-col items-center gap-3">
-                <a href={`/api/builder/preview?store_id=${storeId}`} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground underline underline-offset-2">Preview storefront</a>
-                <button ref={btnRef} onClick={handlePublish} disabled={publishing || skipping} className="inline-flex items-center gap-2 rounded-[10px] bg-[#F97316] px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-[#E86A0E] disabled:opacity-70">
+                <a href={`/api/builder/preview?store_id=${storeId}`} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-2" style={{ color: 'var(--text-secondary)' }}>Preview storefront</a>
+                <button ref={btnRef} onClick={handlePublish} disabled={publishing || skipping} className="inline-flex items-center gap-2 rounded-[10px] px-8 py-3 text-sm font-semibold transition-all disabled:opacity-70" style={{ backgroundColor: '#F97316', color: 'white' }}>
                   {publishing && (
                     <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
@@ -144,7 +145,8 @@ export default function PreviewPage() {
                 <button
                   onClick={handleSkipPublish}
                   disabled={skipping || publishing}
-                  className="text-sm text-muted-foreground underline underline-offset-2 mt-1 hover:text-[#0F0F0E] disabled:opacity-50"
+                  className="text-sm underline underline-offset-2 mt-1 disabled:opacity-50"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
                   {skipping ? 'Going to dashboard...' : 'Go to dashboard'}
                 </button>
@@ -156,7 +158,7 @@ export default function PreviewPage() {
 
       {toastVisible && (
         <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2 animate-slideDown">
-          <div className="flex items-center gap-3 rounded-xl bg-[#0F0F0E] px-5 py-3 text-sm text-white shadow-lg">
+          <div className="flex items-center gap-3 rounded-xl px-5 py-3 text-sm shadow-lg" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>
             <span>Your store is live! Share it</span>
             <button
               onClick={() => {
@@ -164,7 +166,8 @@ export default function PreviewPage() {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2000)
               }}
-              className="flex items-center gap-1.5 rounded-lg bg-white/20 px-3 py-1.5 text-xs font-medium"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+              style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
             >
               {copied ? <Check size={12} /> : <Copy size={12} />}
               {copied ? 'Copied' : 'Copy link'}

@@ -5,10 +5,20 @@ import { X, ChevronDown } from 'lucide-react'
 
 const tabs = ['All', 'New', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
 
-const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400', confirmed: 'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400',
-  processing: 'bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400', shipped: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400',
-  delivered: 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400', cancelled: 'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400',
+const statusStyles: Record<string, string> = {}
+function statusColor(status: string) {
+  const map: Record<string, string> = {
+    pending: '#eab308', confirmed: '#3b82f6', processing: '#a855f7',
+    shipped: '#6366f1', delivered: '#22c55e', cancelled: '#EF4444',
+  }
+  return map[status] || '#666'
+}
+function statusBg(status: string) {
+  const map: Record<string, string> = {
+    pending: 'rgba(234,179,8,0.12)', confirmed: 'rgba(59,130,246,0.12)', processing: 'rgba(168,85,247,0.12)',
+    shipped: 'rgba(99,102,241,0.12)', delivered: 'rgba(34,197,94,0.12)', cancelled: 'rgba(239,68,68,0.12)',
+  }
+  return map[status] || 'rgba(102,102,102,0.12)'
 }
 
 export default function OrdersClient({ store, orders: initial }: { store: any; orders: any[] }) {
@@ -51,7 +61,7 @@ export default function OrdersClient({ store, orders: initial }: { store: any; o
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground" style={{ color: 'var(--text-secondary)' }}>No orders found.</p>
+        <p className="mt-8 text-sm" style={{ color: 'var(--text-secondary)' }}>No orders found.</p>
       ) : (
         <div className="mt-4 overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--border-default)' }}>
           <table className="w-full text-left text-sm">
@@ -70,8 +80,8 @@ export default function OrdersClient({ store, orders: initial }: { store: any; o
                       value={o.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => { e.stopPropagation(); handleStatusChange(o.id, e.target.value) }}
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium outline-none border transition-colors ${statusStyles[o.status] || 'bg-gray-100'}`}
-                      style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)' }}
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium outline-none border transition-colors`}
+                      style={{ backgroundColor: statusBg(o.status), color: statusColor(o.status), borderColor: statusColor(o.status) }}
                     >
                       {Object.keys(statusStyles).map((s) => <option key={s} value={s} style={{ backgroundColor: 'var(--bg-surface)', color: 'var(--text-primary)' }}>{s}</option>)}
                     </select>
@@ -100,8 +110,8 @@ export default function OrdersClient({ store, orders: initial }: { store: any; o
                   <select
                     value={detail.status}
                     onChange={(e) => handleStatusChange(detail.id, e.target.value)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium outline-none border transition-colors ${statusStyles[detail.status] || 'bg-gray-100'}`}
-                    style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)' }}
+                    className={`rounded-full px-3 py-1 text-xs font-medium outline-none border transition-colors`}
+                    style={{ backgroundColor: statusBg(detail.status), color: statusColor(detail.status), borderColor: statusColor(detail.status) }}
                   >
                     {Object.keys(statusStyles).map((s) => <option key={s} value={s} style={{ backgroundColor: 'var(--bg-surface)', color: 'var(--text-primary)' }}>{s}</option>)}
                   </select>

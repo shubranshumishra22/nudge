@@ -124,17 +124,17 @@ export default function ChatBox({ storeId }: { storeId: string }) {
       >
         {open && (
           <>
-            <div className="flex items-center justify-between border-b bg-[#0F0F0E] px-5 py-4 rounded-t-2xl">
+            <div className="flex items-center justify-between border-b px-5 py-4 rounded-t-2xl" style={{ backgroundColor: 'var(--bg-inverse)', borderColor: 'var(--border-default)' }}>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                  <Sparkles size={16} className="text-white" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ backgroundColor: 'var(--bg-base)' }}>
+                  <Sparkles size={16} style={{ color: 'var(--text-inverse)' }} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Nudge AI</p>
-                  <p className="text-[10px] text-white/60">Store assistant</p>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-inverse)' }}>Nudge AI</p>
+                  <p className="text-[10px]" style={{ color: 'var(--text-inverse)', opacity: 0.6 }}>Store assistant</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-white/60 hover:bg-white/10 hover:text-white transition-colors">
+              <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 transition-colors" style={{ color: 'var(--text-inverse)', opacity: 0.6 }}>
                 <X size={18} />
               </button>
             </div>

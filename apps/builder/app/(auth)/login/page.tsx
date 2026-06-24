@@ -69,21 +69,21 @@ export default function LoginPage() {
           <p className="text-sm text-[var(--muted)]">Create your AI-powered storefront</p>
         </div>
 
-        <div className="sutra-card rounded-[32px] border border-zinc-200/80 bg-white p-8 shadow-lg">
+        <div className="sutra-card rounded-[32px] p-8 shadow-lg" style={{ border: '1px solid var(--border-default)', backgroundColor: 'var(--bg-surface)' }}>
           {error && (
-            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold border border-red-200 bg-red-50 text-red-700">
+            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold" style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: 'var(--text-primary)' }}>
               {error}
             </div>
           )}
           {message && (
-            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700">
+            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold" style={{ backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: 'var(--text-primary)' }}>
               {message}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="text-left">
-              <label className="mb-1.5 block text-xs font-bold text-[var(--ink)]">Email</label>
+              <label className="mb-1.5 block text-xs font-bold" style={{ color: 'var(--text-primary)' }}>Email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -94,7 +94,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="text-left">
-              <label className="mb-1.5 block text-xs font-bold text-[var(--ink)]">Password</label>
+              <label className="mb-1.5 block text-xs font-bold" style={{ color: 'var(--text-primary)' }}>Password</label>
               <input
                 type="password"
                 placeholder="At least 6 characters"
@@ -108,19 +108,21 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full py-3.5 text-sm font-semibold transition-all bg-[var(--indigo)] text-white shadow-sm hover:bg-[#212191] active:scale-[0.97] disabled:opacity-50"
+              className="w-full rounded-full py-3.5 text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-50"
+              style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
             >
               {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-[var(--muted)]">
+          <p className="mt-6 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
             {mode === 'login' ? (
               <>
                 No account?{' '}
                 <button
                   onClick={() => { setMode('signup'); setError(''); setMessage('') }}
-                  className="font-semibold underline underline-offset-2 text-[var(--indigo)] hover:text-[#212191] transition-colors"
+                  className="font-semibold underline underline-offset-2 transition-colors"
+                  style={{ color: 'var(--text-primary)' }}
                 >
                   Sign up
                 </button>
@@ -130,7 +132,8 @@ export default function LoginPage() {
                 Already have an account?{' '}
                 <button
                   onClick={() => { setMode('login'); setError(''); setMessage('') }}
-                  className="font-semibold underline underline-offset-2 text-[var(--indigo)] hover:text-[#212191] transition-colors"
+                  className="font-semibold underline underline-offset-2 transition-colors"
+                  style={{ color: 'var(--text-primary)' }}
                 >
                   Sign in
                 </button>
