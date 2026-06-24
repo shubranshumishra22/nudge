@@ -9,8 +9,8 @@ const ibmPlexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['500'], variabl
 const instrumentSerif = Instrument_Serif({ subsets: ['latin'], weight: ['400'], style: ['normal', 'italic'], variable: '--font-serif' })
 
 export const metadata: Metadata = {
-  title: 'Nudge',
-  description: 'Manage your store',
+  title: 'Karoji',
+  description: 'Build your website in your own language using AI',
   icons: { icon: '/favicon.png' },
 }
 
