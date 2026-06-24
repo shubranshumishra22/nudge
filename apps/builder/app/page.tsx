@@ -726,8 +726,8 @@ const catalog = await client.catalog.scan({
             {/* Column 1 */}
             <div className="md:col-span-5 flex flex-col gap-4 text-left">
               <div className="flex items-center gap-2">
-                <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover dark:hidden" />
-                <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" />
+                <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover dark:hidden" />
+                <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" />
                 <span className="text-base font-bold font-sora tracking-tight text-zinc-800 dark:text-zinc-100">Karoji</span>
               </div>
               <p className="text-sm text-[var(--muted)] leading-relaxed max-w-sm">

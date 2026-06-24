@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, Instrument_Serif } from 'next/font/google'
+import { Inter, Sora, IBM_Plex_Mono, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/lib/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const instrumentSerif = Instrument_Serif({ weight: '400', subsets: ['latin'], variable: '--font-instrument-serif' })
+const sora = Sora({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-sora' })
+const ibmPlexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['500'], variable: '--font-mono' })
+const instrumentSerif = Instrument_Serif({ subsets: ['latin'], weight: ['400'], style: ['normal', 'italic'], variable: '--font-serif' })
 
 export const metadata: Metadata = {
   title: 'Nudge',
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${sora.variable} ${ibmPlexMono.variable} ${instrumentSerif.variable}`}>
       <body>
         <ThemeProvider>
           {children}
@@ -23,3 +25,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+

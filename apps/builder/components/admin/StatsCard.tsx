@@ -18,20 +18,21 @@ export default function StatsCard({
   return (
     <div
       style={{
-        backgroundColor: '#1A1A1A',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '12px',
-        padding: '20px'
+        backgroundColor: 'var(--surface)',
+        border: '1.5px solid var(--sand-border)',
+        borderRadius: 'var(--radius-md)',
+        padding: '24px',
+        boxShadow: 'var(--shadow-card)'
       }}
-      className="flex flex-col gap-2 transition-all hover:border-white/10"
+      className="flex flex-col gap-2 transition-all hover:border-[var(--saffron)]"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold tracking-wider text-[#6B6B67] uppercase">
+        <span className="text-[11px] font-semibold tracking-wider text-[var(--muted)] uppercase">
           {label}
         </span>
         <Icon size={20} className={colorClass} />
       </div>
-      <div className="font-serif text-3xl font-bold text-white mt-1">
+      <div className="font-mono text-3xl font-medium text-[var(--indigo)] mt-1">
         {value}
       </div>
       {trend && (

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Instrument_Serif } from 'next/font/google'
+import { Inter, Sora, IBM_Plex_Mono, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
@@ -7,10 +7,23 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const instrumentSerif = Instrument_Serif({
-  weight: '400',
+const sora = Sora({
   subsets: ['latin'],
-  variable: '--font-instrument-serif',
+  weight: ['500', '600', '700'],
+  variable: '--font-sora',
+})
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['500'],
+  variable: '--font-mono',
+})
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
 })
 
 export const metadata: Metadata = {
@@ -24,8 +37,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${sora.variable} ${ibmPlexMono.variable} ${instrumentSerif.variable}`}>
       <body>{children}</body>
     </html>
   )
 }
+

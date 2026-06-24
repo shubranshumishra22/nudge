@@ -63,8 +63,8 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-[400px] z-10">
         <div className="mb-8 text-center flex flex-col items-center gap-3">
-          <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm dark:hidden" />
-          <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm hidden dark:block" />
+          <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm dark:hidden" />
+          <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm hidden dark:block" />
           <h1 className="font-serif text-4xl font-bold tracking-tight text-[var(--ink)]">Karoji</h1>
           <p className="text-sm text-[var(--muted)]">Create your AI-powered storefront</p>
         </div>

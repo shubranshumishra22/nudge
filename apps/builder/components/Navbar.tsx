@@ -46,12 +46,12 @@ export default function Navbar() {
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <img
-            src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png"
+            src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png"
             alt="Karoji"
             className="h-6 w-6 rounded-lg object-cover dark:hidden"
           />
           <img
-            src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png"
+            src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png"
             alt="Karoji"
             className="h-6 w-6 rounded-lg object-cover hidden dark:block"
           />

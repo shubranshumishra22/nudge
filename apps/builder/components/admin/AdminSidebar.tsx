@@ -116,12 +116,12 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
         <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
           <div className="flex items-center gap-2">
             <img 
-              src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" 
+              src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" 
               alt="Nudge" 
               className="h-7 w-7 rounded-[8px] object-cover dark:hidden" 
             />
             <img 
-              src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" 
+              src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" 
               alt="Nudge" 
               className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" 
             />

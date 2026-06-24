@@ -18,16 +18,16 @@ export default function AdminShell({
     <div
       className="flex min-h-screen font-sans"
       style={{
-        backgroundColor: '#0F0F0E',
-        color: '#FAFAF8',
-        '--admin-bg': '#0F0F0E',
-        '--admin-surface': '#1A1A1A',
-        '--admin-surface-2': '#242424',
-        '--admin-border': 'rgba(255,255,255,0.08)',
-        '--admin-text': '#FAFAF8',
-        '--admin-text-2': '#A1A1AA',
-        '--admin-text-3': '#6B6B67',
-        '--admin-accent': '#F97316'
+        backgroundColor: 'var(--bg)',
+        color: 'var(--ink)',
+        '--admin-bg': 'var(--bg)',
+        '--admin-surface': 'var(--surface)',
+        '--admin-surface-2': 'var(--bg-subtle)',
+        '--admin-border': 'var(--sand-border)',
+        '--admin-text': 'var(--ink)',
+        '--admin-text-2': 'var(--muted)',
+        '--admin-text-3': '#8C8375',
+        '--admin-accent': 'var(--saffron)'
       } as React.CSSProperties}
     >
       {/* 240px Fixed Sidebar */}

@@ -4,97 +4,290 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    /* Sarvam AI inspired design system colors */
+    --bg: #FFFFFF;
+    --surface: #FAFAFA;
+    --ink: #141414;
+    --muted: #666666;
+    --sand-border: #E6E6E6;
+    --saffron: #E6651B;
+    --saffron-deep: #A5460F;
+    --saffron-tint: #FEEDE6;
+    --indigo: #3333CC;
+    --indigo-soft: #4250D5;
+    --turmeric: #DF9C2A;
+    --banyan: #6EA335;
+    --banyan-tint: #F2F8EB;
+
+    --radius-sm: 12px;
+    --radius-md: 24px;
+    --radius-lg: 32px; /* Massive rounded borders from sarvam.ai */
+
+    --shadow-soft: 0 12px 40px -10px rgba(0,0,0,0.06);
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 8px 30px -8px rgba(0,0,0,0.04);
+
+    /* Tailwind & shadcn mappings */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 8%; /* #141414 */
+    --card: 0 0% 98%; /* #FAFAFA */
+    --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --popover-foreground: 0 0% 8%;
+    --primary: 21 82% 50%; /* #E6651B */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 60% 50%; /* #3333CC */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 40%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 21 82% 95%;
+    --accent-foreground: 21 82% 50%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    --border: 0 0% 90%; /* #E6E6E6 */
+    --input: 0 0% 90%;
+    --ring: 240 60% 50%; /* blue focus ring */
+    --radius: 24px;
 
-    --bg-base: #FAFAF8;
-    --bg-surface: #FFFFFF;
-    --bg-subtle: #F4F3F0;
-    --bg-inverse: #0F0F0E;
-    --text-primary: #0F0F0E;
-    --text-secondary: #6B6B67;
-    --text-tertiary: #9B9B96;
-    --text-inverse: #FAFAF8;
-    --border-default: rgba(0,0,0,0.08);
-    --border-hover: rgba(0,0,0,0.14);
-    --border-focus: #0F0F0E;
-    --accent: #F97316;
-    --accent-subtle: #FFF4ED;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
+    /* Legacy app compatibility */
+    --bg-base: var(--bg);
+    --bg-surface: var(--surface);
+    --bg-subtle: #F5F5F5;
+    --bg-inverse: var(--indigo);
+    --text-primary: var(--ink);
+    --text-secondary: var(--muted);
+    --text-tertiary: #999999;
+    --text-inverse: #FFFFFF;
+    --border-default: var(--sand-border);
+    --border-hover: #CCCCCC;
+    --border-focus: var(--indigo);
+    --accent-subtle: var(--saffron-tint);
     --radius-full: 9999px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --bg-surface-glass: color-mix(in srgb, var(--bg-surface) 78%, transparent);
+    --shadow-sm: var(--shadow-card);
+    --shadow-md: var(--shadow-soft);
+    --bg-surface-glass: rgba(255, 255, 255, 0.85);
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Sleek high-tech deep space mode */
+    --bg: #0C0D16;
+    --surface: #121422;
+    --ink: #FFFFFF;
+    --muted: #99A1C2;
+    --sand-border: #23263B;
+    --saffron: #F38858;
+    --saffron-deep: #EE7944;
+    --saffron-tint: #2E1E16;
+    --indigo: #556ADC;
+    --indigo-soft: #81A0E9;
+    --turmeric: #DF9C2A;
+    --banyan: #6EA335;
+    --banyan-tint: #162413;
+
+    --background: 233 28% 7%;
+    --foreground: 0 0% 100%;
+    --card: 233 28% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 233 28% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 21 82% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 233 28% 86%;
+    --secondary-foreground: 233 28% 10%;
+    --muted: 233 15% 65%;
+    --muted-foreground: 233 15% 75%;
+    --accent: 21 82% 20%;
+    --accent-foreground: 21 82% 65%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 233 28% 18%;
+    --input: 233 28% 18%;
+    --ring: 233 28% 86%;
 
-    --bg-base: #141412;
-    --bg-surface: #1C1C1A;
-    --bg-subtle: #262624;
-    --bg-inverse: #FAFAF8;
-    --text-primary: #EDEDEC;
-    --text-secondary: #A0A09B;
-    --text-tertiary: #70706B;
-    --text-inverse: #141412;
-    --border-default: rgba(255,255,255,0.08);
-    --border-hover: rgba(255,255,255,0.14);
-    --border-focus: #EDEDEC;
-    --accent: #F97316;
-    --accent-subtle: #2A1A0A;
+    /* Legacy app compatibility */
+    --bg-base: var(--bg);
+    --bg-surface: var(--surface);
+    --bg-subtle: #191B2D;
+    --bg-inverse: #FFFFFF;
+    --text-primary: var(--ink);
+    --text-secondary: var(--muted);
+    --text-tertiary: #6E7491;
+    --text-inverse: var(--bg);
+    --border-default: var(--sand-border);
+    --border-hover: #313655;
+    --border-focus: var(--indigo);
+    --accent-subtle: var(--saffron-tint);
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-    --bg-surface-glass: color-mix(in srgb, var(--bg-surface) 78%, transparent);
+    --bg-surface-glass: rgba(12, 13, 22, 0.85);
   }
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--sand-border);
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--bg);
+    color: var(--ink);
   }
+}
+
+/* Premium input focus overrides */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+  border: 1px solid var(--sand-border) !important;
+  border-radius: var(--radius-sm) !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  background-color: transparent !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: var(--indigo) !important;
+  box-shadow: 0 0 0 3px rgba(51, 51, 204, 0.12) !important;
+}
+
+/* Dot grid repeating background motif (modern developer aesthetic) */
+.jali-bg {
+  position: relative;
+}
+.jali-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 1;
+  z-index: 0;
+}
+.dark .jali-bg::before {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Reusable UI helpers */
+.sutra-card {
+  background-color: var(--surface);
+  border: 1px solid var(--sand-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+}
+
+.sutra-icon-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--saffron-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--saffron);
+}
+
+@keyframes floatSaffron {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.05);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes floatGreen {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-40px, 30px) scale(0.95);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Radial Glow Blobs representing the Indian Tricolor */
+.sutra-blob-saffron {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 101, 27, 0.58) 0%, transparent 75%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatSaffron 22s ease-in-out infinite;
+}
+
+.sutra-blob-green {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(19, 136, 8, 0.52) 0%, transparent 75%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatGreen 26s ease-in-out infinite;
+}
+
+.sutra-blob-white {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1.0) 0%, transparent 70%);
+  filter: blur(60px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Dark mode adjustments to keep blobs subtle and professional */
+.dark .sutra-blob-saffron {
+  background: radial-gradient(circle, rgba(230, 101, 27, 0.32) 0%, transparent 75%);
+}
+
+.dark .sutra-blob-green {
+  background: radial-gradient(circle, rgba(19, 136, 8, 0.28) 0%, transparent 75%);
+}
+
+.dark .sutra-blob-white {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, transparent 70%);
+}
+
+/* Dark CTA helper */
+.sutra-dark-cta {
+  background-color: #0E0F19; /* Royal Indigo-Black */
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+}
+.sutra-dark-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  z-index: 0;
 }
 
 @keyframes drawCircle {

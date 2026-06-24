@@ -4,48 +4,86 @@
 
 @layer base {
   :root {
+    /* Sarvam AI inspired design system colors */
+    --bg: #FFFFFF;
+    --surface: #FAFAFA;
+    --ink: #141414;
+    --muted: #666666;
+    --sand-border: #E6E6E6;
+    --saffron: #E6651B;
+    --saffron-deep: #A5460F;
+    --saffron-tint: #FEEDE6;
+    --indigo: #3333CC;
+    --indigo-soft: #4250D5;
+    --turmeric: #DF9C2A;
+    --banyan: #6EA335;
+    --banyan-tint: #F2F8EB;
+
+    --radius-sm: 12px;
+    --radius-md: 24px;
+    --radius-lg: 32px;
+
+    --shadow-soft: 0 12px 40px -10px rgba(0,0,0,0.06);
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 8px 30px -8px rgba(0,0,0,0.04);
+
+    /* Tailwind & shadcn mappings */
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --foreground: 0 0% 8%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --popover-foreground: 0 0% 8%;
+    --primary: 21 82% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 60% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 40%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 21 82% 95%;
+    --accent-foreground: 21 82% 50%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 240 60% 50%;
+    --radius: 24px;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Sleek dark theme */
+    --bg: #0C0D16;
+    --surface: #121422;
+    --ink: #FFFFFF;
+    --muted: #99A1C2;
+    --sand-border: #23263B;
+    --saffron: #F38858;
+    --saffron-deep: #EE7944;
+    --saffron-tint: #2E1E16;
+    --indigo: #556ADC;
+    --indigo-soft: #81A0E9;
+    --turmeric: #DF9C2A;
+    --banyan: #6EA335;
+    --banyan-tint: #162413;
+
+    --background: 233 28% 7%;
+    --foreground: 0 0% 100%;
+    --card: 233 28% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 233 28% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 21 82% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 233 28% 86%;
+    --secondary-foreground: 233 28% 10%;
+    --muted: 233 15% 65%;
+    --muted-foreground: 233 15% 75%;
+    --accent: 21 82% 20%;
+    --accent-foreground: 21 82% 65%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 233 28% 18%;
+    --input: 233 28% 18%;
+    --ring: 233 28% 86%;
   }
 }
 
@@ -56,4 +94,41 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Reusable UI helpers */
+.sutra-card {
+  background-color: var(--surface);
+  border: 1px solid var(--sand-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+}
+
+.sutra-icon-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--saffron-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--saffron);
+}
+
+.jali-bg {
+  position: relative;
+}
+.jali-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 1;
+  z-index: 0;
+}
+.dark .jali-bg::before {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }

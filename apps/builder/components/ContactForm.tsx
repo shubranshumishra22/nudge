@@ -63,12 +63,7 @@ export default function ContactForm() {
   if (isSubmitted) {
     return (
       <div 
-        className="mx-auto w-full max-w-[560px] rounded-2xl p-8 text-center transition-all animate-in fade-in zoom-in duration-300"
-        style={{ 
-          backgroundColor: 'var(--bg-surface)', 
-          border: '1px solid var(--border-default)',
-          boxShadow: 'var(--shadow-sm)'
-        }}
+        className="mx-auto w-full max-w-[560px] sutra-card text-center transition-all animate-in fade-in zoom-in duration-300"
       >
         <div className="flex justify-center">
           <CheckCircle2 size={48} className="text-[#16A34A] animate-bounce" />
@@ -81,8 +76,7 @@ export default function ContactForm() {
         </p>
         <button
           onClick={() => setIsSubmitted(false)}
-          className="mt-6 text-xs font-semibold underline underline-offset-4 hover:opacity-80 transition-opacity"
-          style={{ color: 'var(--accent)' }}
+          className="mt-6 text-xs font-semibold underline underline-offset-4 hover:text-[var(--saffron)] transition-colors"
         >
           Send another message
         </button>
@@ -92,12 +86,7 @@ export default function ContactForm() {
 
   return (
     <div 
-      className="mx-auto w-full max-w-[560px] rounded-2xl p-8 transition-all"
-      style={{ 
-        backgroundColor: 'var(--bg-surface)', 
-        border: '1px solid var(--border-default)',
-        boxShadow: 'var(--shadow-sm)'
-      }}
+      className="mx-auto w-full max-w-[560px] sutra-card transition-all"
     >
       <div className="text-center mb-6">
         <h2 className="font-serif text-[28px] leading-tight font-bold text-[var(--text-primary)]">
@@ -119,12 +108,7 @@ export default function ContactForm() {
             placeholder="Shubranshu Shekhar"
             {...register('name')}
             disabled={isSubmitting}
-            className="w-full rounded-[10px] px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--text-primary)]"
-            style={{ 
-              backgroundColor: 'var(--bg-subtle)', 
-              border: '1px solid var(--border-default)',
-              color: 'var(--text-primary)'
-            }}
+            className="w-full bg-[var(--bg-surface)] px-3.5 text-sm"
           />
           {errors.name && (
             <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
@@ -141,12 +125,7 @@ export default function ContactForm() {
             placeholder="founder@mybrand.com"
             {...register('email')}
             disabled={isSubmitting}
-            className="w-full rounded-[10px] px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--text-primary)]"
-            style={{ 
-              backgroundColor: 'var(--bg-subtle)', 
-              border: '1px solid var(--border-default)',
-              color: 'var(--text-primary)'
-            }}
+            className="w-full bg-[var(--bg-surface)] px-3.5 text-sm"
           />
           {errors.email && (
             <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
@@ -161,12 +140,7 @@ export default function ContactForm() {
             id="business_type"
             {...register('business_type')}
             disabled={isSubmitting}
-            className="w-full rounded-[10px] px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--text-primary)] cursor-pointer"
-            style={{ 
-              backgroundColor: 'var(--bg-subtle)', 
-              border: '1px solid var(--border-default)',
-              color: 'var(--text-primary)'
-            }}
+            className="w-full bg-[var(--bg-surface)] px-3.5 text-sm cursor-pointer"
           >
             <option value="Coffee Shop">Coffee Shop</option>
             <option value="Bakery">Bakery</option>
@@ -192,12 +166,7 @@ export default function ContactForm() {
             placeholder="Share your thoughts, feedback or product questions here..."
             {...register('message')}
             disabled={isSubmitting}
-            className="w-full rounded-[10px] px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--text-primary)] resize-none"
-            style={{ 
-              backgroundColor: 'var(--bg-subtle)', 
-              border: '1px solid var(--border-default)',
-              color: 'var(--text-primary)'
-            }}
+            className="w-full bg-[var(--bg-surface)] px-3.5 text-sm resize-none"
           />
           {errors.message && (
             <p className="mt-1 text-xs text-red-500">{errors.message.message}</p>
@@ -207,11 +176,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-[10px] py-3 text-sm font-semibold transition-opacity flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50"
-          style={{ 
-            backgroundColor: 'var(--bg-inverse)', 
-            color: 'var(--text-inverse)'
-          }}
+          className="w-full rounded-full py-3 text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-br from-[var(--saffron)] to-[var(--saffron-deep)] text-white shadow-[var(--shadow-soft)] hover:brightness-105 active:scale-[0.97] disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
