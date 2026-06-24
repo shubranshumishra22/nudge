@@ -57,6 +57,8 @@ ${JSON.stringify(content)}
 Generated Storefront HTML:
 ${html}`;
 
+  const modelOverride = (input as any)._model_overrides?.critic;
+
   if (!isSpecialistMode) {
     // BATCHED MODE: Single prompt
     try {
@@ -66,7 +68,7 @@ ${html}`;
           { role: 'system', content: BATCHED_SYSTEM_PROMPT },
           { role: 'user', content: userMessage }
         ],
-        { max_tokens: 3000, json_mode: true }
+        { max_tokens: 3000, json_mode: true, _model_override: modelOverride }
       );
 
       const parsed = JSON.parse(response) as CriticPanelResult;
@@ -95,7 +97,7 @@ ${html}`;
             { role: 'system', content: sysPrompt },
             { role: 'user', content: userMessage }
           ],
-          { max_tokens: 1500, json_mode: true }
+          { max_tokens: 1500, json_mode: true, _model_override: modelOverride }
         );
         return { key, report: JSON.parse(response) as CriticReport };
       } catch (err) {

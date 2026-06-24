@@ -114,7 +114,18 @@ export async function POST(request: Request) {
 
   const plan = (profile as { plan?: string })?.plan ?? 'free'
 
-  const { allowed, resetAt } = await checkRateLimit(user.id, plan)
+  const { isAdmin } = await import('@/lib/auth/isAdmin')
+  const userIsAdmin = await isAdmin(user.id, db)
+
+  let allowed = true
+  let resetAt: number | null = null
+
+  if (!userIsAdmin) {
+    const rateLimitRes = await checkRateLimit(user.id, plan)
+    allowed = rateLimitRes.allowed
+    resetAt = rateLimitRes.resetAt
+  }
+
   if (!allowed) {
     return NextResponse.json(
       { error: 'Generation limit reached', resetAt },

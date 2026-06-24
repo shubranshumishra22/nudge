@@ -36,11 +36,13 @@ export default function DashboardLayoutClient({
   user,
   stores,
   activeStore,
+  plan,
   children,
 }: {
   user: any
   stores: any[]
   activeStore: any
+  plan: string
   children: React.ReactNode
 }) {
   const pathname = usePathname()
@@ -131,7 +133,6 @@ export default function DashboardLayoutClient({
   }
 
   const ownerStore = activeStore
-  const plan = 'free'
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}>

@@ -41,8 +41,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: stores } = await db.from('stores').select('id, slug, name, status').eq('owner_id', user.id)
   const activeStore = stores?.[0]
 
+  const { data: profile } = await db.from('profiles').select('plan').eq('id', user.id).maybeSingle()
+  const plan = profile?.plan || 'free'
+
   return (
-    <DashboardLayoutClient user={user} stores={stores || []} activeStore={activeStore || null}>
+    <DashboardLayoutClient user={user} stores={stores || []} activeStore={activeStore || null} plan={plan}>
       {children}
     </DashboardLayoutClient>
   )

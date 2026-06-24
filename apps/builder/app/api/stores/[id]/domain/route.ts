@@ -17,7 +17,10 @@ export async function POST(
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data: profile } = await db.from('profiles').select('plan').eq('id', user.id).single()
-    if (!profile || profile.plan === 'free') {
+    const { isAdmin } = await import('@/lib/auth/isAdmin')
+    const userIsAdmin = await isAdmin(user.id, db)
+
+    if (!userIsAdmin && (!profile || profile.plan === 'free')) {
       return NextResponse.json({ error: 'Pro plan required for custom domains' }, { status: 403 })
     }
 

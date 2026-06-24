@@ -85,13 +85,15 @@ Return ONLY valid JSON. No markdown backticks.`;
 ${JSON.stringify(layout)}
 
 Critic Weaknesses:
-Design: ${JSON.stringify(criticResults.design.weaknesses)}
-UX: ${JSON.stringify(criticResults.ux.weaknesses)}
-Accessibility: ${JSON.stringify(criticResults.accessibility.weaknesses)}
-SEO: ${JSON.stringify(criticResults.seo.weaknesses)}
-Conversion: ${JSON.stringify(criticResults.conversion.weaknesses)}
+Design: ${JSON.stringify(criticResults?.design?.weaknesses || [])}
+UX: ${JSON.stringify(criticResults?.ux?.weaknesses || [])}
+Accessibility: ${JSON.stringify(criticResults?.accessibility?.weaknesses || [])}
+SEO: ${JSON.stringify(criticResults?.seo?.weaknesses || [])}
+Conversion: ${JSON.stringify(criticResults?.conversion?.weaknesses || [])}
 
 Select a corrective patch and output the modified JSON package.`;
+
+  const modelOverride = (layout.style as any)._model_overrides?.builder;
 
   try {
     const response = await callModel(
@@ -100,7 +102,7 @@ Select a corrective patch and output the modified JSON package.`;
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
       ],
-      { max_tokens: 3000, json_mode: true }
+      { max_tokens: 3000, json_mode: true, _model_override: modelOverride }
     );
 
     const parsed = JSON.parse(response);

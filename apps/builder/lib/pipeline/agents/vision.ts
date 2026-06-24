@@ -27,6 +27,8 @@ export async function runVisionAgent(input: UserInput, research: ResearchOutput)
     return getDefaultDesign(input.primary_color);
   }
 
+  const modelOverride = (input as any)._model_overrides?.vision;
+
   const modelResponses = await Promise.all(
     validScreenshots.map(async ({ base64 }) => {
       try {
@@ -42,7 +44,7 @@ export async function runVisionAgent(input: UserInput, research: ResearchOutput)
               ]
             }
           ],
-          { max_tokens: 2000 }
+          { max_tokens: 2000, _model_override: modelOverride }
         );
         return response;
       } catch {

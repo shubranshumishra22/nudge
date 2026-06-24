@@ -56,6 +56,8 @@ ${JSON.stringify(content)}
 Design tokens:
 ${JSON.stringify(design)}`;
 
+  const modelOverride = (input as any)._model_overrides?.builder;
+
   try {
     const response = await callModel(
       'openai/gpt-oss-120b:free',
@@ -63,7 +65,7 @@ ${JSON.stringify(design)}`;
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
       ],
-      { max_tokens: 3000, json_mode: true }
+      { max_tokens: 3000, json_mode: true, _model_override: modelOverride }
     );
 
     const layout = JSON.parse(response);

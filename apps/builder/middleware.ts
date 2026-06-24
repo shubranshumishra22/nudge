@@ -30,6 +30,23 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = pathname.startsWith('/login')
   const isOnboardPage = pathname.startsWith('/onboard')
   const isDashboardPage = pathname.startsWith('/dashboard') || pathname.startsWith('/builder')
+  const isAdminPage = pathname.startsWith('/admin')
+
+  if (isAdminPage) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login?redirect=/admin', request.url))
+    }
+    const { data: adminCheck } = await supabase
+      .from('admin_users')
+      .select('is_admin')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    
+    if (adminCheck?.is_admin !== true) {
+      return NextResponse.redirect(new URL('/dashboard?error=unauthorized', request.url))
+    }
+    return response
+  }
 
   if (!user) {
     if (isDashboardPage || isOnboardPage) {
@@ -65,5 +82,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/onboard/:path*', '/dashboard/:path*'],
+  matcher: ['/login', '/onboard/:path*', '/dashboard/:path*', '/admin/:path*'],
 }

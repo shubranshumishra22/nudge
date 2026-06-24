@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Check, Zap, Building2, ArrowRight } from 'lucide-react'
 import Navbar from '@/components/Navbar'
+import ContactForm from '@/components/ContactForm'
 
 export default function LandingPage() {
   const plans = [
@@ -103,6 +104,10 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section id="contact" className="px-4 py-16 border-t" style={{ borderColor: 'var(--border-default)', backgroundColor: 'var(--bg-base)' }}>
+          <ContactForm />
         </section>
       </main>
 

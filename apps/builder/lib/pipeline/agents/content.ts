@@ -39,13 +39,15 @@ WhatsApp message: Pre-filled message a customer would send to the business (e.g.
 
 Return ONLY valid JSON matching the ContentOutput interface.`;
 
+    const modelOverride = (input as any)._model_overrides?.content;
+
     const modelResponse = await callModel(
       'openai/gpt-oss-120b:free',
       [
         { role: 'system', content: systemMessage },
         { role: 'user', content: userMessage }
       ],
-      { max_tokens: 2000 }
+      { max_tokens: 2000, _model_override: modelOverride }
     );
 
     const parsed: ContentOutput = JSON.parse(modelResponse);

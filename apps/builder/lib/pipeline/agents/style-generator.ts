@@ -52,6 +52,8 @@ Suggested Primary Color: ${input.primary_color}
 Extracted from competitor sites:
 ${JSON.stringify(visionDesign)}`;
 
+  const modelOverride = (input as any)._model_overrides?.builder;
+
   try {
     const response = await callModel(
       'openai/gpt-oss-120b:free',
@@ -59,7 +61,7 @@ ${JSON.stringify(visionDesign)}`;
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
       ],
-      { max_tokens: 1500, json_mode: true }
+      { max_tokens: 1500, json_mode: true, _model_override: modelOverride }
     );
 
     const parsed = JSON.parse(response) as DesignOutput;
@@ -67,6 +69,8 @@ ${JSON.stringify(visionDesign)}`;
     if (input.primary_color && input.primary_color.startsWith('#')) {
       parsed.primary_color = input.primary_color;
     }
+    // Propagate overrides downstream
+    (parsed as any)._model_overrides = (input as any)._model_overrides;
     return parsed;
   } catch (err) {
     console.error('Style Generator LLM call failed, returning formatted input:', err);
@@ -80,5 +84,8 @@ ${JSON.stringify(visionDesign)}`;
   refined.border_radius = refined.border_radius || '16px';
   refined.spacing_unit = refined.spacing_unit || '24px';
   refined.primary_color = input.primary_color || '#4F46E5';
+  
+  // Propagate overrides downstream for fallback
+  (refined as any)._model_overrides = (input as any)._model_overrides;
   return refined;
 }

@@ -163,7 +163,7 @@ export async function runOrchestrator(input: UserInput): Promise<PipelineResult>
         console.log(`[Orchestrator] Evaluated patch candidate score: ${testCritic.overall_score} vs current: ${currentScore}`);
 
         // Record reinforcement feedback outcome in DB
-        const primaryWeakness = currentCritic.design.weaknesses[0] || 'design improvement';
+        const primaryWeakness = currentCritic?.design?.weaknesses?.[0] || 'design improvement';
         await recordPatchOutcome(supabase, input.business_type, layoutPlan.style.template_name, primaryWeakness, patchRes.patchAction, scoreIncreased);
 
         if (scoreIncreased) {
@@ -238,7 +238,7 @@ export async function runOrchestrator(input: UserInput): Promise<PipelineResult>
       build: { html: finalHtml, css: finalCss, js: '' },
       qa: {
         passed: currentScore >= threshold,
-        issues_found: currentCritic?.design.weaknesses || [],
+        issues_found: currentCritic?.design?.weaknesses || [],
         issues_fixed: [],
         html: finalHtml,
         css: finalCss,

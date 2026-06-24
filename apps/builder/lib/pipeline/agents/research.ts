@@ -5,6 +5,7 @@ import type { UserInput, ResearchOutput } from '@/lib/pipeline/types';
 
 export async function runResearchAgent(input: UserInput): Promise<ResearchOutput> {
   const startTime = Date.now();
+  const modelOverride = (input as any)._model_overrides?.research;
 
   // Step 1: Ask the model to generate relevant competitor URLs
   const urlGenerationPrompt = `List 8 well-known, real competitor websites for a ${input.business_type} business called "${input.business_name}". Return ONLY a JSON array of strings with full URLs (e.g. "https://example.com"). Do not include any other text. Example for cafe: ["https://bluebottlecoffee.com", "https://stumptowncoffee.com"]`;
@@ -14,7 +15,7 @@ export async function runResearchAgent(input: UserInput): Promise<ResearchOutput
     const urlResponse = await callModel(
       'nvidia/llama-3.3-nemotron-super-49b-v1:free',
       [{ role: 'user', content: urlGenerationPrompt }],
-      { max_tokens: 1000, temperature: 0.3 }
+      { max_tokens: 1000, temperature: 0.3, _model_override: modelOverride }
     );
     const parsed = JSON.parse(urlResponse);
     if (Array.isArray(parsed)) {
@@ -69,7 +70,7 @@ Return ONLY valid JSON matching:
         { role: 'system', content: RESEARCH_SYSTEM_PROMPT },
         { role: 'user', content: userMessage }
       ],
-      { max_tokens: 2000, json_mode: true }
+      { max_tokens: 2000, json_mode: true, _model_override: modelOverride }
     );
 
     const parsed: ResearchOutput = JSON.parse(modelResponse);

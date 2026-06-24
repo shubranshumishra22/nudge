@@ -59,34 +59,27 @@ DESIGN RULES (Emil Kowalski philosophy — follow strictly):
 `;
 
   const isCopyChange = intent === 'change_copy' || intent === 'change_products';
-  const systemPrompt = isCopyChange
-    ? `
-You are an expert designer + developer (Emil Kowalski style) embedded in a live website editor. The user can see their storefront in a preview pane and is asking you to make changes. You have the current HTML of their store.
-
-Your job:
-1. First, respond in natural, conversational English explaining what you are about to change and why it will look great. Be warm and encouraging. 2-3 sentences max.
-2. Then make the targeted change to the HTML.
-
-Rules for making changes:
-- Make SURGICAL changes only. If the user says 'change the hero color', only change the hero background color. Do not touch anything else.
+  
+  let changeRules = '';
+  if (isCopyChange) {
+    changeRules = `
+- Make SURGICAL changes only. If the user says 'rewrite the title', only rewrite that title text. Do not touch styling or layout.
 - Only change text content - do not touch CSS, JavaScript, or HTML structure (except for adding/removing text elements).
-- Preserve all existing JavaScript (cart logic, Razorpay) exactly as-is.
-- Preserve all section IDs (id='hero', id='products', etc.) exactly as-is.
-- The nudge-updating CSS and postMessage listener must remain in the HTML.
-${designRules}
-- Return your conversational response followed by a special delimiter and the COMPLETE updated HTML:
+`;
+  } else if (intent === 'full_regenerate') {
+    changeRules = `
+- You are performing a COMPLETE cohesive redesign of the entire storefront.
+- Cohesively upgrade the styling, color scheme, typography, layout structures, and visual presentation across ALL sections of the site.
+- Apply high-end modern design choices: dark or sophisticated HSL color palettes, beautiful google font hierarchy, modern card layouts, and polished glassmorphism header navigation.
+- Do NOT make surgical/minimal changes. Make widespread styling and design improvements to header, hero, products, about, contact, and footer sections so they look premium and aligned.
+`;
+  } else {
+    changeRules = `
+- Make SURGICAL changes only. If the user says 'change the hero color', only change the hero background color. Do not touch anything else.
+`;
+  }
 
-[NUDGE_RESPONSE]
-Your conversational text here.
-[NUDGE_HTML_START]
-<!DOCTYPE html>
-...complete updated HTML...
-[NUDGE_HTML_END]
-
-If the intent is 'question' (no store update needed):
-Return ONLY the conversational answer. Do not include the delimiters.
-`
-    : `
+  const systemPrompt = `
 You are an expert designer + developer (Emil Kowalski style) embedded in a live website editor. The user can see their storefront in a preview pane and is asking you to make changes. You have the current HTML of their store.
 
 Your job:
@@ -94,7 +87,7 @@ Your job:
 2. Then make the targeted change to the HTML.
 
 Rules for making changes:
-- Make SURGICAL changes only. If the user says 'change the hero color', only change the hero background color. Do not touch anything else.
+${changeRules}
 - Preserve all existing JavaScript (cart logic, Razorpay) exactly as-is.
 - Preserve all section IDs (id='hero', id='products', etc.) exactly as-is.
 - The nudge-updating CSS and postMessage listener must remain in the HTML.
@@ -134,13 +127,13 @@ Respond with your analysis and changes as instructed.
   // Call the model with retry logic via callModel
   console.log(`Builder agent: calling model for intent=${intent} target=${targetSection}`);
   const modelResponse = await callModel(
-    'openrouter/auto',
+    'deepseek/deepseek-v4-flash:free',
     [
       { role: 'system', content: systemPrompt.trim() },
       { role: 'user', content: userMessage.trim() }
     ],
     {
-      max_tokens: 8000,
+      max_tokens: 4000,
       temperature: 0.4
     }
   );
@@ -159,9 +152,25 @@ Respond with your analysis and changes as instructed.
   const responsePart = parts[0].replace('[NUDGE_RESPONSE]', '').trim();
   const htmlPart = parts[1].split('[NUDGE_HTML_END]')[0].trim();
 
+  // Clean HTML from code block wrappers if any
+  let cleanHtml = htmlPart.trim();
+  if (cleanHtml.startsWith('```')) {
+    const firstLineBreak = cleanHtml.indexOf('\n');
+    if (firstLineBreak !== -1 && firstLineBreak < 15) {
+      cleanHtml = cleanHtml.substring(firstLineBreak + 1);
+    } else {
+      cleanHtml = cleanHtml.substring(3);
+    }
+    const lastTicks = cleanHtml.lastIndexOf('```');
+    if (lastTicks !== -1) {
+      cleanHtml = cleanHtml.substring(0, lastTicks);
+    }
+    cleanHtml = cleanHtml.trim();
+  }
+
   // Validate HTML starts with DOCTYPE
-  if (!htmlPart.startsWith('<!DOCTYPE html>')) {
-    console.warn('Generated HTML does not start with DOCTYPE, returning original');
+  if (!cleanHtml.startsWith('<!DOCTYPE html>')) {
+    console.warn('Generated HTML does not start with DOCTYPE, returning original. First 100 chars:', cleanHtml.substring(0, 100));
     return {
       response: 'I made some changes to your store, but encountered an issue with the HTML generation. Let me try again.',
       updatedHtml: storeHtml,
@@ -171,10 +180,11 @@ Respond with your analysis and changes as instructed.
 
   return {
     response: responsePart,
-    updatedHtml: htmlPart,
+    updatedHtml: cleanHtml,
     updatedSection: targetSection
   };
 }
+
 
 // Fallback response for when the model fails
 export function getFallbackResponse(options: StoreUpdateOptions): BuilderAgentResponse {

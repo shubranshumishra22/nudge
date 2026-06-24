@@ -13,6 +13,34 @@ interface CallModelOptions {
   temperature?: number;
   max_tokens?: number;
   json_mode?: boolean;
+  _model_override?: string;
+}
+
+function cleanResponse(content: string | null | undefined): string {
+  if (!content) return '{}';
+  let cleaned = content.trim();
+  // Remove <think>...</think> tags if present (e.g. from DeepSeek R1)
+  cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+  
+  // Remove markdown code block markers
+  if (cleaned.startsWith('```json')) {
+    cleaned = cleaned.substring(7);
+    const lastIndex = cleaned.lastIndexOf('```');
+    if (lastIndex !== -1) {
+      cleaned = cleaned.substring(0, lastIndex);
+    }
+  } else if (cleaned.startsWith('```')) {
+    cleaned = cleaned.substring(3);
+    const lastIndex = cleaned.lastIndexOf('```');
+    if (lastIndex !== -1) {
+      cleaned = cleaned.substring(0, lastIndex);
+    }
+  }
+  cleaned = cleaned.trim();
+  if (!cleaned || cleaned === 'null') {
+    return '{}';
+  }
+  return cleaned;
 }
 
 export async function callModel(
@@ -20,7 +48,8 @@ export async function callModel(
   messages: Message[],
   options: CallModelOptions = {},
 ): Promise<string> {
-  const { temperature = 0.3, max_tokens = 4000, json_mode = false } = options;
+  const { temperature = 0.3, max_tokens = 4000, json_mode = false, _model_override } = options;
+  const targetModel = _model_override || model;
 
   const maxRetries = 3;
   const baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
@@ -39,7 +68,7 @@ export async function callModel(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model,
+          model: targetModel,
           messages,
           temperature,
           max_tokens,
@@ -61,7 +90,7 @@ export async function callModel(
       }
 
       const data = await res.json();
-      return data.choices[0].message.content;
+      return cleanResponse(data.choices?.[0]?.message?.content);
     } catch (err) {
       clearTimeout(timeout);
 
@@ -79,7 +108,7 @@ export async function callModel(
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'openrouter/auto',
+              model: 'openrouter/free',
               messages,
               temperature,
               max_tokens,
@@ -96,7 +125,7 @@ export async function callModel(
           }
 
           const data = await res.json();
-          return data.choices[0].message.content;
+          return cleanResponse(data.choices?.[0]?.message?.content);
         } catch (fallbackErr) {
           clearTimeout(fallbackTimeout);
           throw fallbackErr;
