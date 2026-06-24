@@ -151,7 +151,8 @@ export default function DashboardLayoutClient({
       >
         <div className="flex items-center justify-between gap-2 border-b px-5 py-4" style={{ minWidth: SIDEBAR_MIN, borderColor: 'var(--border-default)' }}>
           <div className="flex items-center gap-2">
-            <img src="https://i.postimg.cc/fyvVwyF5/Chat-GPT-Image-Jun-22-2026-08-08-03-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover" />
+            <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover dark:hidden" />
+            <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Nudge" className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" />
             <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Nudge</span>
           </div>
           <div className="flex items-center gap-1">

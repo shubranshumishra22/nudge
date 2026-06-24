@@ -52,71 +52,75 @@ export default function LoginPage() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center px-4"
-      style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
+      className="relative flex min-h-screen items-center justify-center px-4 overflow-hidden jali-bg"
     >
-      <div className="w-full max-w-[400px]">
-        <div className="mb-8 text-center">
-          <h1 className="font-serif text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Nudge Commerce</h1>
-          <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>Create your AI-powered store</p>
+      {/* Floating Indian Tricolor Background Blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="sutra-blob-saffron -top-[10%] -left-[10%] opacity-85" />
+        <div className="sutra-blob-white top-[20%] left-[15%] opacity-95" />
+        <div className="sutra-blob-green -bottom-[10%] -right-[10%] opacity-85" />
+      </div>
+
+      <div className="relative w-full max-w-[400px] z-10">
+        <div className="mb-8 text-center flex flex-col items-center gap-3">
+          <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm dark:hidden" />
+          <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-10 w-10 rounded-xl object-cover shadow-sm hidden dark:block" />
+          <h1 className="font-serif text-4xl font-bold tracking-tight text-[var(--ink)]">Karoji</h1>
+          <p className="text-sm text-[var(--muted)]">Create your AI-powered storefront</p>
         </div>
 
-        <div className="rounded-xl border p-8 shadow-md" style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)' }}>
+        <div className="sutra-card rounded-[32px] border border-zinc-200/80 bg-white p-8 shadow-lg">
           {error && (
-            <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#EF4444' }}>
+            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold border border-red-200 bg-red-50 text-red-700">
               {error}
             </div>
           )}
           {message && (
-            <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10B981' }}>
+            <div className="mb-4 rounded-xl px-4 py-3 text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700">
               {message}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email</label>
+            <div className="text-left">
+              <label className="mb-1.5 block text-xs font-bold text-[var(--ink)]">Email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-[10px] border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--border-focus)]"
-                style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }}
+                className="w-full px-4 text-sm"
                 required
               />
             </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Password</label>
+            <div className="text-left">
+              <label className="mb-1.5 block text-xs font-bold text-[var(--ink)]">Password</label>
               <input
                 type="password"
                 placeholder="At least 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 minLength={6}
-                className="w-full rounded-[10px] border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--border-focus)]"
-                style={{ backgroundColor: 'var(--bg-base)', borderColor: 'var(--border-default)', color: 'var(--text-primary)' }}
+                className="w-full px-4 text-sm"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-[10px] px-4 py-3 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
+              className="w-full rounded-full py-3.5 text-sm font-semibold transition-all bg-[var(--indigo)] text-white shadow-sm hover:bg-[#212191] active:scale-[0.97] disabled:opacity-50"
             >
               {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-6 text-center text-sm text-[var(--muted)]">
             {mode === 'login' ? (
               <>
                 No account?{' '}
                 <button
                   onClick={() => { setMode('signup'); setError(''); setMessage('') }}
-                  className="font-medium underline underline-offset-2"
-                  style={{ color: 'var(--text-primary)' }}
+                  className="font-semibold underline underline-offset-2 text-[var(--indigo)] hover:text-[#212191] transition-colors"
                 >
                   Sign up
                 </button>
@@ -126,8 +130,7 @@ export default function LoginPage() {
                 Already have an account?{' '}
                 <button
                   onClick={() => { setMode('login'); setError(''); setMessage('') }}
-                  className="font-medium underline underline-offset-2"
-                  style={{ color: 'var(--text-primary)' }}
+                  className="font-semibold underline underline-offset-2 text-[var(--indigo)] hover:text-[#212191] transition-colors"
                 >
                   Sign in
                 </button>

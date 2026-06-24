@@ -67,20 +67,20 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
         href={item.href}
         className="flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold rounded-lg transition-all"
         style={{
-          color: active ? '#FAFAF8' : '#6B6B67',
-          backgroundColor: active ? 'rgba(255,255,255,0.08)' : 'transparent',
-          borderLeft: active ? '2px solid #F97316' : '2px solid transparent',
-          borderRadius: active ? '0px 8px 8px 0px' : '8px'
+          color: active ? '#FFFFFF' : '#8E96B5',
+          backgroundColor: active ? 'rgba(255,255,255,0.06)' : 'transparent',
+          borderLeft: active ? '2px solid var(--indigo)' : '2px solid transparent',
+          borderRadius: active ? '0px 10px 10px 0px' : '10px'
         }}
         onMouseEnter={(e) => {
           if (!active) {
-            e.currentTarget.style.color = '#FAFAF8'
+            e.currentTarget.style.color = '#FFFFFF'
             e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'
           }
         }}
         onMouseLeave={(e) => {
           if (!active) {
-            e.currentTarget.style.color = '#6B6B67'
+            e.currentTarget.style.color = '#8E96B5'
             e.currentTarget.style.backgroundColor = 'transparent'
           }
         }}
@@ -102,13 +102,13 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
 
   return (
     <aside
-      className="fixed left-0 top-0 flex flex-col justify-between shrink-0"
+      className="fixed left-0 top-0 flex flex-col justify-between shrink-0 jali-bg"
       style={{
         width: '240px',
         height: '100vh',
-        backgroundColor: '#1A1A1A',
-        borderRight: '1px solid rgba(255,255,255,0.08)',
-        color: '#FAFAF8'
+        backgroundColor: '#0E0F19', /* Indigo-Black */
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        color: '#FFFFFF'
       }}
     >
       <div className="flex flex-col">
@@ -116,9 +116,14 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
         <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
           <div className="flex items-center gap-2">
             <img 
-              src="https://i.postimg.cc/fyvVwyF5/Chat-GPT-Image-Jun-22-2026-08-08-03-PM.png" 
+              src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" 
               alt="Nudge" 
-              className="h-7 w-7 rounded-[8px] object-cover" 
+              className="h-7 w-7 rounded-[8px] object-cover dark:hidden" 
+            />
+            <img 
+              src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" 
+              alt="Nudge" 
+              className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" 
             />
             <span className="text-sm font-bold tracking-tight text-white">Nudge</span>
           </div>
@@ -133,7 +138,7 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
         <nav className="flex flex-col gap-6 px-3.5 py-6">
           {sections.map((sec) => (
             <div key={sec.label} className="flex flex-col gap-1.5">
-              <span className="px-3.5 text-[9px] font-bold tracking-wider text-[#6B6B67] mb-1 uppercase">
+              <span className="px-3.5 text-[9px] font-bold tracking-wider text-[#5A607F] mb-1 uppercase">
                 {sec.label}
               </span>
               {sec.items.map(navLink)}
@@ -160,7 +165,7 @@ export default function AdminSidebar({ unreadMessagesCount = 0 }: AdminSidebarPr
 
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-xs font-medium text-[#6B6B67] hover:text-white transition-colors"
+          className="flex items-center gap-2 text-xs font-medium text-[#8E96B5] hover:text-white transition-colors"
         >
           <ArrowLeft size={13} />
           <span>Back to app</span>
