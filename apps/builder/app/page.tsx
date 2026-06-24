@@ -117,24 +117,24 @@ export default function LandingPage() {
         </section>
 
         {/* AI AGENCY SECTION */}
-        <section id="developers" className="px-4 py-28" style={{ backgroundColor: '#0A0A0A' }}>
+        <section id="developers" className="px-4 py-28" style={{ backgroundColor: 'var(--bg-base)' }}>
           <div className="mx-auto max-w-6xl text-center">
-            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight text-white leading-tight">
+            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight leading-tight" style={{ color: 'var(--text-primary)' }}>
               An entire AI agency<br />working for your business.
             </h2>
-            <p className="mt-4 text-sm max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <p className="mt-4 text-sm max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               Karoji researches, designs, develops, optimizes and deploys your website automatically — in your language.
             </p>
 
             <div className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               
               {/* Left: AI Workflow Card */}
-              <div className="lg:col-span-7 rounded-3xl overflow-hidden text-left" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="lg:col-span-7 rounded-3xl overflow-hidden text-left sutra-card" style={{ backgroundColor: 'var(--bg-surface)' }}>
                 {/* Card header */}
-                <div className="px-7 pt-7 pb-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                <div className="px-7 pt-7 pb-4 border-b" style={{ borderColor: 'var(--border-default)' }}>
                   <div className="flex items-center gap-2.5">
                     <span className="text-lg">☕</span>
-                    <span className="text-sm font-semibold text-white/80">Premium Coffee Store</span>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Premium Coffee Store</span>
                   </div>
                 </div>
 
@@ -150,7 +150,7 @@ export default function LandingPage() {
                   ].map((step, i) => (
                     <div key={i} className="flex items-center gap-3 py-2.5">
                       <div className="flex items-center justify-center h-5 w-5 shrink-0 rounded-full" style={{
-                        backgroundColor: step.done ? '#FF7A00' : step.active ? 'rgba(255,122,0,0.15)' : 'rgba(255,255,255,0.06)',
+                        backgroundColor: step.done ? '#FF7A00' : step.active ? 'rgba(255,122,0,0.15)' : 'var(--border-default)',
                         border: step.active ? '1px solid #FF7A00' : 'none',
                       }}>
                         {step.done ? (
@@ -160,11 +160,11 @@ export default function LandingPage() {
                         ) : step.active ? (
                           <div className="h-2 w-2 rounded-full" style={{ backgroundColor: '#FF7A00' }} />
                         ) : (
-                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
+                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--border-default)' }} />
                         )}
                       </div>
                       <span className="text-sm" style={{
-                        color: step.done ? 'rgba(255,255,255,0.9)' : step.active ? '#FF7A00' : 'rgba(255,255,255,0.3)',
+                        color: step.done ? 'var(--text-primary)' : step.active ? '#FF7A00' : 'var(--text-tertiary)',
                       }}>
                         {step.label}
                       </span>
@@ -174,15 +174,15 @@ export default function LandingPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="px-7 py-5 border-t text-center" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                  <div className="text-xs font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                <div className="px-7 py-5 border-t text-center" style={{ borderColor: 'var(--border-default)' }}>
+                  <div className="text-xs font-mono tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
                     ─────────────────────────
                   </div>
                   <div className="mt-2 flex items-center justify-center gap-2">
                     <span className="text-sm font-semibold" style={{ color: '#FF7A00' }}>Website Ready</span>
-                    <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>Live in 47s</span>
+                    <span className="text-xs font-mono" style={{ color: 'var(--text-tertiary)' }}>Live in 47s</span>
                   </div>
-                  <div className="mt-1 text-xs font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                  <div className="mt-1 text-xs font-mono tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
                     ─────────────────────────
                   </div>
                 </div>
@@ -197,12 +197,12 @@ export default function LandingPage() {
                   { icon: '↻', title: 'Optimization Loop', desc: 'Evaluates and improves every website before deployment.' },
                 ].map((card, i) => (
                   <div key={i} className="rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-0.5 group" style={{
-                    backgroundColor: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--border-default)',
                   }}>
                     <span className="text-xl block mb-4 group-hover:scale-110 transition-transform duration-300">{card.icon}</span>
-                    <h4 className="text-sm font-semibold text-white/90 mb-1.5">{card.title}</h4>
-                    <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{card.desc}</p>
+                    <h4 className="text-sm font-semibold mb-1.5" style={{ color: 'var(--text-primary)' }}>{card.title}</h4>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{card.desc}</p>
                   </div>
                 ))}
               </div>
@@ -217,11 +217,11 @@ export default function LandingPage() {
                 { label: 'Auto', sub: 'Deploy Included' },
               ].map((stat, i) => (
                 <div key={i} className="rounded-2xl py-6 px-4 text-center" style={{
-                  backgroundColor: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.05)',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-default)',
                 }}>
-                  <div className="text-xl font-semibold tracking-tight text-white/90">{stat.label}</div>
-                  <div className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{stat.sub}</div>
+                  <div className="text-xl font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>{stat.label}</div>
+                  <div className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{stat.sub}</div>
                 </div>
               ))}
             </div>
