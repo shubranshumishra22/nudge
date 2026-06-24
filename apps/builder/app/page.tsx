@@ -187,164 +187,123 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* INTERACTIVE STOREFRONT BUILDER PLAYGROUND (Replicating Screenshot 3 Layout) */}
-        <section id="playground" className="px-4 py-20 bg-white/20 dark:bg-zinc-950/15 backdrop-blur-[2px]">
+        {/* INTERACTIVE STOREFRONT BUILDER PLAYGROUND */}
+        <section id="playground" className="px-4 py-24">
           <div className="mx-auto max-w-6xl text-center">
-            <h2 className="font-serif text-3xl sm:text-4.5xl font-normal tracking-tight text-[#141414] dark:text-white mb-4">
+            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight" style={{ color: 'var(--text-primary)' }}>
               The Storefront Engine India Builds On
             </h2>
-            <p className="text-sm text-zinc-500 mb-12">Click each engine module to see how prompts translate to active merchant storefront interfaces</p>
+            <p className="mt-3 text-sm max-w-xl mx-auto" style={{ color: 'var(--text-tertiary)' }}>
+              Click each engine module to see how prompts translate to active merchant storefront interfaces
+            </p>
 
-            {/* Sandbox Container */}
-            <div className="rounded-[36px] md:rounded-[40px] border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.03)] p-6 md:p-10 text-left">
-              
-              {/* Tab Header list */}
-              <div className="flex items-center flex-wrap gap-2 border-b border-zinc-100 pb-5 mb-8">
-                <button
-                  onClick={() => handleEngineChange('akshar')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-                    selectedEngine === 'akshar'
-                      ? 'bg-indigo-50/50 text-[#3333CC] border border-indigo-100/50 shadow-sm'
-                      : 'bg-transparent text-zinc-400 hover:text-zinc-600'
-                  }`}
-                >
-                  <Cpu size={13} />
-                  Akshar UI Layout
-                </button>
-                <button
-                  onClick={() => handleEngineChange('saaras')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-                    selectedEngine === 'saaras'
-                      ? 'bg-indigo-50/50 text-[#3333CC] border border-indigo-100/50 shadow-sm'
-                      : 'bg-transparent text-zinc-400 hover:text-zinc-600'
-                  }`}
-                >
-                  <Mic size={13} />
-                  Saaras Voice Cataloger
-                </button>
-                <button
-                  onClick={() => handleEngineChange('mayura')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-                    selectedEngine === 'mayura'
-                      ? 'bg-indigo-50/50 text-[#3333CC] border border-indigo-100/50 shadow-sm'
-                      : 'bg-transparent text-zinc-400 hover:text-zinc-600'
-                  }`}
-                >
-                  <Globe size={13} />
-                  Mayura Translation
-                </button>
-                <button
-                  onClick={() => handleEngineChange('arya')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-                    selectedEngine === 'arya'
-                      ? 'bg-indigo-50/50 text-[#3333CC] border border-indigo-100/50 shadow-sm'
-                      : 'bg-transparent text-zinc-400 hover:text-zinc-600'
-                  }`}
-                >
-                  <Truck size={13} />
-                  Arya Logistics Agent
-                </button>
+            <div className="mt-12 rounded-2xl border text-left" style={{ borderColor: 'var(--border-default)', backgroundColor: 'var(--bg-surface)' }}>
+              {/* Engine Tabs */}
+              <div className="flex items-center flex-wrap gap-1.5 px-6 pt-5 pb-4 border-b" style={{ borderColor: 'var(--border-default)' }}>
+                {engines.map((e) => (
+                  <button
+                    key={e.id}
+                    onClick={() => handleEngineChange(e.id as any)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all"
+                    style={{
+                      backgroundColor: selectedEngine === e.id ? 'var(--bg-subtle)' : 'transparent',
+                      color: selectedEngine === e.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                    }}
+                  >
+                    {e.id === 'akshar' && <Cpu size={13} />}
+                    {e.id === 'saaras' && <Mic size={13} />}
+                    {e.id === 'mayura' && <Globe size={13} />}
+                    {e.id === 'arya' && <Truck size={13} />}
+                    {e.name}
+                  </button>
+                ))}
               </div>
 
-              {/* Grid content */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                
-                {/* Left Side: Dynamic Textarea / Prompt Input */}
-                <div className="lg:col-span-7 flex flex-col justify-between border border-zinc-200/80 dark:border-zinc-800 rounded-3xl p-6 min-h-[340px] bg-white/60 dark:bg-[#0E0F19]/60 backdrop-blur-sm relative">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:divide-x" style={{ borderColor: 'var(--border-default)' }}>
+                {/* Left: Prompt Input */}
+                <div className="lg:col-span-7 p-6 flex flex-col min-h-[320px] relative">
                   {isGenerating && (
-                    <div className="absolute inset-0 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-[2px] rounded-3xl flex flex-col items-center justify-center gap-3 z-15">
-                      <div className="h-6 w-6 rounded-full border-2 border-[var(--indigo)] border-t-transparent animate-spin" />
-                      <span className="text-xs font-bold text-[var(--indigo)] font-mono">RENDERING DESIGN SYSTEMS...</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10 rounded-2xl" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)', backdropFilter: 'blur(4px)' }}>
+                      <div className="h-5 w-5 rounded-full border-2 animate-spin" style={{ borderColor: 'var(--border-default)', borderTopColor: 'var(--text-primary)' }} />
+                      <span className="text-xs font-semibold font-mono" style={{ color: 'var(--text-tertiary)' }}>Rendering ...</span>
                     </div>
                   )}
 
                   <textarea
                     value={promptText}
                     onChange={(e) => setPromptText(e.target.value)}
-                    className="w-full text-zinc-700 text-base font-medium resize-none border-none focus:outline-none focus:ring-0 bg-transparent flex-1 leading-relaxed min-h-[160px]"
-                    placeholder="Describe your storefront idea here..."
+                    className="w-full resize-none border-none outline-none ring-0 bg-transparent flex-1 text-sm leading-relaxed min-h-[180px]"
+                    style={{ color: 'var(--text-primary)' }}
+                    placeholder="Describe your storefront in your own language..."
                   />
 
-                  <div className="border-t border-zinc-100 pt-5 mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      {/* Language dropdown */}
-                      <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-zinc-50 border border-zinc-200 text-xs font-semibold text-zinc-700 cursor-pointer hover:bg-zinc-100">
-                        <span>Language</span>
-                        <span className="text-[10px] text-zinc-400">▼</span>
-                      </div>
-                      <span className="text-xs text-zinc-400 font-mono">Indic Translation Active</span>
-                    </div>
-
+                  <div className="flex items-center justify-between pt-4 mt-2" style={{ borderTop: '1px solid var(--border-default)' }}>
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] text-zinc-400 font-mono">Karoji v3</span>
-                      {/* Generate / Build Action button */}
-                      <button 
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-secondary)' }}>
+                        <span>Language</span>
+                        <span>▼</span>
+                      </div>
+                      <span className="text-[11px] font-mono" style={{ color: 'var(--text-tertiary)' }}>Indic Translation Active</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-mono" style={{ color: 'var(--text-tertiary)' }}>Karoji v3</span>
+                      <button
                         onClick={handleGenerate}
-                        className="h-12 w-12 rounded-full bg-[#1E2245] text-white flex items-center justify-center hover:opacity-90 active:scale-95 transition-all shadow-sm"
-                        title="Generate Store"
+                        className="h-9 w-9 rounded-full flex items-center justify-center transition-all active:scale-90"
+                        style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
                       >
-                        <Play size={16} fill="white" className="ml-0.5" />
+                        <Play size={13} fill="currentColor" className="ml-0.5" />
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Side: Mock Phone Storefront Simulator */}
-                <div className="lg:col-span-5 flex flex-col justify-between">
-                  
-                  {/* Phone Mock Container */}
-                  <div 
-                    className="rounded-3xl border border-zinc-200 overflow-hidden shadow-sm flex flex-col min-h-[260px] transition-all duration-500 text-left"
-                    style={{ backgroundColor: currentEngine.bg }}
-                  >
-                    {/* Header */}
-                    <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
+                {/* Right: Simulator */}
+                <div className="lg:col-span-5 p-5 flex flex-col">
+                  <div className="rounded-xl overflow-hidden flex flex-col" style={{ border: '1px solid var(--border-default)', backgroundColor: currentEngine.bg || 'var(--bg-subtle)' }}>
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b" style={{ borderColor: 'var(--border-default)' }}>
                       <span className="text-[10px] font-bold uppercase tracking-wider font-sora" style={{ color: currentEngine.color }}>
                         {currentEngine.name}
                       </span>
-                      <span className="text-[8px] bg-zinc-100 text-zinc-500 font-bold px-1.5 py-0.5 rounded font-mono">SIMULATOR</span>
+                      <span className="text-[8px] font-bold px-2 py-0.5 rounded font-mono" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-tertiary)' }}>SIMULATOR</span>
                     </div>
-
-                    {/* Body */}
-                    <div className="p-5 flex-1 flex flex-col justify-between gap-4">
-                      <div>
-                        {/* Mini Hero layout */}
-                        <div className="rounded-xl p-3 text-center" style={{ backgroundColor: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.03)' }}>
-                          <span className="text-[7px] uppercase tracking-wider block font-bold font-mono" style={{ color: currentEngine.accent }}>AI Rendered</span>
-                          <h3 className="text-[11px] font-bold font-serif mt-1 leading-snug" style={{ color: currentEngine.color }}>
-                            {currentEngine.desc}
-                          </h3>
-                        </div>
-
-                        {/* Product list preview */}
-                        <div className="mt-3 flex flex-col gap-1.5">
-                          <span className="text-[7px] font-bold text-zinc-400 uppercase tracking-widest block mb-0.5">Preview Products</span>
-                          {currentEngine.products.map((p) => (
-                            <div key={p} className="flex items-center justify-between p-2 rounded bg-white border border-black/[0.03] shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
-                              <span className="text-[9px] font-medium text-zinc-800">{p}</span>
-                              <span className="text-[8px] font-bold font-mono" style={{ color: currentEngine.color }}>₹450</span>
-                            </div>
-                          ))}
-                        </div>
+                    <div className="p-4 flex flex-col gap-3">
+                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-base) 60%, transparent)' }}>
+                        <span className="block text-[8px] font-bold uppercase tracking-wider font-mono" style={{ color: currentEngine.accent }}>AI RENDERED</span>
+                        <h3 className="mt-1 text-xs font-semibold font-serif leading-snug" style={{ color: currentEngine.color }}>
+                          {currentEngine.desc}
+                        </h3>
                       </div>
-
-                      {/* Checkout payment simulation */}
-                      <button className="w-full py-2.5 text-[9px] font-bold rounded-lg text-white text-center transition-all active:scale-95 shadow-sm" style={{ backgroundColor: currentEngine.color }}>
-                        Go to Checkout (UPI Linked)
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Products</span>
+                        {currentEngine.products.map((p) => (
+                          <div key={p} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs" style={{ backgroundColor: 'var(--bg-base)', border: '1px solid var(--border-default)' }}>
+                            <span style={{ color: 'var(--text-primary)' }}>{p}</span>
+                            <span className="font-bold font-mono text-[11px]" style={{ color: currentEngine.color }}>₹450</span>
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97]"
+                        style={{ backgroundColor: currentEngine.color, color: '#FFFFFF' }}
+                      >
+                        Checkout — UPI
                       </button>
                     </div>
                   </div>
-
-                  <div className="border-t border-zinc-100 pt-4 mt-4 flex items-center justify-between text-xs text-zinc-500">
-                    <span>Try with other engines</span>
-                    <div className="flex gap-2">
+                  <div className="flex items-center justify-between pt-3 mt-1" style={{ borderTop: '1px solid var(--border-default)' }}>
+                    <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>Try engines</span>
+                    <div className="flex gap-1.5">
                       {engines.map((e) => (
-                        <button 
+                        <button
                           key={e.id}
                           onClick={() => handleEngineChange(e.id as any)}
-                          className={`h-6 w-6 rounded font-mono text-[9px] font-bold border transition-all ${
-                            selectedEngine === e.id ? 'border-[var(--indigo)] bg-indigo-50 text-[var(--indigo)]' : 'border-zinc-200 text-zinc-400'
-                          }`}
+                          className="h-6 w-6 rounded text-[9px] font-bold font-mono transition-all"
+                          style={{
+                            backgroundColor: selectedEngine === e.id ? 'var(--bg-subtle)' : 'transparent',
+                            color: selectedEngine === e.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                            border: selectedEngine === e.id ? '1px solid var(--border-default)' : '1px solid transparent',
+                          }}
                         >
                           {e.id[0].toUpperCase()}
                         </button>
@@ -352,7 +311,6 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
