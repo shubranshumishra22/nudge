@@ -423,55 +423,53 @@ export default function LandingPage() {
       <footer className="relative">
         <div className="mx-auto max-w-6xl px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-            {/* Column 1 */}
+            {/* Column 1 — Brand */}
             <div className="md:col-span-5 flex flex-col gap-4 text-left">
               <div className="flex items-center gap-2">
                 <img src="https://i.ibb.co/qLLzB0PX/Chat-GPT-Image-Jun-24-2026-10-52-58-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover dark:hidden" />
                 <img src="https://i.ibb.co/r2t1yhLF/Chat-GPT-Image-Jun-24-2026-10-53-04-PM.png" alt="Karoji" className="h-7 w-7 rounded-[8px] object-cover hidden dark:block" />
-                <span className="text-base font-bold font-sora tracking-tight text-zinc-800 dark:text-zinc-100">Karoji</span>
+                <span className="text-base font-bold font-sora tracking-tight" style={{ color: 'var(--text-primary)' }}>Karoji</span>
               </div>
-              <p className="text-sm text-[var(--muted)] leading-relaxed max-w-sm">
+              <p className="text-sm leading-relaxed max-w-sm" style={{ color: 'var(--text-secondary)' }}>
                 AI-powered sovereign e-commerce for Indian small businesses. Designed, engineered, and operated locally.
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs text-[var(--muted)] font-mono">Built by</span>
-                <a href="https://shubranshu.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-xs font-mono font-bold underline underline-offset-2 text-zinc-800 dark:text-zinc-200 hover:text-[var(--indigo)] transition-colors">Shubranshu</a>
+                <span className="text-xs font-mono" style={{ color: 'var(--text-tertiary)' }}>Built by</span>
+                <a href="https://shubranshu.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-xs font-mono font-bold underline underline-offset-2 transition-colors" style={{ color: 'var(--text-secondary)' }}>Shubranshu</a>
               </div>
             </div>
 
-            {/* Column 2 */}
+            {/* Column 2 — Company */}
             <div className="md:col-span-3 flex flex-col gap-3 text-left">
-              <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-100 uppercase tracking-wider">Products</h4>
-              <ul className="space-y-2 text-sm text-[var(--muted)]">
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Karoji Akshar Layouts</a></li>
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Karoji Saaras Voice</a></li>
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Karoji Arya Logistics</a></li>
+              <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>Company</h4>
+              <ul className="space-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <li><a href="/about" className="transition-colors hover:opacity-70">About Us</a></li>
+                <li>
+                  <a
+                    href="mailto:shubranshu@example.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:opacity-70"
+                  >
+                    Talk to the founder
+                  </a>
+                </li>
               </ul>
             </div>
 
-            {/* Column 3 */}
+            {/* Column 3 — Legal */}
             <div className="md:col-span-2 flex flex-col gap-3 text-left">
-              <h4 className="text-xs font-bold text-zinc-800 uppercase tracking-wider">Company</h4>
-              <ul className="space-y-2 text-sm text-[var(--muted)]">
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Trust Center</a></li>
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            {/* Column 4 */}
-            <div className="md:col-span-2 flex flex-col gap-3 text-left">
-              <h4 className="text-xs font-bold text-zinc-800 uppercase tracking-wider">Legal</h4>
-              <ul className="space-y-2 text-sm text-[var(--muted)]">
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Terms of Service</a></li>
+              <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>Legal</h4>
+              <ul className="space-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <li><a href="#" className="transition-colors hover:opacity-70">Privacy Policy</a></li>
+                <li><a href="#" className="transition-colors hover:opacity-70">Terms of Service</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-zinc-100 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--muted)] font-mono">
+          <div className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono" style={{ color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-default)' }}>
             <span>© {new Date().getFullYear()} karoji.ai. All rights reserved.</span>
-            <span className="mt-2 sm:mt-0 flex items-center gap-1">Made with taste in Bengaluru <span className="text-[var(--indigo)]">✦</span></span>
+            <span className="mt-2 sm:mt-0 flex items-center gap-1">Made with taste in Bengaluru <span style={{ color: '#FF7A00' }}>✦</span></span>
           </div>
         </div>
       </footer>
