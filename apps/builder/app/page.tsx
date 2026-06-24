@@ -117,7 +117,7 @@ export default function LandingPage() {
         </section>
 
         {/* AI AGENCY SECTION */}
-        <section id="developers" className="px-4 py-28" style={{ backgroundColor: 'var(--bg-base)' }}>
+        <section id="developers" className="px-4 py-28">
           <div className="mx-auto max-w-6xl text-center">
             <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight leading-tight" style={{ color: 'var(--text-primary)' }}>
               An entire AI agency<br />working for your business.
@@ -229,130 +229,14 @@ export default function LandingPage() {
         </section>
 
         {/* KAROJI VALUE STORY */}
-        <section className="px-4 py-20">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              
-              {/* Left narrative */}
-              <div className="lg:col-span-5 text-left flex flex-col gap-6">
-                <h2 className="font-serif text-4.5xl font-normal tracking-tight text-zinc-800 dark:text-zinc-100 leading-tight">
-                  India Sells Online
-                </h2>
-                <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-md">
-                  From handloom silk weavers in Banaras to organic spice growers in Wayanad, Karoji is empowering India&apos;s 100 million merchants to launch digital storefronts and capture customers globally.
-                </p>
-                <Link href="/login" className="w-fit rounded-full px-8 py-3.5 text-xs font-semibold bg-[#1E2245] text-white hover:bg-[#151833] transition-colors shadow-sm">
-                  Go to Dashboard
-                </Link>
-              </div>
-
-              {/* Right Media Card (Visualizing local craft going digital) */}
-              <div className="lg:col-span-7 w-full">
-                <div className="relative rounded-[32px] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/20 aspect-[16/10] shadow-md group cursor-pointer">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#E9C4A6]/20 to-[#A6C5E9]/10" />
-                  <div className="absolute inset-0 flex items-center justify-center p-8">
-                    <div className="w-full h-full rounded-2xl bg-zinc-100 border border-zinc-200/50 overflow-hidden relative flex items-center justify-center">
-                      <img 
-                        src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?q=80&w=1200&auto=format&fit=crop" 
-                        alt="Local Indian Handcrafts" 
-                        className="object-cover w-full h-full opacity-70 group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-                      <div className="h-16 w-16 rounded-full bg-[#1E2245]/90 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg z-10">
-                        <Play size={20} fill="white" className="ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* NUDGE SOVEREIGN VALUE CARDS */}
         <section className="px-4 py-24">
-          <div className="mx-auto max-w-6xl">
-            {/* Outline Card matching Container style */}
-            <div className="rounded-[36px] md:rounded-[40px] border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-md p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                
-                {/* Left Visual Mandala Card */}
-                <div className="lg:col-span-5 w-full">
-                  <div className="rounded-3xl bg-[radial-gradient(circle_at_center,rgba(51,51,204,0.18)_0%,rgba(12,13,22,0.95)_100%)] aspect-square border border-zinc-800 flex items-center justify-center relative overflow-hidden group shadow-md">
-                    {/* Clouds styling backdrop */}
-                    <div className="absolute -bottom-10 inset-x-0 h-40 bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.05),transparent_80%)] border-t border-white/5 pointer-events-none" />
-                    
-                    {/* Slow Rotating Mandala Floral emblem */}
-                    <svg className="h-32 w-32 text-indigo-200/90 animate-[spin_35s_linear_infinite]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="50" cy="50" r="10" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3"/>
-                      <circle cx="50" cy="50" r="22" stroke="currentColor" strokeWidth="1"/>
-                      {/* Leaf loops */}
-                      {Array.from({ length: 12 }).map((_, idx) => {
-                        const rot = idx * 30;
-                        return (
-                          <g key={idx} transform={`rotate(${rot} 50 50)`}>
-                            <path d="M50 28 C45 38, 55 38, 50 28" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            <path d="M50 14 C40 32, 60 32, 50 14" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
-                          </g>
-                        )
-                      })}
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Right narrative & icons list */}
-                <div className="lg:col-span-7 text-left flex flex-col justify-between min-h-[360px]">
-                  <div className="flex flex-col gap-8">
-                    
-                    {/* Feature 1 */}
-                    <div className="flex items-start gap-5">
-                      <div className="h-6 w-6 rounded-md bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 flex items-center justify-center text-[#3333CC] dark:text-indigo-400 shrink-0 mt-1">
-                        <Plus size={12} className="rotate-45" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">Sovereign Store Templates</h4>
-                        <p className="text-sm text-zinc-400 dark:text-zinc-400 mt-2 leading-relaxed">
-                          Visual theme layouts inspired by historical Indian styles, claywares, silk weaves, and handcraft aesthetics.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Feature 2 */}
-                    <div className="flex items-start gap-5">
-                      <div className="h-6 w-6 rounded-md bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 flex items-center justify-center text-[#3333CC] dark:text-indigo-400 shrink-0 mt-1">
-                        <Plus size={12} className="rotate-45" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">Frictionless UPI Checkout</h4>
-                        <p className="text-sm text-zinc-400 dark:text-zinc-400 mt-2 leading-relaxed">
-                          Integrated mobile UPI deep-linking (PhonePe, GPay, Paytm) with zero merchant setups or sign-up friction.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Feature 3 */}
-                    <div className="flex items-start gap-5">
-                      <div className="h-6 w-6 rounded-md bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 flex items-center justify-center text-[#3333CC] dark:text-indigo-400 shrink-0 mt-1">
-                        <Plus size={12} className="rotate-45" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">WhatsApp Confirmation Agent</h4>
-                        <p className="text-sm text-zinc-400 dark:text-zinc-400 mt-2 leading-relaxed">
-                          Automates customer shipping confirmations and verification routes directly inside local WhatsApp threads.
-                        </p>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <Link href="/login" className="w-fit rounded-full px-8 py-3.5 text-xs font-semibold bg-[#1E2245] text-white hover:bg-[#151833] dark:bg-white dark:text-[#1E2245] dark:hover:bg-zinc-100 mt-8 shadow-sm transition-colors">
-                    Get Started
-                  </Link>
-                </div>
-
-              </div>
-            </div>
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight leading-tight" style={{ color: 'var(--text-primary)' }}>
+              India has always been a land of makers.
+            </h2>
+            <p className="mt-6 text-base leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+              From handcrafted textiles and spices to modern startups and local brands, our strength has never been in what we consume but in what we create. Karoji exists to help Indian businesses step onto the global stage and turn local ambition into worldwide opportunity.
+            </p>
           </div>
         </section>
 
