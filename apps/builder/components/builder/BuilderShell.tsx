@@ -4,6 +4,7 @@ import { useReducer, useState, useCallback, useRef } from 'react'
 
 import ChatPane from './ChatPane'
 import PreviewPane from './PreviewPane'
+import StoreBuildingView from './StoreBuildingView'
 
 export interface Message {
   id: string
@@ -75,9 +76,11 @@ function reducer(state: BuilderState, action: Action): BuilderState {
 
 interface BuilderShellProps {
   storeId: string
+  isBuildingInitial?: boolean
 }
 
-export default function BuilderShell({ storeId }: BuilderShellProps) {
+export default function BuilderShell({ storeId, isBuildingInitial = false }: BuilderShellProps) {
+  const [isBuilding, setIsBuilding] = useState(isBuildingInitial)
   const [state, dispatch] = useReducer(reducer, {
     messages: [],
     isAiResponding: false,
@@ -187,6 +190,14 @@ export default function BuilderShell({ storeId }: BuilderShellProps) {
   }, [])
 
   const previewUrl = `/api/builder/preview?store_id=${storeId}&t=${previewTs}`
+
+  if (isBuilding) {
+    return (
+      <div className="flex h-screen items-center justify-center p-8 bg-[var(--bg-base)]">
+        <StoreBuildingView storeId={storeId} onComplete={() => setIsBuilding(false)} />
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen flex-col" style={{ backgroundColor: 'var(--bg-base)' }}>

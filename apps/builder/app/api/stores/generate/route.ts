@@ -147,165 +147,198 @@ export async function POST(request: Request) {
   const baseSlug = slugify(input.business_name)
   const slug = await uniqueSlug(db, baseSlug)
 
-  // Run the multi-agent pipeline
-  const result = await runPipeline(input)
-
-  if (result.success) {
-    // Create store
-    const { data: store, error: storeError } = await db
-      .from('stores')
-      .insert({
-        owner_id: user.id,
-        name: input.business_name,
-        slug,
-        description: input.description,
-        business_type: input.business_type,
-        ai_config: result as unknown as Record<string, unknown>,
-        currency: 'INR',
-        delivery_fee: 0,
-        status: 'draft',
-      })
-      .select('id')
-      .single()
-
-    if (storeError || !store) {
-      return NextResponse.json({ error: storeError?.message ?? 'Failed to create store' }, { status: 500 })
-    }
-
-    // Insert theme from design output
-    const { error: themeError } = await db.from('store_themes').insert({
-      store_id: store.id,
-      primary_color: result.design.primary_color,
-      accent_color: result.design.accent_color,
-      background_color: result.design.background_color,
-      font_style: fontStyleFromHeading(result.design.font_heading),
-      hero_headline: result.content.hero_headline,
-      hero_subheading: result.content.hero_subheadline,
-      sections_order: result.research.common_sections,
-      sections_enabled: {
-        hero: true,
-        products: true,
-        about: true,
-        contact: true,
-      },
+  // 1. Create the store immediately in draft status with null ai_config
+  const { data: store, error: storeError } = await db
+    .from('stores')
+    .insert({
+      owner_id: user.id,
+      name: input.business_name,
+      slug,
+      description: input.description,
+      business_type: input.business_type,
+      ai_config: null, // null indicates building state
+      currency: 'INR',
+      delivery_fee: 0,
+      status: 'draft',
     })
+    .select('id')
+    .single()
 
-    if (themeError) {
-      console.error('Theme creation failed:', themeError)
-    }
+  if (storeError || !store) {
+    return NextResponse.json({ error: storeError?.message ?? 'Failed to create store record' }, { status: 500 })
+  }
 
-    // Insert products
-    for (let i = 0; i < input.products.length; i++) {
-      const p = input.products[i]
-      const { data: product, error: productError } = await db.from('products').insert({
-        store_id: store.id,
-        name: p.name,
-        slug: slugify(p.name),
-        description: p.description || '',
-        price: p.price,
-        category: input.business_type,
-        is_featured: i === 0,
-        sort_order: i,
-      }).select('id').single()
+  // 2. Mark onboarding as completed immediately so middleware allows user to dashboard/builder
+  await db
+    .from('profiles')
+    .update({ onboarding_completed: true })
+    .eq('id', user.id)
 
-      if (productError) {
-        console.error('Product creation failed:', productError)
-      } else if (product && p.image_url) {
-        const { error: imageError } = await db.from('product_images').insert({
-          product_id: product.id,
-          url: p.image_url,
-          alt_text: p.name,
-          sort_order: 0,
-          is_primary: true,
-        })
+  // 3. Spawn pipeline execution in the background
+  generateStoreInBackground(db, store.id, user.id, input, slug).catch((err) => {
+    console.error('Unhandled background store generation crash:', err)
+  })
 
-        if (imageError) {
-          console.error('Product image creation failed:', imageError)
+  // 4. Return success response immediately
+  return NextResponse.json({
+    success: true,
+    store_id: store.id,
+    slug,
+    preview_url: `/onboard/preview?store=${store.id}`,
+  })
+}
+
+async function generateStoreInBackground(
+  db: any,
+  storeId: string,
+  userId: string,
+  input: any,
+  slug: string
+) {
+  try {
+    const result = await runPipeline(input)
+
+    if (result.success) {
+      // Insert theme from design output
+      const { error: themeError } = await db.from('store_themes').insert({
+        store_id: storeId,
+        primary_color: result.design.primary_color,
+        accent_color: result.design.accent_color,
+        background_color: result.design.background_color,
+        font_style: fontStyleFromHeading(result.design.font_heading),
+        hero_headline: result.content.hero_headline,
+        hero_subheading: result.content.hero_subheadline,
+        sections_order: result.research.common_sections,
+        sections_enabled: {
+          hero: true,
+          products: true,
+          about: true,
+          contact: true,
+        },
+      })
+
+      if (themeError) {
+        console.error('Theme creation failed:', themeError)
+      }
+
+      // Insert products
+      for (let i = 0; i < input.products.length; i++) {
+        const p = input.products[i]
+        const { data: product, error: productError } = await db.from('products').insert({
+          store_id: storeId,
+          name: p.name,
+          slug: slugify(p.name),
+          description: p.description || '',
+          price: p.price,
+          category: input.business_type,
+          is_featured: i === 0,
+          sort_order: i,
+        }).select('id').single()
+
+        if (productError) {
+          console.error('Product creation failed:', productError)
+        } else if (product && p.image_url) {
+          const { error: imageError } = await db.from('product_images').insert({
+            product_id: product.id,
+            url: p.image_url,
+            alt_text: p.name,
+            sort_order: 0,
+            is_primary: true,
+          })
+
+          if (imageError) {
+            console.error('Product image creation failed:', imageError)
+          }
         }
       }
-    }
 
-    // Save generated HTML to storage
-    const { error: uploadError } = await db.storage
-      .from('storefronts')
-      .upload(`${store.id}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
-        upsert: true,
-        contentType: 'text/html',
-      })
-
-    if (uploadError) {
-      console.error('HTML upload failed:', uploadError)
-    }
-
-    // Log generation
-    await db.from('ai_generation_logs').insert({
-      owner_id: user.id,
-      store_id: store.id,
-      input_payload: input as unknown as Record<string, unknown>,
-      output_config: result as unknown as Record<string, unknown>,
-      model_used: result.models_used.join(', '),
-      tokens_used: null,
-      duration_ms: result.duration_ms,
-      success: true,
-      error_message: null,
-    })
-
-    return NextResponse.json({
-      success: true,
-      store_id: store.id,
-      slug,
-      preview_url: `/onboard/preview?store=${store.id}`,
-    })
-  } else {
-    // Partial failure — save whatever we have
-    let partialStore = null
-    const { data: store } = await db
-      .from('stores')
-      .insert({
-        owner_id: user.id,
-        name: input.business_name,
-        slug,
-        description: input.description,
-        business_type: input.business_type,
-        ai_config: result as unknown as Record<string, unknown>,
-        currency: 'INR',
-        delivery_fee: 0,
-        status: 'draft',
-      })
-      .select('id')
-      .single()
-
-    if (store) {
-      partialStore = store
-      // Save whatever HTML we have
-      await db.storage
+      // Save generated HTML to storage
+      const { error: uploadError } = await db.storage
         .from('storefronts')
-        .upload(`${store.id}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
+        .upload(`${storeId}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
           upsert: true,
           contentType: 'text/html',
         })
+
+      if (uploadError) {
+        console.error('HTML upload failed:', uploadError)
+      }
+
+      // Update store details and config last to signal completion
+      const { error: storeUpdateError } = await db
+        .from('stores')
+        .update({
+          ai_config: result as unknown as Record<string, unknown>,
+        })
+        .eq('id', storeId)
+
+      if (storeUpdateError) {
+        throw storeUpdateError
+      }
+
+      // Log generation
+      await db.from('ai_generation_logs').insert({
+        owner_id: userId,
+        store_id: storeId,
+        input_payload: input as unknown as Record<string, unknown>,
+        output_config: result as unknown as Record<string, unknown>,
+        model_used: result.models_used.join(', '),
+        tokens_used: null,
+        duration_ms: result.duration_ms,
+        success: true,
+        error_message: null,
+      })
+    } else {
+      // Partial failure — save whatever we have
+      await db.storage
+        .from('storefronts')
+        .upload(`${storeId}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
+          upsert: true,
+          contentType: 'text/html',
+        })
+
+      // Update store details with config (which has error message)
+      await db
+        .from('stores')
+        .update({
+          ai_config: result as unknown as Record<string, unknown>,
+        })
+        .eq('id', storeId)
+
+      await db.from('ai_generation_logs').insert({
+        owner_id: userId,
+        store_id: storeId,
+        input_payload: input as unknown as Record<string, unknown>,
+        output_config: result as unknown as Record<string, unknown>,
+        model_used: result.models_used.join(', '),
+        tokens_used: null,
+        duration_ms: result.duration_ms,
+        success: false,
+        error_message: result.error || 'Unknown error',
+      })
     }
+  } catch (err) {
+    console.error('Background store generation crashed:', err)
+    // Mark the store with an error status in ai_config so UI can show it
+    await db
+      .from('stores')
+      .update({
+        ai_config: { error: err instanceof Error ? err.message : 'Pipeline crashed', success: false },
+      })
+      .eq('id', storeId)
 
     await db.from('ai_generation_logs').insert({
-      owner_id: user.id,
-      store_id: partialStore?.id || null,
+      owner_id: userId,
+      store_id: storeId,
       input_payload: input as unknown as Record<string, unknown>,
-      output_config: result as unknown as Record<string, unknown>,
-      model_used: result.models_used.join(', '),
+      output_config: null,
+      model_used: '',
       tokens_used: null,
-      duration_ms: result.duration_ms,
+      duration_ms: 0,
       success: false,
-      error_message: result.error || 'Unknown error',
+      error_message: err instanceof Error ? err.message : String(err),
     })
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: result.error || 'Pipeline failed',
-        partial: true,
-        store_id: partialStore?.id || null,
-      },
-      { status: 500 },
-    )
   }
 }
+
+

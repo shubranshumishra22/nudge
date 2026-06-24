@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Package, Plus, Share2, Eye, Palette, Copy, Check } from 'lucide-react'
+import { createBrowserSupabaseClient } from '@nudge/db'
+import StoreBuildingView from '@/components/builder/StoreBuildingView'
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
@@ -22,11 +24,61 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function DashboardHomeClient({
-  greeting, name, store, stats, orders,
+  greeting, name, store: initialStore, stats: initialStats, orders: initialOrders,
 }: {
   greeting: string; name: string; store: any; stats: any; orders: any[]
 }) {
+  const [store, setStore] = useState(initialStore)
+  const [stats, setStats] = useState(initialStats)
+  const [orders, setOrders] = useState(initialOrders)
   const [copied, setCopied] = useState(false)
+
+  // Poll store status if store is building (ai_config is null and no error)
+  const isBuilding = store && !store.ai_config
+
+  useEffect(() => {
+    if (!isBuilding) return
+
+    const supabase = createBrowserSupabaseClient()
+    const interval = setInterval(async () => {
+      const { data: updatedStore, error } = await supabase
+        .from('stores')
+        .select('*')
+        .eq('id', store.id)
+        .single() as any
+
+      if (error) {
+        console.error('Error polling store status:', error)
+        return
+      }
+
+      if (updatedStore && updatedStore.ai_config) {
+        clearInterval(interval)
+        setStore(updatedStore)
+
+        // Refetch orders & stats since they are now generated
+        const { data: newOrders } = await supabase
+          .from('orders')
+          .select('*, order_items(*)')
+          .eq('store_id', store.id)
+          .order('created_at', { ascending: false })
+
+        const { count: productCount } = await supabase
+          .from('products')
+          .select('*', { count: 'exact', head: true })
+          .eq('store_id', store.id)
+
+        setOrders(newOrders || [])
+        setStats({
+          totalOrders: newOrders?.length || 0,
+          revenueThisMonth: 0,
+          productCount: productCount || 0,
+        })
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [isBuilding, store?.id])
 
   if (!store) {
     return (
@@ -35,6 +87,29 @@ export default function DashboardHomeClient({
         <h2 className="mt-4 font-serif text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Welcome to Nudge</h2>
         <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>Create your first store to get started.</p>
         <Link href="/onboard" className="mt-6 rounded-[10px] px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}>Create store</Link>
+      </div>
+    )
+  }
+
+  // If the store is building, render the premium building interface
+  if (isBuilding) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center py-12">
+        <StoreBuildingView
+          storeId={store.id}
+          onComplete={() => {
+            // Refetch store data to trigger state updates and render dashboard
+            const supabase = createBrowserSupabaseClient()
+            supabase
+              .from('stores')
+              .select('*')
+              .eq('id', store.id)
+              .single()
+              .then(({ data }) => {
+                if (data) setStore(data)
+              })
+          }}
+        />
       </div>
     )
   }
@@ -137,3 +212,4 @@ export default function DashboardHomeClient({
     </div>
   )
 }
+

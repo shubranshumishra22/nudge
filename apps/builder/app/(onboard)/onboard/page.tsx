@@ -167,7 +167,7 @@ export default function OnboardPage() {
       }
 
       const data = await res.json()
-      router.push(`/onboard/preview?store=${data.store_id || data.storeId}`)
+      router.push(`/builder?store=${data.store_id || data.storeId}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

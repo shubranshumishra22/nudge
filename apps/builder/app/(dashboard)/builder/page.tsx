@@ -38,12 +38,14 @@ export default async function BuilderPage({
   const db = getDb()
   const { data: store } = await db
     .from('stores')
-    .select('id')
+    .select('id, ai_config')
     .eq('id', storeId)
     .eq('owner_id', user.id)
     .single()
 
   if (!store) redirect('/dashboard')
 
-  return <BuilderShell storeId={store.id} />
+  const isBuilding = !store.ai_config
+
+  return <BuilderShell storeId={store.id} isBuildingInitial={isBuilding} />
 }
