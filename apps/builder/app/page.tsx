@@ -8,28 +8,13 @@ import {
   Zap, 
   Building2, 
   ArrowRight, 
-  Sparkles, 
-  Smartphone, 
-  Cpu, 
-  FileJson, 
   Play, 
-  ArrowUpRight, 
-  Mic, 
-  Terminal, 
-  Globe,
-  Plus,
-  FileText,
-  CreditCard,
-  Truck
+  Plus
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import ContactForm from '@/components/ContactForm'
 
 export default function LandingPage() {
-  const [selectedEngine, setSelectedEngine] = useState<'akshar' | 'saaras' | 'mayura' | 'arya'>('akshar')
-  const [activeCodeTab, setActiveCodeTab] = useState<'python' | 'js' | 'curl'>('python')
-  const [promptText, setPromptText] = useState('मुझे एक जैविक मसालों की दुकान बनानी है जिसका रंग हल्दी जैसा पीला हो और बहुत ही साफ़ सुथरा डिज़ाइन हो।')
-  const [isGenerating, setIsGenerating] = useState(false)
 
   const phrases = [
     { q: "Want to build a website?" },
@@ -51,70 +36,6 @@ export default function LandingPage() {
     return () => clearInterval(interval)
   }, [phrases.length])
 
-  const engines = [
-    { 
-      id: 'akshar', 
-      name: 'Akshar Layouts', 
-      type: 'UI Generator', 
-      desc: 'Generates custom Tailwind themes from vernacular text prompts', 
-      color: '#3333CC',
-      accent: '#DF9C2A', // Haldi Yellow
-      bg: '#FFFDF9',
-      products: ['Premium Haldi Powder', 'Organic Cumin Seed', 'Kashmiri Red Chilli'],
-      prompt: 'मुझे एक जैविक मसालों की दुकान बनानी है जिसका रंग हल्दी जैसा पीला हो और बहुत ही साफ़ सुथरा डिज़ाइन हो।'
-    },
-    { 
-      id: 'saaras', 
-      name: 'Saaras Voice ASR', 
-      type: 'Audio Inventory', 
-      desc: 'Transcribes merchant audio files to list catalog products', 
-      color: '#6EA335',
-      accent: '#800020', // Banarasi Crimson
-      bg: '#FCFAF7',
-      products: ['Katan Silk Saree', 'Tanchoi Silk Brocade', 'Banarasi Georgette Saree'],
-      prompt: 'मुझे बनारसी साड़ियों की दुकान बनानी है जिसका रंग गहरा लाल और सुनहरा हो।'
-    },
-    { 
-      id: 'mayura', 
-      name: 'Mayura Translate', 
-      type: 'Indic Localization', 
-      desc: 'Auto-translates catalogs and templates across 23 languages', 
-      color: '#B81514',
-      accent: '#8A4F35', // Clay Brown
-      bg: '#FAF9F6',
-      products: ['Terracotta Tea Set', 'Minimalist Clay Vase', 'Glazed Mitti Bowl'],
-      prompt: 'एक मिट्टी के बर्तनों का स्टोर बनाओ, रंग अर्दी ब्राउन हो।'
-    },
-    { 
-      id: 'arya', 
-      name: 'Arya Logistics Agent', 
-      type: 'Logistics Orchestrator', 
-      desc: 'Dispatches parcel details and schedules Shadowfax/Dunzo routes', 
-      color: '#DF9C2A',
-      accent: '#212191', // Indigo Accent
-      bg: '#F8F9FC',
-      products: ['Kesar Face Elixir', 'Saffron kumkumadi Scrub', 'Ayurvedic Saffron Lip Butter'],
-      prompt: 'organic cosmetics store with saffron orange gradients and premium sans fonts.'
-    }
-  ]
-
-  const handleGenerate = () => {
-    setIsGenerating(true)
-    setTimeout(() => {
-      setIsGenerating(false)
-    }, 1500)
-  }
-
-  const handleEngineChange = (id: 'akshar' | 'saaras' | 'mayura' | 'arya') => {
-    setSelectedEngine(id)
-    const engine = engines.find(e => e.id === id)
-    if (engine) {
-      setPromptText(engine.prompt)
-    }
-  }
-
-  const currentEngine = engines.find(e => e.id === selectedEngine) || engines[0]
-
   const plans = [
     { name: 'Free', price: '₹0', icon: Zap, features: ['1 active store', '5 products', 'Karoji subdomain', 'Basic payment options', 'Karoji footer branding', 'Community support'], cta: 'Get started', href: '/login' },
     { name: 'Pro', price: '₹499', icon: Zap, features: ['Up to 5 active stores', 'Unlimited products', 'Custom domain mapping', 'Zero Karoji branding', 'WhatsApp order notifications', '24/7 Priority support'], cta: 'Start free trial', href: '/login', accent: true, badge: 'Most Popular' },
@@ -134,7 +55,7 @@ export default function LandingPage() {
 
       <main className="flex-1 relative z-10">
         {/* HERO SECTION */}
-        <section className="relative flex min-h-[92vh] flex-col items-center justify-center px-4 pt-36 sm:pt-40 lg:pt-44 pb-16 overflow-hidden">
+        <section className="relative flex min-h-[92vh] flex-col items-center justify-center px-4 pt-20 sm:pt-24 lg:pt-28 pb-10 overflow-hidden">
 
           <div className="relative mx-auto max-w-4xl w-full text-center z-10 flex flex-col items-center">
             {/* Title / Animating Multi-lingual Question Stack */}
@@ -154,15 +75,15 @@ export default function LandingPage() {
             </div>
 
             {/* Fixed Answer below the question */}
-            <div className="font-sora text-2xl sm:text-4xl lg:text-[3rem] font-extrabold tracking-tight text-[#E6651B] dark:text-[#F38858] mt-10 mb-8 select-none leading-none">
+            <div className="font-sora text-2xl sm:text-4xl lg:text-[3rem] font-extrabold tracking-tight text-[#E6651B] dark:text-[#F38858] mt-6 mb-6 select-none leading-none">
               karoji.ai
             </div>
 
-            <p className="mt-4 text-base sm:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xl">
+            <p className="mt-3 text-base sm:text-lg leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)' }}>
               Describe your brand in your native language. Our custom layout and localization engines generate a high-performing digital storefront in 5 minutes. Powered by karoji.ai.
             </p>
             
-            <div className="mt-10 flex items-center justify-center gap-4">
+            <div className="mt-7 flex items-center justify-center gap-4">
               <Link href="/login" className="rounded-full px-8 py-3.5 text-xs font-semibold bg-[#1E2245] text-white hover:bg-[#151833] dark:bg-white dark:text-[#1E2245] dark:hover:bg-zinc-100 transition-all active:scale-[0.98] shadow-md shadow-indigo-900/5 hover:shadow-lg hover:shadow-indigo-900/10">
                 Go to Dashboard
               </Link>
@@ -172,152 +93,143 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Grayscale partner logo strip */}
-          <div className="relative w-full max-w-7xl mx-auto mt-24 z-10 px-4 border-t border-zinc-100/80 pt-8">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] block text-center mb-6">Sovereign merchants build with Karoji</span>
-            <div className="flex items-center justify-between gap-8 flex-wrap opacity-40 hover:opacity-75 transition-opacity max-w-5xl mx-auto">
-              <span className="text-sm font-semibold tracking-wider font-mono">BANARAS WEAVERS</span>
-              <span className="text-sm font-bold tracking-tight">MITTI STUDIO</span>
-              <span className="text-sm font-extrabold tracking-tighter">KESAR ORGANICS</span>
-              <span className="text-sm font-semibold font-mono">BharatAgri</span>
-              <span className="text-sm font-bold tracking-tight">DECENTRO</span>
-              <span className="text-sm font-bold tracking-tight">KAPI ROASTERS</span>
-              <span className="text-sm font-semibold">Bengal Handlooms</span>
-            </div>
-          </div>
-        </section>
-
-        {/* INTERACTIVE STOREFRONT BUILDER PLAYGROUND */}
-        <section id="playground" className="px-4 py-24">
-          <div className="mx-auto max-w-6xl text-center">
-            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight" style={{ color: 'var(--text-primary)' }}>
-              The Storefront Engine India Builds On
-            </h2>
-            <p className="mt-3 text-sm max-w-xl mx-auto" style={{ color: 'var(--text-tertiary)' }}>
-              Click each engine module to see how prompts translate to active merchant storefront interfaces
-            </p>
-
-            <div className="mt-12 rounded-2xl border text-left" style={{ borderColor: 'var(--border-default)', backgroundColor: 'var(--bg-surface)' }}>
-              {/* Engine Tabs */}
-              <div className="flex items-center flex-wrap gap-1.5 px-6 pt-5 pb-4 border-b" style={{ borderColor: 'var(--border-default)' }}>
-                {engines.map((e) => (
-                  <button
-                    key={e.id}
-                    onClick={() => handleEngineChange(e.id as any)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all"
-                    style={{
-                      backgroundColor: selectedEngine === e.id ? 'var(--bg-subtle)' : 'transparent',
-                      color: selectedEngine === e.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                    }}
-                  >
-                    {e.id === 'akshar' && <Cpu size={13} />}
-                    {e.id === 'saaras' && <Mic size={13} />}
-                    {e.id === 'mayura' && <Globe size={13} />}
-                    {e.id === 'arya' && <Truck size={13} />}
-                    {e.name}
-                  </button>
+          {/* Services Marquee */}
+          <div className="relative w-full max-w-7xl mx-auto mt-10 z-10 px-4 overflow-hidden">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] block text-center mb-8" style={{ color: 'var(--text-tertiary)' }}>Build a store for any business</span>
+            <div className="relative w-full overflow-hidden">
+              <div className="flex gap-16 animate-marquee" style={{ width: 'max-content' }}>
+                {[...Array(2)].map((_, dup) => (
+                  <div key={dup} className="flex gap-16 items-center shrink-0">
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>☕ Coffee Shop</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>👗 Clothing</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>🍞 Bakery</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>💄 Beauty</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>🏋️ Fitness</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>🛍️ Handmade</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>🌿 Organic</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>📚 Books</span>
+                    <span className="text-sm font-semibold tracking-tight whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>💎 Jewelry</span>
+                  </div>
                 ))}
               </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:divide-x" style={{ borderColor: 'var(--border-default)' }}>
-                {/* Left: Prompt Input */}
-                <div className="lg:col-span-7 p-6 flex flex-col min-h-[320px] relative">
-                  {isGenerating && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10 rounded-2xl" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)', backdropFilter: 'blur(4px)' }}>
-                      <div className="h-5 w-5 rounded-full border-2 animate-spin" style={{ borderColor: 'var(--border-default)', borderTopColor: 'var(--text-primary)' }} />
-                      <span className="text-xs font-semibold font-mono" style={{ color: 'var(--text-tertiary)' }}>Rendering ...</span>
-                    </div>
-                  )}
-
-                  <textarea
-                    value={promptText}
-                    onChange={(e) => setPromptText(e.target.value)}
-                    className="w-full resize-none border-none outline-none ring-0 bg-transparent flex-1 text-sm leading-relaxed min-h-[180px]"
-                    style={{ color: 'var(--text-primary)' }}
-                    placeholder="Describe your storefront in your own language..."
-                  />
-
-                  <div className="flex items-center justify-between pt-4 mt-2" style={{ borderTop: '1px solid var(--border-default)' }}>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-secondary)' }}>
-                        <span>Language</span>
-                        <span>▼</span>
-                      </div>
-                      <span className="text-[11px] font-mono" style={{ color: 'var(--text-tertiary)' }}>Indic Translation Active</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-mono" style={{ color: 'var(--text-tertiary)' }}>Karoji v3</span>
-                      <button
-                        onClick={handleGenerate}
-                        className="h-9 w-9 rounded-full flex items-center justify-center transition-all active:scale-90"
-                        style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)' }}
-                      >
-                        <Play size={13} fill="currentColor" className="ml-0.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: Simulator */}
-                <div className="lg:col-span-5 p-5 flex flex-col">
-                  <div className="rounded-xl overflow-hidden flex flex-col" style={{ border: '1px solid var(--border-default)', backgroundColor: currentEngine.bg || 'var(--bg-subtle)' }}>
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b" style={{ borderColor: 'var(--border-default)' }}>
-                      <span className="text-[10px] font-bold uppercase tracking-wider font-sora" style={{ color: currentEngine.color }}>
-                        {currentEngine.name}
-                      </span>
-                      <span className="text-[8px] font-bold px-2 py-0.5 rounded font-mono" style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-tertiary)' }}>SIMULATOR</span>
-                    </div>
-                    <div className="p-4 flex flex-col gap-3">
-                      <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-base) 60%, transparent)' }}>
-                        <span className="block text-[8px] font-bold uppercase tracking-wider font-mono" style={{ color: currentEngine.accent }}>AI RENDERED</span>
-                        <h3 className="mt-1 text-xs font-semibold font-serif leading-snug" style={{ color: currentEngine.color }}>
-                          {currentEngine.desc}
-                        </h3>
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Products</span>
-                        {currentEngine.products.map((p) => (
-                          <div key={p} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs" style={{ backgroundColor: 'var(--bg-base)', border: '1px solid var(--border-default)' }}>
-                            <span style={{ color: 'var(--text-primary)' }}>{p}</span>
-                            <span className="font-bold font-mono text-[11px]" style={{ color: currentEngine.color }}>₹450</span>
-                          </div>
-                        ))}
-                      </div>
-                      <button
-                        className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97]"
-                        style={{ backgroundColor: currentEngine.color, color: '#FFFFFF' }}
-                      >
-                        Checkout — UPI
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between pt-3 mt-1" style={{ borderTop: '1px solid var(--border-default)' }}>
-                    <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>Try engines</span>
-                    <div className="flex gap-1.5">
-                      {engines.map((e) => (
-                        <button
-                          key={e.id}
-                          onClick={() => handleEngineChange(e.id as any)}
-                          className="h-6 w-6 rounded text-[9px] font-bold font-mono transition-all"
-                          style={{
-                            backgroundColor: selectedEngine === e.id ? 'var(--bg-subtle)' : 'transparent',
-                            color: selectedEngine === e.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                            border: selectedEngine === e.id ? '1px solid var(--border-default)' : '1px solid transparent',
-                          }}
-                        >
-                          {e.id[0].toUpperCase()}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
 
-        {/* KAROJI VALUE STORY — Replicating Screenshot 5 Layout for SMB Digitisation */}
-        <section className="px-4 py-20 bg-zinc-50/20 dark:bg-zinc-900/10 border-t border-zinc-100/80 dark:border-zinc-900/80 backdrop-blur-[1px]">
+        {/* AI AGENCY SECTION */}
+        <section id="developers" className="px-4 py-28" style={{ backgroundColor: '#0A0A0A' }}>
+          <div className="mx-auto max-w-6xl text-center">
+            <h2 className="font-serif text-3xl sm:text-[2.75rem] font-medium tracking-tight text-white leading-tight">
+              An entire AI agency<br />working for your business.
+            </h2>
+            <p className="mt-4 text-sm max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              Karoji researches, designs, develops, optimizes and deploys your website automatically — in your language.
+            </p>
+
+            <div className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              
+              {/* Left: AI Workflow Card */}
+              <div className="lg:col-span-7 rounded-3xl overflow-hidden text-left" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                {/* Card header */}
+                <div className="px-7 pt-7 pb-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-lg">☕</span>
+                    <span className="text-sm font-semibold text-white/80">Premium Coffee Store</span>
+                  </div>
+                </div>
+
+                {/* Workflow steps */}
+                <div className="p-7 space-y-0">
+                  {[
+                    { label: 'Researching top coffee brands', done: true },
+                    { label: 'Analyzing design patterns', done: true },
+                    { label: 'Generating content', done: true },
+                    { label: 'Building storefront', done: false, active: true },
+                    { label: 'Optimizing mobile experience', done: false },
+                    { label: 'Deploying website', done: false },
+                  ].map((step, i) => (
+                    <div key={i} className="flex items-center gap-3 py-2.5">
+                      <div className="flex items-center justify-center h-5 w-5 shrink-0 rounded-full" style={{
+                        backgroundColor: step.done ? '#FF7A00' : step.active ? 'rgba(255,122,0,0.15)' : 'rgba(255,255,255,0.06)',
+                        border: step.active ? '1px solid #FF7A00' : 'none',
+                      }}>
+                        {step.done ? (
+                          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                            <path d="M2 6L5 9L10 3" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        ) : step.active ? (
+                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: '#FF7A00' }} />
+                        ) : (
+                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
+                        )}
+                      </div>
+                      <span className="text-sm" style={{
+                        color: step.done ? 'rgba(255,255,255,0.9)' : step.active ? '#FF7A00' : 'rgba(255,255,255,0.3)',
+                      }}>
+                        {step.label}
+                      </span>
+                      {step.active && <span className="text-[10px] font-mono ml-auto" style={{ color: '#FF7A00' }}>now</span>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer */}
+                <div className="px-7 py-5 border-t text-center" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                  <div className="text-xs font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    ─────────────────────────
+                  </div>
+                  <div className="mt-2 flex items-center justify-center gap-2">
+                    <span className="text-sm font-semibold" style={{ color: '#FF7A00' }}>Website Ready</span>
+                    <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>Live in 47s</span>
+                  </div>
+                  <div className="mt-1 text-xs font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    ─────────────────────────
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Feature Cards */}
+              <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4 content-start">
+                {[
+                  { icon: '🔍', title: 'Research Agent', desc: 'Analyzes top-performing businesses in your industry before building.' },
+                  { icon: '✦', title: 'Design Intelligence', desc: 'Learns from successful websites to create premium storefronts.' },
+                  { icon: '⚡', title: 'Builder Agent', desc: 'Creates complete full-stack websites without templates.' },
+                  { icon: '↻', title: 'Optimization Loop', desc: 'Evaluates and improves every website before deployment.' },
+                ].map((card, i) => (
+                  <div key={i} className="rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-0.5 group" style={{
+                    backgroundColor: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                    <span className="text-xl block mb-4 group-hover:scale-110 transition-transform duration-300">{card.icon}</span>
+                    <h4 className="text-sm font-semibold text-white/90 mb-1.5">{card.title}</h4>
+                    <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{card.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Stats Row */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { label: '10+', sub: 'AI Agents' },
+                { label: '<60s', sub: 'Average Build Time' },
+                { label: '8', sub: 'Languages Supported' },
+                { label: 'Auto', sub: 'Deploy Included' },
+              ].map((stat, i) => (
+                <div key={i} className="rounded-2xl py-6 px-4 text-center" style={{
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                }}>
+                  <div className="text-xl font-semibold tracking-tight text-white/90">{stat.label}</div>
+                  <div className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{stat.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* KAROJI VALUE STORY */}
+        <section className="px-4 py-20">
           <div className="mx-auto max-w-6xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               
@@ -337,7 +249,6 @@ export default function LandingPage() {
               {/* Right Media Card (Visualizing local craft going digital) */}
               <div className="lg:col-span-7 w-full">
                 <div className="relative rounded-[32px] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/20 aspect-[16/10] shadow-md group cursor-pointer">
-                  {/* Visual representing Indian weavers/craft scroll */}
                   <div className="absolute inset-0 bg-gradient-to-br from-[#E9C4A6]/20 to-[#A6C5E9]/10" />
                   <div className="absolute inset-0 flex items-center justify-center p-8">
                     <div className="w-full h-full rounded-2xl bg-zinc-100 border border-zinc-200/50 overflow-hidden relative flex items-center justify-center">
@@ -347,8 +258,6 @@ export default function LandingPage() {
                         className="object-cover w-full h-full opacity-70 group-hover:scale-105 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-                      
-                      {/* Floating play indicator */}
                       <div className="h-16 w-16 rounded-full bg-[#1E2245]/90 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg z-10">
                         <Play size={20} fill="white" className="ml-1" />
                       </div>
@@ -361,175 +270,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* KAROJI DEVELOPER SDK GRID — Replicating Screenshot 1 Layout */}
-        <section id="developers" className="px-4 py-24 bg-white/20 dark:bg-zinc-950/10 border-t border-zinc-100/80 dark:border-zinc-900/80 backdrop-blur-[1px]">
-          <div className="mx-auto max-w-6xl text-center">
-            <h2 className="font-serif text-3xl sm:text-4.5xl font-normal tracking-tight text-[#141414] dark:text-white mb-4">
-              Build anything with Karoji APIs
-            </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-16">Simple layout, localization, and payment endpoints for e-commerce.</p>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-              
-              {/* Left Developer Card */}
-              <div className="lg:col-span-6 rounded-[32px] border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-md p-8 flex flex-col justify-between shadow-sm min-h-[500px]">
-                <div className="text-left">
-                  <h3 className="text-xl font-bold text-zinc-800 dark:text-zinc-100 leading-tight">
-                    Add <span className="text-[#3333CC] dark:text-indigo-400">AI Catalog Scanner</span> <br />
-                    to your app in minutes
-                  </h3>
-
-                  {/* Tabs code block */}
-                  <div className="rounded-2xl border border-zinc-100/85 dark:border-zinc-800/80 bg-[#FCFCFD] dark:bg-zinc-900/50 p-4 mt-8 flex flex-col gap-4">
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                      <div className="flex gap-4">
-                        <button 
-                          onClick={() => setActiveCodeTab('python')}
-                          className={`text-xs font-bold pb-1 transition-all ${
-                            activeCodeTab === 'python' ? 'border-b-2 border-amber-500 text-zinc-800' : 'text-zinc-400'
-                          }`}
-                        >
-                          🐍 Python
-                        </button>
-                        <button 
-                          onClick={() => setActiveCodeTab('js')}
-                          className={`text-xs font-bold pb-1 transition-all ${
-                            activeCodeTab === 'js' ? 'border-b-2 border-amber-500 text-zinc-800' : 'text-zinc-400'
-                          }`}
-                        >
-                          ☕ JavaScript
-                        </button>
-                        <button 
-                          onClick={() => setActiveCodeTab('curl')}
-                          className={`text-xs font-bold pb-1 transition-all ${
-                            activeCodeTab === 'curl' ? 'border-b-2 border-amber-500 text-zinc-800' : 'text-zinc-400'
-                          }`}
-                        >
-                          🌐 cURL
-                        </button>
-                      </div>
-                      <span className="text-[10px] text-zinc-400 font-mono cursor-pointer hover:text-zinc-600">Copy</span>
-                    </div>
-
-                    {/* Pre */}
-                    <div className="font-mono text-[10px] leading-relaxed text-zinc-600 select-all overflow-x-auto min-h-[140px]">
-                      {activeCodeTab === 'python' && (
-                        <pre><code>{`from karojiai import KarojiClient
-from karojiai.catalog import scan
-
-client = KarojiClient(api_subscription_key="YOUR_KEY")
-
-# Scan raw invoice photo to product list
-catalog = client.catalog.scan(
-    file_path="supplier_bill.jpg",
-    language="hi-IN",
-    extract_prices=True
-)
-print("Products:", catalog.products)`}</code></pre>
-                      )}
-                      {activeCodeTab === 'js' && (
-                        <pre><code>{`import { KarojiClient } from 'karojiai';
-
-const client = new KarojiClient({ apiKey: 'YOUR_KEY' });
-
-const catalog = await client.catalog.scan({
-  filePath: "supplier_bill.jpg",
-  languageCode: "hi-IN"
-});`}</code></pre>
-                      )}
-                      {activeCodeTab === 'curl' && (
-                        <pre><code>{`curl -X POST https://api.karoji.ai/v1/catalog/scan \\
-  -H "api-subscription-key: YOUR_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"image_url": "https://host/bill.jpg"}'`}</code></pre>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <button className="w-full py-3.5 rounded-full bg-[#1E2245] text-white font-semibold text-xs mt-8 hover:opacity-90 transition-opacity">
-                  Get your API key & get started
-                </button>
-              </div>
-
-              {/* Right Cards Stack */}
-              <div className="lg:col-span-6 flex flex-col gap-6">
-                
-                {/* 2x2 Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
-                  
-                  {/* Card 1 */}
-                  <div className="rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-sm p-6 text-left flex flex-col justify-between relative overflow-hidden group hover:border-[#3333CC] dark:hover:border-indigo-400 transition-all duration-300">
-                    <div className="absolute top-0 right-0 h-10 w-10 bg-amber-100/50 rounded-bl-full pointer-events-none" />
-                    <div>
-                      <div className="h-8 w-8 rounded-lg bg-indigo-50 border border-indigo-100/50 flex items-center justify-center text-[#3333CC] mb-6">
-                        <Cpu size={14} />
-                      </div>
-                      <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 mb-1">Akshar UI Layout</h4>
-                      <p className="text-xs text-zinc-400 dark:text-zinc-400 leading-normal">Translates prompts into structured digital storefront themes</p>
-                    </div>
-                  </div>
-
-                  {/* Card 2 */}
-                  <div className="rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-sm p-6 text-left flex flex-col justify-between hover:border-[#3333CC] dark:hover:border-indigo-400 transition-colors">
-                    <div>
-                      <div className="h-8 w-8 rounded-lg bg-emerald-50 border border-emerald-100/50 flex items-center justify-center text-[#6EA335] mb-6">
-                        <Mic size={14} />
-                      </div>
-                      <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 mb-1">Saaras Voice ASR</h4>
-                      <p className="text-xs text-zinc-400 dark:text-zinc-400 leading-normal">Transcribes merchant vocal product listings to catalog</p>
-                    </div>
-                  </div>
-
-                  {/* Card 3 */}
-                  <div className="rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-sm p-6 text-left flex flex-col justify-between hover:border-[#3333CC] dark:hover:border-indigo-400 transition-colors">
-                    <div>
-                      <div className="h-8 w-8 rounded-lg bg-red-50 border border-red-100/50 flex items-center justify-center text-[#B81514] mb-6">
-                        <Globe size={14} />
-                      </div>
-                      <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 mb-1">Mayura Translate</h4>
-                      <p className="text-xs text-zinc-400 dark:text-zinc-400 leading-normal">Localizes shop copies and catalogs across 23 languages</p>
-                    </div>
-                  </div>
-
-                  {/* Card 4 */}
-                  <div className="rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-sm p-6 text-left flex flex-col justify-between hover:border-[#3333CC] dark:hover:border-indigo-400 transition-colors">
-                    <div>
-                      <div className="h-8 w-8 rounded-lg bg-amber-50 border border-amber-100/50 flex items-center justify-center text-amber-600 mb-6">
-                        <FileText size={14} />
-                      </div>
-                      <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 mb-1">Akshar OCR</h4>
-                      <p className="text-xs text-zinc-400 dark:text-zinc-400 leading-normal">Digitizes handwritten merchant bills into catalog lists</p>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Bottom row of 3 SDK stats cards */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="border border-zinc-100/80 dark:border-zinc-800 rounded-2xl p-4 text-left bg-zinc-50/20 dark:bg-zinc-900/10">
-                    <h5 className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">REST API</h5>
-                    <p className="text-[9px] text-zinc-400 dark:text-zinc-500 mt-1">Clean endpoints</p>
-                  </div>
-                  <div className="border border-zinc-100/80 dark:border-zinc-800 rounded-2xl p-4 text-left bg-zinc-50/20 dark:bg-zinc-900/10">
-                    <h5 className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">Python SDK</h5>
-                    <p className="text-[9px] text-zinc-400 dark:text-zinc-500 mt-1">pip install karojiai</p>
-                  </div>
-                  <div className="border border-zinc-100/80 dark:border-zinc-800 rounded-2xl p-4 text-left bg-zinc-50/20 dark:bg-zinc-900/10">
-                    <h5 className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">Playground</h5>
-                    <p className="text-[9px] text-zinc-400 dark:text-zinc-500 mt-1">Test in browser</p>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* NUDGE SOVEREIGN VALUE CARDS (Replicating Screenshot 2 Layout) */}
-        <section className="px-4 py-24 bg-transparent border-t border-zinc-100/80 dark:border-zinc-900/80">
+        {/* NUDGE SOVEREIGN VALUE CARDS */}
+        <section className="px-4 py-24">
           <div className="mx-auto max-w-6xl">
             {/* Outline Card matching Container style */}
             <div className="rounded-[36px] md:rounded-[40px] border border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-[#0E0F19]/80 backdrop-blur-md p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
@@ -615,7 +357,7 @@ const catalog = await client.catalog.scan({
         </section>
 
         {/* PRICING SECTION */}
-        <section id="pricing" className="px-4 py-24 bg-white/20 dark:bg-zinc-950/10 border-t border-zinc-100/80 dark:border-zinc-900/80 backdrop-blur-[1px]">
+        <section id="pricing" className="px-4 py-24">
           <div className="mx-auto max-w-6xl">
             <div className="text-center max-w-xl mx-auto mb-16">
               <h2 className="font-serif text-4xl font-bold tracking-tight text-[var(--ink)]">Simple pricing</h2>
@@ -673,12 +415,12 @@ const catalog = await client.catalog.scan({
 
 
         {/* CONTACT SECTION */}
-        <section id="contact" className="px-4 py-24 bg-transparent border-t border-zinc-100/80 dark:border-zinc-900/80 jali-bg">
+        <section id="contact" className="px-4 py-24 jali-bg">
           <ContactForm />
         </section>
       </main>
 
-      <footer className="border-t border-zinc-100 dark:border-zinc-900 bg-white/90 dark:bg-[#0C0D16]/90 backdrop-blur-md relative">
+      <footer className="relative">
         <div className="mx-auto max-w-6xl px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
             {/* Column 1 */}
