@@ -21,19 +21,25 @@ export default function LoginPage() {
     setMessage('')
 
     if (mode === 'signup') {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboard`,
-        },
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
-      if (error) {
-        setError(error.message)
-      } else if (data?.user?.identities?.length === 0) {
-        setError('An account with this email already exists.')
+      const resData = await res.json()
+      if (!res.ok) {
+        setError(resData.error || 'Registration failed. Please try again.')
       } else {
-        setMessage('Check your email for a confirmation link.')
+        // Auto sign-in the newly registered user
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        if (signInError) {
+          setError(signInError.message)
+        } else {
+          router.push('/onboard')
+        }
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
