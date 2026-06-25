@@ -29,6 +29,9 @@ export async function getOutputEmbedding(html: string): Promise<number[]> {
     return new Array(1536).fill(0);
   }
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
   try {
     const res = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
@@ -41,8 +44,11 @@ export async function getOutputEmbedding(html: string): Promise<number[]> {
       body: JSON.stringify({
         model: 'text-embedding-3-small',
         input: html.slice(0, 1000)
-      })
+      }),
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const errText = await res.text();

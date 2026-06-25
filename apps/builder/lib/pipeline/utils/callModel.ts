@@ -81,12 +81,19 @@ export async function callModel(
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        if (res.status === 429) {
+        const errMsg = errorData.error?.message ?? `HTTP ${res.status}`;
+        const isPermanentError = 
+          res.status === 402 || 
+          errMsg.includes('Insufficient credits') || 
+          errMsg.includes('free-models-per-day') ||
+          errMsg.includes('credits');
+
+        if (res.status === 429 && !isPermanentError) {
           const delay = Math.pow(2, attempt) * 1000;
           await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
         }
-        throw new Error(errorData.error?.message ?? `HTTP ${res.status}`);
+        throw new Error(errMsg);
       }
 
       const data = await res.json();

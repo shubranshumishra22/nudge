@@ -6,6 +6,9 @@ import type { LayoutPlan } from '../types';
 const ReactDOMServer = require('react-dom/server');
 
 function hexToRgb(hex: string): string {
+  if (!hex || typeof hex !== 'string') {
+    return '0, 0, 0';
+  }
   const clean = hex.replace('#', '');
   if (clean.length === 3) {
     const r = parseInt(clean[0] + clean[0], 16);

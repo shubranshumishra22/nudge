@@ -12,6 +12,10 @@ async function launchBrowser() {
 }
 
 export async function takeScreenshot(url: string): Promise<string> {
+  if (process.platform === 'darwin') {
+    console.warn('[Puppeteer] Skipping screenshot taking on macOS to avoid @sparticuz/chromium executable errors.');
+    return '';
+  }
   let browser = null;
 
   try {

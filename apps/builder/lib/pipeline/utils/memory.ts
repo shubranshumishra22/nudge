@@ -31,6 +31,10 @@ export async function getEmbedding(text: string): Promise<number[]> {
 
       if (!res.ok) {
         const errorText = await res.text();
+        if (res.status === 402) {
+          console.warn('[Embeddings] Insufficient OpenRouter credits (402). Returning mock vector immediately.');
+          return new Array(1536).fill(0);
+        }
         throw new Error(`OpenRouter Embeddings API returned ${res.status}: ${errorText}`);
       }
 
