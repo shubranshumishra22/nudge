@@ -31,7 +31,7 @@ export const MODEL_POOL: Record<string, string[]> = {
   ],
   content: [
     'openai/gpt-oss-120b:free',
-    'deepseek/deepseek-r1:free',
+    'deepseek/deepseek-chat:free',
     'deepseek/deepseek-chat:free'
   ],
   builder: [
@@ -41,14 +41,14 @@ export const MODEL_POOL: Record<string, string[]> = {
   ],
   critic: [
     'openai/gpt-oss-120b:free',
-    'deepseek/deepseek-r1:free',
+    'deepseek/deepseek-chat:free',
     'deepseek/deepseek-chat:free'
   ],
   orchestrator: [
-    'deepseek/deepseek-r1:free'          // fixed — best reasoning, no variation
+    'deepseek/deepseek-chat:free'          // fixed — best reasoning, no variation
   ],
   patch: [
-    'deepseek/deepseek-r1:free'          // fixed — reasoning over rewriting
+    'deepseek/deepseek-chat:free'          // fixed — reasoning over rewriting
   ]
 };
 

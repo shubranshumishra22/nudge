@@ -4,7 +4,7 @@ import { scoreOutput } from './scorer';
 import { UserInput } from '../types';
 
 const MAX_PATCH_ITERATIONS = 3;
-const PATCH_MODEL = 'deepseek/deepseek-r1:free';
+const PATCH_MODEL = 'deepseek/deepseek-chat:free';
 
 function cleanAndParseJSON(response: string): any {
   let cleaned = response;

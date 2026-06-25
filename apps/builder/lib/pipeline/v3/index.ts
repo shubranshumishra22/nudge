@@ -45,6 +45,11 @@ export async function runPipelineV3(
   ]);
   console.log(`[Threshold] Dynamic Quality Gate: ${threshold} (Archive size: ${archiveEmbeddings.length})`);
 
+  // Run Research Agent ONCE before starting workers
+  console.log('[V3 Entry] Running Unified Research Agent...');
+  const { runResearchAgent } = await import('../agents/research');
+  const researchData = await runResearchAgent(input);
+
   // STEP 4 — Run BFTS 3 workers in parallel
   console.log('[V3 Entry] STEP 4 - Executing BFTS 3 parallel workers...');
   const workerResults = await runBFTS(
@@ -52,15 +57,34 @@ export async function runPipelineV3(
     ragContext,
     archiveEmbeddings,
     steppingStones,
-    threshold
+    threshold,
+    researchData
   );
 
   const winner = workerResults[0]; // Sort order guaranteed highest score first
   console.log(`[BFTS] Selected Winner: Worker ${winner.worker_id} with score ${winner.score}`);
 
+  // Run a single final visual analysis check on the winner storefront to get visual penalties & metrics logs
+  console.log('[V3 Entry] Running final Puppeteer visual analysis on winning layout...');
+  const { renderAndAnalyzeHTML } = await import('../utils/metrics');
+  const visualAnalysis = await renderAndAnalyzeHTML(winner.pipeline_result.qa.html);
+  
+  // Apply visual penalties to the winner's score and record issues in winner's qa
+  const visualViolations = visualAnalysis.metrics.issues;
+  let finalScore = winner.score;
+  if (visualViolations.length > 0) {
+    console.warn(`[V3 Entry] Final Visual metric issues for winner: ${visualViolations.join(', ')}`);
+    finalScore = Math.max(0, finalScore - (visualViolations.length * 5)); // visual penalties (out of 100)
+    winner.pipeline_result.qa.issues_found = [
+      ...winner.pipeline_result.qa.issues_found,
+      ...visualViolations
+    ];
+    winner.score = finalScore;
+    winner.pipeline_result.qa.passed = finalScore >= threshold;
+  }
+
   // STEP 5 — Run patch loop on winner if below threshold
   let finalHtml = winner.pipeline_result.qa.html;
-  let finalScore = winner.score;
   let patchIterations = 0;
 
   if (finalScore < threshold) {
@@ -109,11 +133,13 @@ export async function runPipelineV3(
     slug: slug,
     winning_worker: {
       ...winner,
+      score: finalScore,
       pipeline_result: {
         ...winner.pipeline_result,
         qa: {
           ...winner.pipeline_result.qa,
-          html: finalHtml
+          html: finalHtml,
+          passed: finalScore >= threshold
         }
       }
     },

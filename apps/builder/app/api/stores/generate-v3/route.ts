@@ -150,6 +150,32 @@ export async function POST(request: Request) {
   const slug = await uniqueSlug(db, baseSlug);
   const storeId = randomUUID();
 
+  // 1. Create the store immediately in draft status with null ai_config (signals building state)
+  const { error: storeError } = await db
+    .from('stores')
+    .insert({
+      id: storeId,
+      owner_id: user.id,
+      name: input.business_name,
+      slug,
+      description: input.description,
+      business_type: input.business_type,
+      ai_config: null, // null indicates building state
+      currency: 'INR',
+      delivery_fee: 0,
+      status: 'draft',
+    });
+
+  if (storeError) {
+    return NextResponse.json({ error: storeError.message ?? 'Failed to create store record' }, { status: 500 });
+  }
+
+  // 2. Mark onboarding as completed immediately so middleware allows user to dashboard/builder
+  await db
+    .from('profiles')
+    .update({ onboarding_completed: true })
+    .eq('id', user.id);
+
   // Injects _store_id and _slug into input before calling pipeline
   const pipelineInput = {
     ...input,
@@ -157,129 +183,151 @@ export async function POST(request: Request) {
     _slug: slug,
   };
 
-  // Run the V3 multi-agent pipeline
-  const result = await runPipelineV3(pipelineInput as any, db);
+  // 3. Spawn V3 pipeline execution in the background
+  generateStoreV3InBackground(db, storeId, user.id, pipelineInput, slug).catch((err) => {
+    console.error('Unhandled background V3 store generation crash:', err);
+  });
 
-  if (result.success) {
-    const pipelineRes = result.winning_worker.pipeline_result;
+  // 4. Return success response immediately
+  return NextResponse.json({
+    success: true,
+    store_id: storeId,
+    slug,
+    preview_url: `/onboard/preview?store=${storeId}`,
+  });
+}
 
-    // Create store
-    const { error: storeError } = await db
-      .from('stores')
-      .insert({
-        id: storeId,
-        owner_id: user.id,
-        name: input.business_name,
-        slug,
-        description: input.description,
-        business_type: input.business_type,
-        ai_config: pipelineRes as unknown as Record<string, unknown>,
-        currency: 'INR',
-        delivery_fee: 0,
-        status: 'draft',
+async function generateStoreV3InBackground(
+  db: any,
+  storeId: string,
+  userId: string,
+  input: any,
+  slug: string
+) {
+  try {
+    const result = await runPipelineV3(input, db);
+
+    if (result.success) {
+      const pipelineRes = result.winning_worker.pipeline_result;
+
+      // Insert theme from design output
+      const { error: themeError } = await db.from('store_themes').insert({
+        store_id: storeId,
+        primary_color: pipelineRes.design.primary_color,
+        accent_color: pipelineRes.design.accent_color,
+        background_color: pipelineRes.design.background_color,
+        font_style: fontStyleFromHeading(pipelineRes.design.font_heading),
+        hero_headline: pipelineRes.content.hero_headline,
+        hero_subheading: pipelineRes.content.hero_subheadline,
+        sections_order: pipelineRes.research.common_sections,
+        sections_enabled: {
+          hero: true,
+          products: true,
+          about: true,
+          contact: true,
+        },
       });
 
-    if (storeError) {
-      return NextResponse.json({ error: storeError.message ?? 'Failed to create store record' }, { status: 500 });
-    }
+      if (themeError) {
+        console.error('Theme creation failed for V3 store:', themeError);
+      }
 
-    // Insert theme from design output
-    const { error: themeError } = await db.from('store_themes').insert({
-      store_id: storeId,
-      primary_color: pipelineRes.design.primary_color,
-      accent_color: pipelineRes.design.accent_color,
-      background_color: pipelineRes.design.background_color,
-      font_style: fontStyleFromHeading(pipelineRes.design.font_heading),
-      hero_headline: pipelineRes.content.hero_headline,
-      hero_subheading: pipelineRes.content.hero_subheadline,
-      sections_order: pipelineRes.research.common_sections,
-      sections_enabled: {
-        hero: true,
-        products: true,
-        about: true,
-        contact: true,
-      },
-    });
+      // Insert products
+      for (let i = 0; i < input.products.length; i++) {
+        const p = input.products[i];
+        const { data: product, error: productError } = await db.from('products').insert({
+          store_id: storeId,
+          name: p.name,
+          slug: slugify(p.name),
+          description: p.description || '',
+          price: p.price,
+          category: input.business_type,
+          is_featured: i === 0,
+          sort_order: i,
+        }).select('id').single();
 
-    if (themeError) {
-      console.error('Theme creation failed for V3 store:', themeError);
-    }
+        if (productError) {
+          console.error('Product creation failed for V3 store:', productError);
+        } else if (product && p.image_url) {
+          const { error: imageError } = await db.from('product_images').insert({
+            product_id: product.id,
+            url: p.image_url,
+            alt_text: p.name,
+            sort_order: 0,
+            is_primary: true,
+          });
 
-    // Insert products
-    for (let i = 0; i < input.products.length; i++) {
-      const p = input.products[i];
-      const { data: product, error: productError } = await db.from('products').insert({
-        store_id: storeId,
-        name: p.name,
-        slug: slugify(p.name),
-        description: p.description || '',
-        price: p.price,
-        category: input.business_type,
-        is_featured: i === 0,
-        sort_order: i,
-      }).select('id').single();
-
-      if (productError) {
-        console.error('Product creation failed for V3 store:', productError);
-      } else if (product && p.image_url) {
-        const { error: imageError } = await db.from('product_images').insert({
-          product_id: product.id,
-          url: p.image_url,
-          alt_text: p.name,
-          sort_order: 0,
-          is_primary: true,
-        });
-
-        if (imageError) {
-          console.error('Product image creation failed for V3 store:', imageError);
+          if (imageError) {
+            console.error('Product image creation failed for V3 store:', imageError);
+          }
         }
       }
+
+      // Update store details and config last to signal completion
+      const { error: storeUpdateError } = await db
+        .from('stores')
+        .update({
+          ai_config: pipelineRes as unknown as Record<string, unknown>,
+        })
+        .eq('id', storeId);
+
+      if (storeUpdateError) {
+        throw storeUpdateError;
+      }
+
+      // Log generation to ai_generation_logs
+      await db.from('ai_generation_logs').insert({
+        owner_id: userId,
+        store_id: storeId,
+        input_payload: input as unknown as Record<string, unknown>,
+        output_config: pipelineRes as unknown as Record<string, unknown>,
+        model_used: Object.values(result.models_selected).join(', '),
+        tokens_used: null,
+        duration_ms: result.total_duration_ms,
+        success: true,
+        error_message: null,
+      });
+    } else {
+      // Pipeline failed completely - save failure status in config
+      await db
+        .from('stores')
+        .update({
+          ai_config: { error: 'Pipeline V3 failed completely', success: false } as any,
+        })
+        .eq('id', storeId);
+
+      await db.from('ai_generation_logs').insert({
+        owner_id: userId,
+        store_id: storeId,
+        input_payload: input as unknown as Record<string, unknown>,
+        output_config: null,
+        model_used: '',
+        tokens_used: null,
+        duration_ms: 0,
+        success: false,
+        error_message: 'Pipeline V3 execution failed',
+      });
     }
+  } catch (err) {
+    console.error('Background V3 store generation crashed:', err);
+    // Mark the store with an error status in ai_config so UI can show it
+    await db
+      .from('stores')
+      .update({
+        ai_config: { error: err instanceof Error ? err.message : 'Pipeline crashed', success: false } as any,
+      })
+      .eq('id', storeId);
 
-    // Log generation to ai_generation_logs
     await db.from('ai_generation_logs').insert({
-      owner_id: user.id,
+      owner_id: userId,
       store_id: storeId,
-      input_payload: input as unknown as Record<string, unknown>,
-      output_config: pipelineRes as unknown as Record<string, unknown>,
-      model_used: Object.values(result.models_selected).join(', '),
-      tokens_used: null,
-      duration_ms: result.total_duration_ms,
-      success: true,
-      error_message: null,
-    });
-
-    return NextResponse.json({
-      success: true,
-      store_id: storeId,
-      slug,
-      preview_url: `/onboard/preview?store=${storeId}`,
-      final_score: result.final_score,
-      threshold_used: result.threshold_used,
-      patch_iterations: result.patch_iterations,
-      workers_run: result.all_workers.length,
-      bandit_updated: result.bandit_updated,
-    });
-  } else {
-    // Pipeline failed entirely
-    await db.from('ai_generation_logs').insert({
-      owner_id: user.id,
-      store_id: null,
       input_payload: input as unknown as Record<string, unknown>,
       output_config: null,
       model_used: '',
       tokens_used: null,
       duration_ms: 0,
       success: false,
-      error_message: 'Pipeline V3 execution failed',
+      error_message: err instanceof Error ? err.message : String(err),
     });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Pipeline V3 failed completely',
-      },
-      { status: 500 },
-    );
   }
 }

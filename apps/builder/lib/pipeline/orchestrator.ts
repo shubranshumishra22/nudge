@@ -31,8 +31,14 @@ export async function runOrchestrator(input: UserInput): Promise<PipelineResult>
 
     // 2. Run Research agent
     console.log('[Orchestrator] Starting Research agent...');
-    const research = await runResearchAgent(input);
-    modelsUsed.push('nvidia/llama-3.3-nemotron-super-49b-v1:free');
+    let research;
+    if ((input as any)._pre_scraped_research) {
+      console.log('[Orchestrator] Using pre-scraped research data');
+      research = (input as any)._pre_scraped_research;
+    } else {
+      research = await runResearchAgent(input);
+      modelsUsed.push('nvidia/llama-3.3-nemotron-super-49b-v1:free');
+    }
 
     // 3. Run Vision agent with research URLs
     console.log('[Orchestrator] Starting Vision agent...');
@@ -96,7 +102,23 @@ export async function runOrchestrator(input: UserInput): Promise<PipelineResult>
 
       // B. Rule-based Visual Metrics & Contrast Checks
       console.log('[Orchestrator] Running Puppeteer visual metrics...');
-      const visualAnalysis = await renderAndAnalyzeHTML(finalHtml);
+      let visualAnalysis;
+      if ((input as any)._skip_puppeteer) {
+        console.log('[Orchestrator] Skipping Puppeteer visual metrics check.');
+        visualAnalysis = {
+          screenshotBase64: '',
+          metrics: {
+            passed: true,
+            issues: [],
+            contrastRatioViolations: [],
+            headingHierarchyViolations: [],
+            touchTargetViolations: [],
+            hasViewportMeta: true
+          }
+        };
+      } else {
+        visualAnalysis = await renderAndAnalyzeHTML(finalHtml);
+      }
 
       // C. Dual-Mode Evaluation (switch to specialist after iteration 1)
       console.log('[Orchestrator] Running Critic Panel...');
@@ -145,7 +167,16 @@ export async function runOrchestrator(input: UserInput): Promise<PipelineResult>
 
         // Test the mutated layout in the next loop
         const testRender = renderLayoutToHTML(patchRes.layout);
-        const testVisual = await renderAndAnalyzeHTML(testRender.html);
+        let testVisual;
+        if ((input as any)._skip_puppeteer) {
+          testVisual = {
+            metrics: {
+              issues: []
+            }
+          };
+        } else {
+          testVisual = await renderAndAnalyzeHTML(testRender.html);
+        }
         const testCritic = await runEvaluatorEnsemble(
           testRender.html,
           input,

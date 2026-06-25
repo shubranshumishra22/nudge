@@ -2,7 +2,7 @@ import { runOrchestrator } from '../orchestrator';
 import { selectModel, bftsStorage } from './modelBandit';
 import { scoreOutput } from './scorer';
 import { computeNovelty, getOutputEmbedding, isNovel } from './noveltyFilter';
-import { UserInput } from '../types';
+import { UserInput, ResearchOutput } from '../types';
 import { RAGContext, ArchiveEntry, WorkerResult } from './types';
 
 export async function runBFTS(
@@ -10,7 +10,8 @@ export async function runBFTS(
   ragContext: RAGContext,
   archiveEmbeddings: number[][],
   steppingStones: ArchiveEntry[],
-  threshold: number
+  threshold: number,
+  preScrapedResearch?: ResearchOutput
 ): Promise<WorkerResult[]> {
   // Generate a unique run ID for isolating concurrent model selections in AsyncLocalStorage
   const runId = Math.random().toString(36).substring(2, 15);
@@ -68,7 +69,9 @@ export async function runBFTS(
       // Call existing runOrchestrator with model overrides in context
       const result = await runOrchestrator({
         ...augmentedInputs[worker_id - 1],
-        _model_overrides: models
+        _model_overrides: models,
+        _skip_puppeteer: true,
+        _pre_scraped_research: preScrapedResearch
       } as any);
 
       // Score output
