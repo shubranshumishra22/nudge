@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import { createServerSupabaseClient } from '@nudge/db'
-import { runPipeline } from '@/lib/pipeline'
+import { runPipeline, runFastPipeline } from '@/lib/pipeline'
+import { checkContentSafety } from '@/lib/pipeline/utils/safety'
+import { inngest } from '@/inngest/client'
 import { z } from 'zod'
+
+export const maxDuration = 60;
 
 const generateSchema = z.object({
   business_name: z.string().min(2).max(60),
@@ -147,45 +151,260 @@ export async function POST(request: Request) {
   const baseSlug = slugify(input.business_name)
   const slug = await uniqueSlug(db, baseSlug)
 
-  // 1. Create the store immediately in draft status with null ai_config
-  const { data: store, error: storeError } = await db
-    .from('stores')
-    .insert({
-      owner_id: user.id,
-      name: input.business_name,
-      slug,
-      description: input.description,
-      business_type: input.business_type,
-      ai_config: null, // null indicates building state
-      currency: 'INR',
-      delivery_fee: 0,
-      status: 'draft',
-    })
-    .select('id')
-    .single()
-
-  if (storeError || !store) {
-    return NextResponse.json({ error: storeError?.message ?? 'Failed to create store record' }, { status: 500 })
+  // Content safety check
+  const safetyCheck = await checkContentSafety(input.business_name, input.description)
+  if (!safetyCheck.safe) {
+    return NextResponse.json(
+      { error: safetyCheck.reason || 'Input violates content safety policies' },
+      { status: 400 }
+    )
   }
 
-  // 2. Mark onboarding as completed immediately so middleware allows user to dashboard/builder
-  await db
-    .from('profiles')
-    .update({ onboarding_completed: true })
-    .eq('id', user.id)
+  const useBackgroundJobs = process.env.USE_BACKGROUND_JOBS === 'true'
 
-  // 3. Spawn pipeline execution in the background
-  generateStoreInBackground(db, store.id, user.id, input, slug).catch((err) => {
-    console.error('Unhandled background store generation crash:', err)
-  })
+  if (useBackgroundJobs) {
+    // 1. Create the store immediately in generating status
+    const { data: store, error: storeError } = await db
+      .from('stores')
+      .insert({
+        owner_id: user.id,
+        name: input.business_name,
+        slug,
+        description: input.description,
+        business_type: input.business_type,
+        ai_config: null, // null indicates building state
+        currency: 'INR',
+        delivery_fee: 0,
+        status: 'generating',
+        generation_started_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single()
 
-  // 4. Return success response immediately
-  return NextResponse.json({
-    success: true,
-    store_id: store.id,
-    slug,
-    preview_url: `/onboard/preview?store=${store.id}`,
-  })
+    if (storeError || !store) {
+      return NextResponse.json({ error: storeError?.message ?? 'Failed to create store record' }, { status: 500 })
+    }
+
+    // 2. Mark onboarding as completed immediately so middleware allows user to dashboard/builder
+    await db
+      .from('profiles')
+      .update({ onboarding_completed: true })
+      .eq('id', user.id)
+
+    // 3. Dispatch Inngest event
+    try {
+      await inngest.send({
+        name: "store/generate.requested",
+        data: {
+          storeId: store.id,
+          userId: user.id,
+          input,
+          slug
+        }
+      })
+    } catch (inngestError) {
+      console.error('Inngest dispatch failed, falling back to background promise:', inngestError)
+      generateStoreInBackground(db, store.id, user.id, input, slug).catch((err) => {
+        console.error('Unhandled background store generation crash:', err)
+      })
+    }
+
+    // 4. Return success response immediately
+    return NextResponse.json({
+      success: true,
+      store_id: store.id,
+      slug,
+      preview_url: `/onboard/preview?store=${store.id}`,
+    })
+  } else {
+    // 1. Create the store immediately in generating status
+    const { data: store, error: storeError } = await db
+      .from('stores')
+      .insert({
+        owner_id: user.id,
+        name: input.business_name,
+        slug,
+        description: input.description,
+        business_type: input.business_type,
+        ai_config: null,
+        currency: 'INR',
+        delivery_fee: 0,
+        status: 'generating',
+        generation_started_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single()
+
+    if (storeError || !store) {
+      return NextResponse.json({ error: storeError?.message ?? 'Failed to create store record' }, { status: 500 })
+    }
+
+    // 2. Mark onboarding as completed immediately
+    await db
+      .from('profiles')
+      .update({ onboarding_completed: true })
+      .eq('id', user.id)
+
+    // 3. Run fast pipeline synchronously
+    try {
+      const result = await runFastPipeline(input)
+
+      if (result.success) {
+        // Insert theme from design output
+        const { error: themeError } = await db.from('store_themes').insert({
+          store_id: store.id,
+          primary_color: result.design.primary_color,
+          accent_color: result.design.accent_color,
+          background_color: result.design.background_color,
+          font_style: fontStyleFromHeading(result.design.font_heading),
+          hero_headline: result.content.hero_headline,
+          hero_subheading: result.content.hero_subheadline,
+          sections_order: result.research.common_sections,
+          sections_enabled: {
+            hero: true,
+            products: true,
+            about: true,
+            contact: true,
+          },
+        })
+
+        if (themeError) {
+          console.error('Theme creation failed in synchronous path:', themeError)
+        }
+
+        // Insert products
+        for (let i = 0; i < input.products.length; i++) {
+          const p = input.products[i]
+          const { data: product, error: productError } = await db.from('products').insert({
+            store_id: store.id,
+            name: p.name,
+            slug: slugify(p.name),
+            description: p.description || '',
+            price: p.price,
+            category: input.business_type,
+            is_featured: i === 0,
+            sort_order: i,
+          }).select('id').single()
+
+          if (productError) {
+            console.error('Product creation failed in synchronous path:', productError)
+          } else if (product && p.image_url) {
+            const { error: imageError } = await db.from('product_images').insert({
+              product_id: product.id,
+              url: p.image_url,
+              alt_text: p.name,
+              sort_order: 0,
+              is_primary: true,
+            })
+
+            if (imageError) {
+              console.error('Product image creation failed in synchronous path:', imageError)
+            }
+          }
+        }
+
+        // Save generated HTML to storage
+        const { error: uploadError } = await db.storage
+          .from('storefronts')
+          .upload(`${store.id}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
+            upsert: true,
+            contentType: 'text/html',
+          })
+
+        if (uploadError) {
+          console.error('HTML upload failed in synchronous path:', uploadError)
+        }
+
+        // Update store details and config last to signal completion
+        const { error: storeUpdateError } = await db
+          .from('stores')
+          .update({
+            status: 'draft',
+            ai_config: result as unknown as Record<string, unknown>,
+            generation_completed_at: new Date().toISOString(),
+            generation_score: result.final_score || 9.0,
+          })
+          .eq('id', store.id)
+
+        if (storeUpdateError) {
+          throw storeUpdateError
+        }
+
+        // Log generation
+        await db.from('ai_generation_logs').insert({
+          owner_id: user.id,
+          store_id: store.id,
+          input_payload: input as unknown as Record<string, unknown>,
+          output_config: result as unknown as Record<string, unknown>,
+          model_used: result.models_used.join(', '),
+          tokens_used: null,
+          duration_ms: result.duration_ms,
+          success: true,
+          error_message: null,
+        })
+      } else {
+        // Handle failure
+        await db.storage
+          .from('storefronts')
+          .upload(`${store.id}/index.html`, new Blob([result.build.html], { type: 'text/html' }), {
+            upsert: true,
+            contentType: 'text/html',
+          })
+
+        await db
+          .from('stores')
+          .update({
+            status: 'draft',
+            ai_config: result as unknown as Record<string, unknown>,
+            generation_completed_at: new Date().toISOString(),
+            generation_score: 1.0,
+          })
+          .eq('id', store.id)
+
+        await db.from('ai_generation_logs').insert({
+          owner_id: user.id,
+          store_id: store.id,
+          input_payload: input as unknown as Record<string, unknown>,
+          output_config: result as unknown as Record<string, unknown>,
+          model_used: result.models_used.join(', '),
+          tokens_used: null,
+          duration_ms: result.duration_ms,
+          success: false,
+          error_message: result.error || 'Unknown error',
+        })
+      }
+    } catch (err) {
+      console.error('Fast pipeline execution crashed:', err)
+      await db
+        .from('stores')
+        .update({
+          status: 'draft',
+          ai_config: { error: err instanceof Error ? err.message : 'Pipeline crashed', success: false },
+          generation_completed_at: new Date().toISOString(),
+          generation_score: 1.0,
+        })
+        .eq('id', store.id)
+
+      await db.from('ai_generation_logs').insert({
+        owner_id: user.id,
+        store_id: store.id,
+        input_payload: input as unknown as Record<string, unknown>,
+        output_config: null,
+        model_used: '',
+        tokens_used: null,
+        duration_ms: 0,
+        success: false,
+        error_message: err instanceof Error ? err.message : String(err),
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      store_id: store.id,
+      slug,
+      preview_url: `/onboard/preview?store=${store.id}`,
+    })
+  }
 }
 
 async function generateStoreInBackground(
@@ -340,5 +559,6 @@ async function generateStoreInBackground(
     })
   }
 }
+
 
 

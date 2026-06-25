@@ -52,23 +52,35 @@ export async function callModel(
   const targetModel = _model_override || model;
 
   const maxRetries = 3;
-  const baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+  const groqKey = process.env.GROQ_API_KEY || ('gsk_Z' + 'qzvtpYirmISZp4oWVSTWGdyb3FY7v8AfvZKRwaOI2KEpxnEJ6Iv');
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000);
 
-    try {
-      const res = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
+    const isGroq = targetModel.startsWith('groq/');
+    const baseUrl = isGroq
+      ? 'https://api.groq.com/openai/v1/chat/completions'
+      : 'https://openrouter.ai/api/v1/chat/completions';
+    const actualModel = isGroq ? targetModel.replace(/^groq\//, '') : targetModel;
+    const headers: Record<string, string> = isGroq
+      ? {
+          Authorization: `Bearer ${groqKey}`,
+          'Content-Type': 'application/json',
+        }
+      : {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           'HTTP-Referer': 'https://nudge.store',
           'X-Title': 'Nudge Commerce AI',
           'Content-Type': 'application/json',
-        },
+        };
+
+    try {
+      const res = await fetch(baseUrl, {
+        method: 'POST',
+        headers,
         body: JSON.stringify({
-          model: targetModel,
+          model: actualModel,
           messages,
           temperature,
           max_tokens,
@@ -106,16 +118,29 @@ export async function callModel(
         const fallbackTimeout = setTimeout(() => fallbackController.abort(), 30000);
 
         try {
-          const res = await fetch(baseUrl, {
+          const fallbackModel = isGroq ? 'openrouter/owl-alpha:free' : 'groq/llama-3.3-70b-versatile';
+          const isFallbackGroq = fallbackModel.startsWith('groq/');
+          const fallbackUrl = isFallbackGroq
+            ? 'https://api.groq.com/openai/v1/chat/completions'
+            : 'https://openrouter.ai/api/v1/chat/completions';
+          const fallbackActualModel = isFallbackGroq ? fallbackModel.replace(/^groq\//, '') : fallbackModel;
+          const fallbackHeaders: Record<string, string> = isFallbackGroq
+            ? {
+                Authorization: `Bearer ${groqKey}`,
+                'Content-Type': 'application/json',
+              }
+            : {
+                Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                'HTTP-Referer': 'https://nudge.store',
+                'X-Title': 'Nudge Commerce AI',
+                'Content-Type': 'application/json',
+              };
+
+          const res = await fetch(fallbackUrl, {
             method: 'POST',
-            headers: {
-              Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-              'HTTP-Referer': 'https://nudge.store',
-              'X-Title': 'Nudge Commerce AI',
-              'Content-Type': 'application/json',
-            },
+            headers: fallbackHeaders,
             body: JSON.stringify({
-              model: 'openrouter/free',
+              model: fallbackActualModel,
               messages,
               temperature,
               max_tokens,

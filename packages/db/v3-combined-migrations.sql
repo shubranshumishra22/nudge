@@ -205,3 +205,12 @@ BEGIN
   LIMIT match_count;
 END;
 $$;
+
+-- 9. Add columns for background job status tracking
+ALTER TYPE store_status ADD VALUE IF NOT EXISTS 'generating';
+
+ALTER TABLE stores
+ADD COLUMN IF NOT EXISTS generation_started_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS generation_completed_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS generation_score NUMERIC(5,2);
+

@@ -112,6 +112,11 @@ export default function OnboardPage() {
   const fileInputRefs = useRef<Map<string, HTMLInputElement>>(new Map())
   const initiatedRef = useRef(false)
 
+  const [progress, setProgress] = useState(0)
+  const [pollingStatus, setPollingStatus] = useState('Initiating...')
+  const pollIntervalRef = useRef<any>(null)
+  const progressIntervalRef = useRef<any>(null)
+
   const form = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
     defaultValues: {
@@ -121,6 +126,13 @@ export default function OnboardPage() {
       primary_color: '#4F46E5',
     },
   })
+
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     if (step !== 3) return
@@ -133,6 +145,8 @@ export default function OnboardPage() {
   const handleGenerate = useCallback(async () => {
     setGenerating(true)
     setError('')
+    setProgress(5)
+    setPollingStatus('Sending request...')
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -167,10 +181,63 @@ export default function OnboardPage() {
       }
 
       const data = await res.json()
-      router.push(`/builder?store=${data.store_id || data.storeId}`)
+      const storeId = data.store_id || data.storeId
+
+      setPollingStatus('Assembling your custom storefront...')
+      setProgress(15)
+
+      // Start status polling
+      pollIntervalRef.current = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`/api/stores/${storeId}/status`)
+          if (!statusRes.ok) {
+            throw new Error('Failed to fetch build status')
+          }
+          const statusData = await statusRes.json()
+
+          if (statusData.completed) {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+            if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
+
+            if (statusData.success === false || statusData.status === 'error') {
+              setError(statusData.error || 'Generation failed.')
+              setGenerating(false)
+            } else {
+              setProgress(100)
+              setPollingStatus('Storefront generated successfully!')
+              setTimeout(() => {
+                router.push(`/builder?store=${storeId}`)
+              }, 1000)
+            }
+          } else {
+            // Update status message dynamically based on elapsed time
+            if (statusData.elapsed_seconds < 12) {
+              setPollingStatus('Analyzing business & competitor trends...')
+            } else if (statusData.elapsed_seconds < 25) {
+              setPollingStatus('Crafting custom typography & styles...')
+            } else {
+              setPollingStatus('Writing engagement copy & assembling layout...')
+            }
+          }
+        } catch (pollErr) {
+          console.error('Polling error:', pollErr)
+        }
+      }, 3000)
+
+      // Animate progress bar values incrementally
+      progressIntervalRef.current = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 95) {
+            if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
+            return 95
+          }
+          const increment = prev < 50 ? 2 : 1
+          return prev + increment
+        })
+      }, 1000)
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
-    } finally {
       setGenerating(false)
     }
   }, [step1Data, products, router, supabase, setGenerating])
@@ -240,8 +307,25 @@ export default function OnboardPage() {
             </div>
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="animate-pulse text-lg font-medium transition-opacity" style={{ color: 'var(--text-primary)' }}>
+          {/* Progress Bar */}
+          <div className="mt-8 space-y-2">
+            <div className="flex justify-between text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+              <span>{pollingStatus}</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full" style={{ backgroundColor: 'var(--border-default)' }}>
+              <div 
+                className="h-full transition-all duration-300 ease-out animate-pulse" 
+                style={{ 
+                  width: `${progress}%`, 
+                  backgroundColor: step1Data?.primary_color || 'var(--bg-inverse)' 
+                }} 
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="animate-pulse text-sm font-medium transition-opacity animate-pulse" style={{ color: 'var(--text-secondary)' }}>
               {STATUS_TEXTS[statusIndex]}
             </p>
           </div>
@@ -250,7 +334,12 @@ export default function OnboardPage() {
             <div className="mt-6 rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
               <p className="text-sm" style={{ color: '#EF4444' }}>{error}</p>
               <button
-                onClick={() => { initiatedRef.current = false; handleGenerate() }}
+                onClick={() => {
+                  if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+                  if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
+                  initiatedRef.current = false
+                  handleGenerate()
+                }}
                 className="mt-3 rounded-lg px-4 py-2 text-sm font-medium"
                 style={{ backgroundColor: '#EF4444', color: 'white' }}
               >

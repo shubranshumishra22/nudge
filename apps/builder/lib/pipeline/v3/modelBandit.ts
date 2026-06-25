@@ -20,35 +20,35 @@ const memoryBandit: Record<string, BanditScore> = {};
 
 export const MODEL_POOL: Record<string, string[]> = {
   research: [
-    'deepseek/deepseek-v4-flash:free',
-    'openai/gpt-oss-120b:free',
-    'deepseek/deepseek-chat:free'
+    'nvidia/nemotron-3-ultra:free',
+    'nvidia/nemotron-3-ultra:free',
+    'nvidia/nemotron-3-ultra:free'
   ],
   vision: [
-    'nvidia/llama-3.2-nemotron-nano-vl-8b-v1:free',
-    'nvidia/llama-3.2-nemotron-nano-vl-8b-v1:free',
-    'nvidia/llama-3.2-nemotron-nano-vl-8b-v1:free'
+    'nvidia/nemotron-3-nano-omni:free',
+    'nvidia/nemotron-3-nano-omni:free',
+    'nvidia/nemotron-3-nano-omni:free'
   ],
   content: [
-    'openai/gpt-oss-120b:free',
-    'deepseek/deepseek-chat:free',
-    'deepseek/deepseek-chat:free'
+    'google/gemma-4-31b:free',
+    'google/gemma-4-31b:free',
+    'google/gemma-4-31b:free'
   ],
   builder: [
-    'deepseek/deepseek-v4-flash:free',   // W1 — exploit
-    'qwen/qwen3-coder-480b:free',        // W2 — explore
-    'openai/gpt-oss-120b:free'           // W3 — forced random
+    'openrouter/owl-alpha:free',     // W1
+    'poolside/laguna-m.1:free',      // W2
+    'poolside/laguna-xs.2:free'      // W3
   ],
   critic: [
-    'openai/gpt-oss-120b:free',
-    'deepseek/deepseek-chat:free',
-    'deepseek/deepseek-chat:free'
+    'nvidia/nemotron-3-super:free',
+    'nvidia/nemotron-3-super:free',
+    'nvidia/nemotron-3-super:free'
   ],
   orchestrator: [
-    'deepseek/deepseek-chat:free'          // fixed — best reasoning, no variation
+    'nvidia/nemotron-3-ultra:free'
   ],
   patch: [
-    'deepseek/deepseek-chat:free'          // fixed — reasoning over rewriting
+    'poolside/laguna-xs.2:free'
   ]
 };
 
