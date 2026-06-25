@@ -9,6 +9,9 @@ export interface UserInput {
     description?: string;
     image_url?: string;
   }>;
+  language?: string;
+  original_description?: string;
+  original_business_name?: string;
 }
 
 export interface ResearchOutput {

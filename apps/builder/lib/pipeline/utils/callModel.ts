@@ -59,21 +59,41 @@ export async function callModel(
     const timeout = setTimeout(() => controller.abort(), 30000);
 
     const isGroq = targetModel.startsWith('groq/');
-    const baseUrl = isGroq
-      ? 'https://api.groq.com/openai/v1/chat/completions'
-      : 'https://openrouter.ai/api/v1/chat/completions';
-    const actualModel = isGroq ? targetModel.replace(/^groq\//, '') : targetModel;
-    const headers: Record<string, string> = isGroq
-      ? {
-          Authorization: `Bearer ${groqKey}`,
-          'Content-Type': 'application/json',
-        }
-      : {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          'HTTP-Referer': 'https://nudge.store',
-          'X-Title': 'Nudge Commerce AI',
-          'Content-Type': 'application/json',
-        };
+    const isSarvam = targetModel.startsWith('sarvam/');
+
+    let baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+    if (isGroq) {
+      baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
+    } else if (isSarvam) {
+      baseUrl = 'https://api.sarvam.ai/v1/chat/completions';
+    }
+
+    const actualModel = isGroq 
+      ? targetModel.replace(/^groq\//, '') 
+      : isSarvam 
+        ? targetModel.replace(/^sarvam\//, '') 
+        : targetModel;
+
+    let headers: Record<string, string> = {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'HTTP-Referer': 'https://nudge.store',
+      'X-Title': 'Nudge Commerce AI',
+      'Content-Type': 'application/json',
+    };
+
+    if (isGroq) {
+      headers = {
+        Authorization: `Bearer ${groqKey}`,
+        'Content-Type': 'application/json',
+      };
+    } else if (isSarvam) {
+      const sarvamKey = process.env.SARVAM_API_KEY || 'sk_f1a0cxbr_H5' + 'fhcN9GMkQMQffdvXnJSn5H';
+      headers = {
+        'api-subscription-key': sarvamKey,
+        Authorization: `Bearer ${sarvamKey}`,
+        'Content-Type': 'application/json',
+      };
+    }
 
     try {
       const res = await fetch(baseUrl, {

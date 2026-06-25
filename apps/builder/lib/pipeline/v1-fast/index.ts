@@ -1,4 +1,5 @@
 import { callModel } from '../utils/callModel';
+import { translateText } from '../utils/translate';
 import type { UserInput, PipelineResult, ResearchOutput, DesignOutput, ContentOutput, BuildOutput } from '../types';
 import { BUILDER_SYSTEM_PROMPT } from '../prompts';
 
@@ -440,7 +441,7 @@ export function generateFallbackHTML(
 </head>
 <body>
   <header>
-    <div class="logo">${input.business_name}</div>
+    <div class="logo">${input.original_business_name || input.business_name}</div>
     <nav>
       <a href="#products">Products</a>
       <a href="#about">About</a>
@@ -616,7 +617,7 @@ export function generateFallbackHTML(
           key: "rzp_test_123", // Replace with actual key in production
           amount: data.amount,
           currency: data.currency,
-          name: "\${input.business_name}",
+          name: "\${input.original_business_name || input.business_name}",
           description: "Purchase from Nudge store",
           image: "https://nudge.store/logo.png",
           handler: function (response){
@@ -747,7 +748,7 @@ export async function runFastPipeline(input: UserInput): Promise<PipelineResult>
 
   let research: ResearchOutput;
   let design: DesignOutput;
-  let content: ContentOutput;
+  let content: ContentOutput = {} as ContentOutput;
   let build: BuildOutput;
 
   // Step 1: Research Agent (10s timeout)
@@ -828,8 +829,52 @@ Respond strictly in JSON format matching this TypeScript interface:
 
   // Step 3: Content Agent (10s timeout)
   console.log('[Fast Pipeline] Step 3: Running Content Agent...');
-  try {
-    const contentPrompt = `Write compelling brand copy for a storefront.
+  const isRegional = !!(input.language && !input.language.startsWith('en'));
+  let contentGenerated = false;
+
+  if (isRegional) {
+    console.log(`[Fast Pipeline] Regional language active: ${input.language}. Attempting direct generation via sarvam/sarvam-2b...`);
+    try {
+      const regionalPrompt = `You are a copywriter. Write compelling brand copy for a storefront in the language matching code "${input.language}".
+Business Name: ${input.original_business_name || input.business_name}
+Business Type: ${input.business_type}
+Description: ${input.original_description || input.description}
+Tone: ${research.tone}
+
+Respond strictly in JSON format matching this TypeScript interface (values MUST be in the language matching code "${input.language}"):
+{
+  "hero_headline": string,
+  "hero_subheadline": string,
+  "hero_cta": string,
+  "about_title": string,
+  "about_body": string,
+  "products_section_title": string,
+  "contact_tagline": string,
+  "footer_tagline": string,
+  "seo_title": string,
+  "seo_description": string,
+  "whatsapp_message": string
+}`;
+
+      const modelName = 'sarvam/sarvam-2b';
+      modelsUsed.push(modelName);
+      const contentRes = await callModelWithTimeout(
+        modelName,
+        [{ role: 'user', content: regionalPrompt }],
+        { json_mode: true },
+        10000
+      );
+      content = JSON.parse(contentRes);
+      contentGenerated = true;
+      console.log('[Fast Pipeline] Direct regional content generation succeeded!');
+    } catch (regionalErr) {
+      console.warn('[Fast Pipeline] Direct regional content generation failed, falling back to English generation + translation:', regionalErr);
+    }
+  }
+
+  if (!contentGenerated) {
+    try {
+      const contentPrompt = `Write compelling brand copy for a storefront.
 Business Name: ${input.business_name}
 Business Type: ${input.business_type}
 Description: ${input.description}
@@ -850,18 +895,47 @@ Respond strictly in JSON format matching this TypeScript interface:
   "whatsapp_message": string
 }`;
 
-    const modelName = 'google/gemma-4-31b:free';
-    modelsUsed.push(modelName);
-    const contentRes = await callModelWithTimeout(
-      modelName,
-      [{ role: 'user', content: contentPrompt }],
-      { json_mode: true },
-      10000
-    );
-    content = JSON.parse(contentRes);
-  } catch (err) {
-    console.warn('[Fast Pipeline] Content Agent failed or timed out. using default content.', err);
-    content = getDefaultContent(input.business_name, input.business_type);
+      const modelName = 'google/gemma-4-31b:free';
+      modelsUsed.push(modelName);
+      const contentRes = await callModelWithTimeout(
+        modelName,
+        [{ role: 'user', content: contentPrompt }],
+        { json_mode: true },
+        10000
+      );
+      content = JSON.parse(contentRes);
+
+      if (isRegional) {
+        console.log(`[Fast Pipeline] Translating English storefront content to target language: ${input.language}`);
+        for (const key of Object.keys(content) as Array<keyof ContentOutput>) {
+          if (typeof content[key] === 'string') {
+            try {
+              const translation = await translateText(content[key], 'en-IN', input.language);
+              content[key] = translation.translated_text;
+            } catch (transErr) {
+              console.warn(`[Fast Pipeline] Translation of field ${key} failed:`, transErr);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[Fast Pipeline] Content Agent failed or timed out. using default content.', err);
+      content = getDefaultContent(input.business_name, input.business_type);
+
+      if (isRegional) {
+        console.log(`[Fast Pipeline] Translating default storefront content to target language: ${input.language}`);
+        for (const key of Object.keys(content) as Array<keyof ContentOutput>) {
+          if (typeof content[key] === 'string') {
+            try {
+              const translation = await translateText(content[key], 'en-IN', input.language);
+              content[key] = translation.translated_text;
+            } catch (transErr) {
+              console.warn(`[Fast Pipeline] Translation of default fallback field ${key} failed:`, transErr);
+            }
+          }
+        }
+      }
+    }
   }
 
   // Step 4: Builder Agent (20s timeout)
@@ -877,7 +951,7 @@ Respond strictly in JSON format matching this TypeScript interface:
     const userMessage = `DESIGN TOKENS: ${JSON.stringify(design)}
 CONTENT: ${JSON.stringify(content)}
 PRODUCTS: ${JSON.stringify(formattedProducts)}
-STORE NAME: ${input.business_name}
+STORE NAME: ${input.original_business_name || input.business_name}
 BUSINESS TYPE: ${input.business_type}
 PRIMARY COLOR: ${input.primary_color}
 

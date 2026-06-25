@@ -3,7 +3,9 @@ import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import { createServerSupabaseClient } from '@nudge/db'
 import { runPipeline, runFastPipeline } from '@/lib/pipeline'
+import type { UserInput } from '@/lib/pipeline'
 import { checkContentSafety } from '@/lib/pipeline/utils/safety'
+import { translateText } from '@/lib/pipeline/utils/translate'
 import { inngest } from '@/inngest/client'
 import { z } from 'zod'
 
@@ -31,11 +33,12 @@ const generateSchema = z.object({
 })
 
 function slugify(text: string): string {
-  return text
+  const base = text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 40)
+  return base || `item-${Math.random().toString(36).slice(2, 8)}`
 }
 
 function fontStyleFromHeading(fontHeading: string): 'modern' | 'classic' | 'playful' | 'minimal' {
@@ -147,12 +150,48 @@ export async function POST(request: Request) {
     )
   }
 
-  const input = parsed.data
-  const baseSlug = slugify(input.business_name)
+  // Build the UserInput object
+  const userInput: UserInput = {
+    business_name: parsed.data.business_name,
+    business_type: parsed.data.business_type,
+    description: parsed.data.description,
+    primary_color: parsed.data.primary_color,
+    products: parsed.data.products.map(p => ({
+      name: p.name,
+      price: p.price,
+      description: p.description,
+      image_url: p.image_url
+    })),
+  }
+
+  // Detect and translate regional languages
+  let detectedLang = 'en'
+  try {
+    const descTranslation = await translateText(userInput.description, 'auto', 'en-IN')
+    detectedLang = descTranslation.source_language_code
+
+    if (detectedLang && !detectedLang.startsWith('en')) {
+      console.log(`[Localization] Detected regional language: ${detectedLang}. Translating inputs to English...`)
+      userInput.original_description = userInput.description
+      userInput.original_business_name = userInput.business_name
+      userInput.language = detectedLang
+
+      // Translate description
+      userInput.description = descTranslation.translated_text
+
+      // Translate business name
+      const nameTranslation = await translateText(userInput.business_name, detectedLang, 'en-IN')
+      userInput.business_name = nameTranslation.translated_text
+    }
+  } catch (translateError) {
+    console.error('[Localization] Language translation failed, falling back to original:', translateError)
+  }
+
+  const baseSlug = slugify(userInput.business_name)
   const slug = await uniqueSlug(db, baseSlug)
 
   // Content safety check
-  const safetyCheck = await checkContentSafety(input.business_name, input.description)
+  const safetyCheck = await checkContentSafety(userInput.business_name, userInput.description)
   if (!safetyCheck.safe) {
     return NextResponse.json(
       { error: safetyCheck.reason || 'Input violates content safety policies' },
@@ -168,10 +207,10 @@ export async function POST(request: Request) {
       .from('stores')
       .insert({
         owner_id: user.id,
-        name: input.business_name,
+        name: userInput.original_business_name || userInput.business_name,
         slug,
-        description: input.description,
-        business_type: input.business_type,
+        description: userInput.original_description || userInput.description,
+        business_type: userInput.business_type,
         ai_config: null, // null indicates building state
         currency: 'INR',
         delivery_fee: 0,
@@ -198,13 +237,13 @@ export async function POST(request: Request) {
         data: {
           storeId: store.id,
           userId: user.id,
-          input,
+          input: userInput,
           slug
         }
       })
     } catch (inngestError) {
       console.error('Inngest dispatch failed, falling back to background promise:', inngestError)
-      generateStoreInBackground(db, store.id, user.id, input, slug).catch((err) => {
+      generateStoreInBackground(db, store.id, user.id, userInput, slug).catch((err) => {
         console.error('Unhandled background store generation crash:', err)
       })
     }
@@ -222,10 +261,10 @@ export async function POST(request: Request) {
       .from('stores')
       .insert({
         owner_id: user.id,
-        name: input.business_name,
+        name: userInput.original_business_name || userInput.business_name,
         slug,
-        description: input.description,
-        business_type: input.business_type,
+        description: userInput.original_description || userInput.description,
+        business_type: userInput.business_type,
         ai_config: null,
         currency: 'INR',
         delivery_fee: 0,
@@ -247,7 +286,7 @@ export async function POST(request: Request) {
 
     // 3. Run fast pipeline synchronously
     try {
-      const result = await runFastPipeline(input)
+      const result = await runFastPipeline(userInput)
 
       if (result.success) {
         // Insert theme from design output
@@ -273,15 +312,15 @@ export async function POST(request: Request) {
         }
 
         // Insert products
-        for (let i = 0; i < input.products.length; i++) {
-          const p = input.products[i]
+        for (let i = 0; i < userInput.products.length; i++) {
+          const p = userInput.products[i]
           const { data: product, error: productError } = await db.from('products').insert({
             store_id: store.id,
             name: p.name,
             slug: slugify(p.name),
             description: p.description || '',
             price: p.price,
-            category: input.business_type,
+            category: userInput.business_type,
             is_featured: i === 0,
             sort_order: i,
           }).select('id').single()
@@ -334,7 +373,7 @@ export async function POST(request: Request) {
         await db.from('ai_generation_logs').insert({
           owner_id: user.id,
           store_id: store.id,
-          input_payload: input as unknown as Record<string, unknown>,
+          input_payload: userInput as unknown as Record<string, unknown>,
           output_config: result as unknown as Record<string, unknown>,
           model_used: result.models_used.join(', '),
           tokens_used: null,
@@ -364,7 +403,7 @@ export async function POST(request: Request) {
         await db.from('ai_generation_logs').insert({
           owner_id: user.id,
           store_id: store.id,
-          input_payload: input as unknown as Record<string, unknown>,
+          input_payload: userInput as unknown as Record<string, unknown>,
           output_config: result as unknown as Record<string, unknown>,
           model_used: result.models_used.join(', '),
           tokens_used: null,
@@ -388,7 +427,7 @@ export async function POST(request: Request) {
       await db.from('ai_generation_logs').insert({
         owner_id: user.id,
         store_id: store.id,
-        input_payload: input as unknown as Record<string, unknown>,
+        input_payload: userInput as unknown as Record<string, unknown>,
         output_config: null,
         model_used: '',
         tokens_used: null,
